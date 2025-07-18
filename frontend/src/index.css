@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+body {
+  /* This is the dark background color that fills the space */
+  background-color: #1a1a2e; /* A deep navy/dark purple-blue, similar to your image */
+  min-height: 100vh; /* Ensure it covers the full viewport height */
+  margin: 0;
+  padding: 0;
+
+  /* Multiple radial gradients for the "blurred" effects */
+  background-image:
+    /* Top-left light blue blur */
+    radial-gradient(circle at 15% 15%, rgba(68, 203, 246, 0.4), transparent 50%),
+    /* Mid-left purple blur */
+    radial-gradient(circle at 25% 75%, rgba(138, 43, 226, 0.4), transparent 50%),
+    /* Top-right subtle light blue */
+    radial-gradient(circle at 85% 25%, rgba(68, 203, 246, 0.3), transparent 50%),
+    /* Bottom-right light blue/purple */
+    radial-gradient(circle at 75% 85%, rgba(138, 43, 226, 0.3), transparent 50%),
+    /* A more general, faint glow for the center */
+    radial-gradient(circle at 50% 50%, rgba(50, 50, 100, 0.2), transparent 70%);
+
+  /* Background properties to make them behave correctly */
+  background-size: cover; /* or specific sizes if you want more control */
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Keeps gradients fixed when content scrolls */
+}
+
