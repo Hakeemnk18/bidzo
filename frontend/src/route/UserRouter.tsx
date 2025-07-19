@@ -1,6 +1,7 @@
 import { lazy } from "react"
 
 const Home = lazy(()=> import ("../features/user/pages/Home"))
+const UserLogin = lazy(()=> import('../features/user/pages/Login'))
 
 
 
@@ -12,6 +13,12 @@ const userRoutes = [
             <Home />
         ),
     },
+    {
+        path:'/login',
+        element:(
+            <UserLogin />
+        ),
+    }
     
 ]
 
