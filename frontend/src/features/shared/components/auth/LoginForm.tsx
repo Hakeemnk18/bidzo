@@ -1,18 +1,23 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useStoreDispatch } from "../../../../hooks/useStore";
+import type { LoginResponse } from "../../../../types/user.types";
+
 
 
 const LoginForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-
+    const location = useLocation()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         setErrors({ ...errors, [e.target.name]: "" });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
+
         e.preventDefault();
         const newErrors: typeof errors = {};
         if (!formData.email.includes("@") || formData.email.trim().length < 1) {
@@ -27,7 +32,40 @@ const LoginForm = () => {
             setErrors(newErrors);
             return;
         } else {
-            console.log("submitted")
+            let role = 'user'
+
+
+            if (location.pathname.includes('admin')) role = 'admin'
+            if (location.pathname.includes('seller')) role = 'seller'
+
+            console.log(formData)
+            console.log("role ", role)
+            try {
+                const res = await fetch(`http://localhost:4004/${role}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+
+                if (res.ok) {
+                    const data: LoginResponse = await res.json();
+                    console.log(data);
+                    useStoreDispatch();
+                    toast("Login successful");
+                } else {
+                    const errorData: { error: string } = await res.json();
+                    toast(errorData.error);
+
+                }
+
+            } catch (error) {
+                toast("errorin server")
+            }
+
+
         }
 
     };
@@ -86,7 +124,7 @@ const LoginForm = () => {
                 </Link>
             </div>
 
-            
+
         </form>
     );
 };
