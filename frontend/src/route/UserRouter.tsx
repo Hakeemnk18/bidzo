@@ -1,4 +1,6 @@
-import { lazy } from "react"
+import { lazy, Suspense } from "react"
+import PublicRoute from "../features/user/components/PublicRoute"
+import LoadingSpinner from "../features/shared/components/LoadingSpinner"
 
 const Home = lazy(()=> import ("../features/user/pages/Home"))
 const UserLogin = lazy(()=> import('../features/user/pages/Login'))
@@ -16,7 +18,13 @@ const userRoutes = [
     {
         path:'/login',
         element:(
-            <UserLogin />
+            <PublicRoute >
+                <Suspense fallback={< LoadingSpinner />}>
+                    <UserLogin />
+                </Suspense>
+                
+            </PublicRoute>
+            
         ),
     }
     

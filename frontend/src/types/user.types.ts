@@ -9,7 +9,7 @@ export interface GoogleLoginResponse {
   message: string;
   data?: {
     name: string;
-    role: string;
+    role: 'admin' | 'user' | 'seller';
     token: string;
   };
   error?: string;
