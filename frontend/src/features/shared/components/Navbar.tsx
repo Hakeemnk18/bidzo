@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 const Navbar = () => {
 
   const user = useStoreSelector((state) => state.auth)
+  console.log("user in nav bar ",user)
 
   
   return (

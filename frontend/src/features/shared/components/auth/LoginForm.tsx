@@ -1,48 +1,15 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useStoreDispatch } from "../../../../hooks/useStore";
 import type { GoogleLoginResponse, LoginResponse } from "../../../../types/user.types";
-const client_id = import.meta.env.VITE_CLIENTID;
+import { login } from "../../slices/authSlice";
+import GoogleLogin from "./GoogleLogin";
 
 
-//google login
-const handleGoogleLogin = async () => {
-    /* global google */
-    console.log("inside google authentication")
-    try {
-        const client = google.accounts.oauth2.initTokenClient({
-            client_id: client_id,
-            scope: 'openid profile email',
-            callback: async (response: any) => {
-                console.log("Token from Google:", response.access_token);
 
-                // Send token to your backend
-                const res = await fetch('http://localhost:4004/user/google-login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ token: response.access_token }),
-                });
 
-                const data: GoogleLoginResponse = await res.json();
-                if (data.success && res.ok) {
-                    toast(data.message)
-                } else {
-                    toast.error(data.message || "Google login failed");
-                }
-                // console.log("Response from backend:", data);
-            },
-        });
 
-        client.requestAccessToken();
-    } catch (err) {
-        toast.error("Something went wrong. Please try again.");
-        console.error("Google Login Error:", err);
-    }
-
-}
 
 
 const LoginForm = () => {
@@ -92,7 +59,7 @@ const LoginForm = () => {
                 if (res.ok) {
                     const data: LoginResponse = await res.json();
                     console.log(data);
-                    useStoreDispatch();
+                    // useStoreDispatch();
                     toast("Login successful");
                 } else {
                     const errorData: { error: string } = await res.json();
@@ -149,13 +116,7 @@ const LoginForm = () => {
                 Submit
             </button>
 
-            <button
-                onClick={handleGoogleLogin}
-                type="button"
-                className="w-full mt-3 bg-gray-300 text-black font-semibold py-2 rounded-md"
-            >
-                Login with Google
-            </button>
+            <GoogleLogin />
 
             <div className="flex items-center space-x-1 text-sm">
                 <p className="text-gray-500">You don't have account?</p>
