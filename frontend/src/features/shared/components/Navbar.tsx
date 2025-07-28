@@ -1,13 +1,16 @@
 import { FaUserCircle } from 'react-icons/fa';
 import { useStoreSelector } from '../../../hooks/useStore';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import UserDropdown from './userDropdown';
 
 const Navbar = () => {
 
+  const [dropDownOpen, setDropDownOpen] = useState(false)
   const user = useStoreSelector((state) => state.auth)
-  console.log("user in nav bar ",user)
+  console.log("user in nav bar ", user)
 
-  
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 p-4 bg-transparent backdrop-blur-md">
       <div className="container mx-auto flex justify-between items-center">
@@ -32,19 +35,29 @@ const Navbar = () => {
         {/* User Icon */}
         {
           user.isAuthenticated ?
-            <div className="text-white text-2xl cursor-pointer">
-              <FaUserCircle />
-            </div> :
-            <div className="text-white text-md cursor-pointer ">
-              <Link to={'/login'}>
+            <div className="relative inline-block text-left">
+              <div
+                className="text-white text-2xl cursor-pointer"
+                onClick={()=> setDropDownOpen(!dropDownOpen)}
+              >
+                <FaUserCircle />
+              </div>
+              { dropDownOpen && <UserDropdown />}
+              </div>
+              :
+              <div className="text-white text-md cursor-pointer ">
+                <Link to={'/login'}>
                   <button className="bg-blue-400 py-2 px-4 rounded-lg">Login</button>
-              </Link>
-              
-            </div>
+                </Link>
+
+              </div>
 
         }
+              {
 
-      </div>
+              }
+
+            </div>
     </nav>
   );
 };
