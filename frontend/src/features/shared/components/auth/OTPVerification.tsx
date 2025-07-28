@@ -2,8 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import type { ApiResponse, GoogleLoginResponse } from "../../../../types/user.types";
-import { data, useNavigate } from "react-router-dom";
+import type { ApiResponse } from "../../../../types/user.types";
+
 
 interface OTPProps {
   email: string;
@@ -16,7 +16,7 @@ const OTPVerification = ({ email, onSuccess }: OTPProps) => {
   const [timer, setTimer] = useState(0)
   const [isVerifyDesabled, setIsVerifyDesabled] = useState(true)
   const [isResendDesabled, setIsResendDesabled] = useState(true)
-  const navigate = useNavigate()
+  
   let intervalRef = useRef<null | number>(null)
 
 
