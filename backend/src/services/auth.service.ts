@@ -8,6 +8,7 @@ import { IOTPRepository } from "../repositories/otp.repo.interface";
 import { IOTPService } from "./interfaces/otp.interface";
 import { transporter } from "../config/mailer";
 import { VerifyReqOTP } from "../dtos/OTP.dto";
+import { CustomError } from "../utils/customError";
 //import { GoogleUserDTO } from "../dtos/userLogin.dto";
 
 
@@ -25,7 +26,7 @@ export const loginUser = async (
   role: string,
   repo: IUserRepository
 ) => {
-  const user = await repo.findByEmail(email, role);
+  const user = await repo.findByEmailAndRole(email, role);
   if (!user) throw new Error("Invalid credentials");
 };
 
@@ -67,7 +68,7 @@ export class AuthService implements IAuthService {
 
       const { email, name, sub } = await this.fetchGoogleProfile(token);
 
-      let user = await this.userRepo.findByEmail(email, "user");
+      let user = await this.userRepo.findByEmailAndRole(email, "user");
       if (!user) {
         console.log("inside if no user found")
         user = await this.userRepo.createGoogleUser({
@@ -116,6 +117,10 @@ export class AuthService implements IAuthService {
   async sendOTPtoEmail(email: string): Promise<void> {
 
     console.log("iniside otp auth service ")
+    const user = await this.userRepo.findByEmail(email)
+    if(user){
+      throw new CustomError("email already exist ",409)
+    }
     const otp = generateOTP()
     const expiry = new Date(Date.now() + 1 * 60 * 1000);
     await this.otpService.saveAndUpdate({ email, otp, expiry })

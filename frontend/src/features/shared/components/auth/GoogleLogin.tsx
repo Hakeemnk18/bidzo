@@ -22,7 +22,7 @@ const GoogleLogin = () => {
                 callback: async (response: any) => {
                     
 
-                    // Send token to your backend
+                    // Send token to backend
                     const { data: resData } = await axios.post<GoogleLoginResponse>(
                         'http://localhost:4004/user/google-login',
                         { token: response.access_token },
