@@ -11,14 +11,12 @@ export interface CreateGoogleUserDTO {
   role: string;
 }
 
-// export interface GoogleUserDTO {
-//   email: string;
-//   name: string;
-//   googleId: string;
-//   role: string;
-//   repo: IUserRepository;
-// }
-
+export interface UserSignUpDTO {
+  name: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+}
 
 
 export interface UserLoginDTO {

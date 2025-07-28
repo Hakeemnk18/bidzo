@@ -20,3 +20,9 @@ export interface AuthState {
     role: "admin" | "user" | "seller" | null,
     isAuthenticated: boolean
 }
+
+export interface ApiResponse {
+  success: boolean;
+  message: string;
+  error?: string;
+}
