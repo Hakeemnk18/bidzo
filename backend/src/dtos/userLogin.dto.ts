@@ -22,6 +22,7 @@ export interface UserSignUpDTO {
 export interface UserLoginDTO {
   email: string;
   password: string;
+  role: "user" | "admin" | "seller";
 }
 
 export interface UserLoginResponseDTO {
