@@ -4,5 +4,6 @@ import { CreateGoogleUserDTO } from "../dtos/userLogin.dto";
 export interface IUserRepository {
   create(user: User): Promise<User>;
   createGoogleUser(user: CreateGoogleUserDTO): Promise<User>;
-  findByEmail(email: string,role: string): Promise<User | null>;
+  findByEmailAndRole(email: string,role: string): Promise<User | null>;
+  findByEmail(email: string): Promise<User | null>;
 }

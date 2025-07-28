@@ -12,10 +12,11 @@ export class UserRepository implements IUserRepository {
     return await UserModel.create(user);
   }
 
-  async findByEmail(email: string, role: string): Promise<User | null> {
+  async findByEmail(email: string, ): Promise<User | null> {
+    return await UserModel.findOne({ email });
+  }
 
-    console.log("email ",email)
-    console.log("role ",role)
-    return await UserModel.findOne({ email,role });
+  async findByEmailAndRole(email: string, role: string): Promise<User | null> {
+     return await UserModel.findOne({ email,role });
   }
 }

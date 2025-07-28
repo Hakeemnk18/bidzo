@@ -3,19 +3,20 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import type { ApiResponse, GoogleLoginResponse } from "../../../../types/user.types";
+import { data, useNavigate } from "react-router-dom";
 
 interface OTPProps {
   email: string;
-  formData: any;
-  // onSuccess: () => void;
+  onSuccess: () => void;
 }
 
-const OTPVerification = ({ formData, email }: OTPProps) => {
+const OTPVerification = ({ email, onSuccess }: OTPProps) => {
   const [attempt, setAttempt] = useState(0)
   const [otp, setOtp] = useState("");
   const [timer, setTimer] = useState(0)
   const [isVerifyDesabled, setIsVerifyDesabled] = useState(true)
   const [isResendDesabled, setIsResendDesabled] = useState(true)
+  const navigate = useNavigate()
   let intervalRef = useRef<null | number>(null)
 
 
@@ -56,12 +57,12 @@ const OTPVerification = ({ formData, email }: OTPProps) => {
   }, [timer])
 
   const handleResend = async () => {
-    
+
 
     try {
       const res = await axios.post<ApiResponse>("http://localhost:4004/user/send-otp", { email });
       if (res.data.success) {
-        toast(res.data.message)
+        toast("otp send successfully")
         setIsResendDesabled(true)
         if (intervalRef.current) {
           clearInterval(intervalRef.current);
@@ -71,12 +72,15 @@ const OTPVerification = ({ formData, email }: OTPProps) => {
         setTimer(0)
         startTimer()
         setOtp("")
-      }else{
-        toast(res.data.message)
+      } else {
+        toast(res.data.message || "Something went wrong")
       }
-    } catch (error) {
-      console.log("otp resend error ",error)
-      toast("otp send failled ")
+    } catch (error: any) {
+      if (error.response && error.response.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Failed to send OTP. Please try again later.");
+      }
     }
 
   }
@@ -88,27 +92,15 @@ const OTPVerification = ({ formData, email }: OTPProps) => {
     if (attempt === 2) {
       toast("attempt limt exceeded");
       return
-    } else {
-
     }
-
     try {
       const res = await axios.post<ApiResponse>("http://localhost:4004/user/verify-otp", { email, otp });
-      //let res = { data:{ success: false}}
-
       if (res.data.success) {
-
-        const signupRes = await axios.post<GoogleLoginResponse>("http://localhost:4004/user/sign-up", formData);
-        //let signupRes = { data: { success: true } }
-        if (signupRes.data.success) {
-          toast("Signup successful!");
-
-        } else {
-          toast("Signup failed");
-        }
+        onSuccess()
       } else {
-        toast(res.data.message);
+        toast(res.data.success || 'unknown error');
       }
+
     } catch (err: any) {
       const message = err.response?.data?.message || "Something went wrong";
       toast(message);

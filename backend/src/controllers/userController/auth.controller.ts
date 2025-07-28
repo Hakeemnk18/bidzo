@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { IAuthController } from "./interfaces/auth.controller.interface";
 import { IAuthService } from "../../services/interfaces/auth.interfaces";
+import { CustomError } from "../../utils/customError";
 
 
 
@@ -38,11 +39,11 @@ export class AuthController implements IAuthController {
       const user = await this.authService.signUp({ name, email, password, phoneNumber })
       res.status(200).json({
         success: true,
-        message: "Login successful",
+        message: "Signup successful",
         data: user,
       });
     } catch (err) {
-      console.error("Google Login Failed", err);
+      console.error("Signup filed controller", err);
       res.status(500).json({
         success: false,
         message: "Google login failed",
@@ -61,19 +62,19 @@ export class AuthController implements IAuthController {
         message: "OTP send successfully",
       });
     } catch (err) {
-      console.error("error in send otp", err);
-      res.status(500).json({
-        success: false,
-        message: "OTP sending failed",
-        error: err instanceof Error ? err.message : "Unknown error",
-      });
+      console.log("error in end otp controller")
+      if (err instanceof CustomError) {
+        res.status(err.statusCode).json({ message: err.message });
+      } else {
+        res.status(500).json({ message: "Internal server error" });
+      }
     }
   }
 
   async verifyOTP(req: Request, res: Response): Promise<void> {
     try {
-      
-      
+
+
       const { email, otp } = req.body
       await this.authService.verifyOtp({ email, otp })
       res.status(200).json({
