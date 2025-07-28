@@ -10,6 +10,27 @@ export class AuthController implements IAuthController {
 
   constructor(private readonly authService: IAuthService) { }
 
+  async loginUser(req: Request, res: Response): Promise<void> {
+    try {
+      console.log("inside login ",req.body)
+      const { email, password} = req.body
+      const user = await this.authService.userLogin({email, password, role:'user'})
+      res.status(200).json({
+        success: true,
+        message: "Login successful",
+        data: user,
+      });
+      
+    } catch (err) {
+      console.log("error in  login user controller ")
+      if (err instanceof CustomError) {
+        res.status(err.statusCode).json({ message: err.message });
+      } else {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  }
+
   async googleLogin(req: Request, res: Response): Promise<void> {
 
     try {

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useStoreDispatch } from "../../../../hooks/useStore";
 import type { ApiResponse, GoogleLoginResponse, LoginResponse } from "../../../../types/user.types";
 import { login } from "../../slices/authSlice";
-import GoogleLogin from "./GoogleLogin";
 import OTPVerification from "./OTPVerification";
 import axios from "axios";
 
@@ -12,7 +11,6 @@ const SignUpForm = () => {
     const [isOTP, setIsOTP] = useState<boolean>(false)
     const [formData, setFormData] = useState({ email: "", password: "", rePassword: "", phoneNumber: "", name: "" });
     const [errors, setErrors] = useState<{ email?: string; password?: string, name?: string, phoneNumber?: string, rePassword?: string }>({});
-    const location = useLocation()
     const dispatch = useStoreDispatch()
     const navigate = useNavigate()
 

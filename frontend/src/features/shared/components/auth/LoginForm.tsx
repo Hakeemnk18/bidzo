@@ -5,12 +5,15 @@ import { useStoreDispatch } from "../../../../hooks/useStore";
 import type { GoogleLoginResponse, LoginResponse } from "../../../../types/user.types";
 import { login } from "../../slices/authSlice";
 import GoogleLogin from "./GoogleLogin";
+import axios from "axios";
 
 
 const LoginForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
     const location = useLocation()
+    const navigate = useNavigate()
+    const dispatch = useStoreDispatch()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,7 +21,6 @@ const LoginForm = () => {
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-
         e.preventDefault();
         const newErrors: typeof errors = {};
         if (!formData.email.includes("@") || formData.email.trim().length < 1) {
@@ -28,44 +30,39 @@ const LoginForm = () => {
             newErrors.password = "Min 6 characters";
         }
 
-        
+
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
         } else {
             let role = 'user'
-
-
             if (location.pathname.includes('admin')) role = 'admin'
             if (location.pathname.includes('seller')) role = 'seller'
-
-            
             try {
-                const res = await fetch(`http://localhost:4004/${role}/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                });
-
-
-                if (res.ok) {
-                    const data: LoginResponse = await res.json();
-                    
-                    // useStoreDispatch();
-                    toast("Login successful");
+                const res = await axios.post<GoogleLoginResponse>(`http://localhost:4004/${role}/login`, formData);
+                console.log(res)
+                if (res.data.success) {
+                    toast(res.data.message)
+                    const userData: LoginResponse = res.data.data!
+                    localStorage.setItem("authToken", userData.token);
+                    localStorage.setItem("userName", userData.name);
+                    localStorage.setItem("userRole", userData.role);
+                    dispatch(login({
+                        name: userData.name,
+                        role: userData.role
+                    }));
+                    navigate('/');
                 } else {
-                    const errorData: { error: string } = await res.json();
-                    toast(errorData.error);
-
+                    toast(res.data.message || 'unknown error')
                 }
-
-            } catch (error) {
-                toast("errorin server")
+            } catch (error: any) {
+                if (error.response && error.response.data?.message) {
+                    toast.error(error.response.data.message);
+                } else {
+                    toast.error("Failed to login");
+                }
+                console.log("error in  login page", error)
             }
-
-
         }
 
     };

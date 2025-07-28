@@ -1,6 +1,6 @@
 import { IUserRepository } from "../repositories/user.repo.interface";
 import { IAuthService } from "./interfaces/auth.interfaces";
-import { GoogleLoginDTO, UserSignUpDTO } from "../dtos/userLogin.dto";
+import { GoogleLoginDTO, UserLoginDTO, UserSignUpDTO } from "../dtos/userLogin.dto";
 import { IJWTService } from "./interfaces/jwt.interface";
 import { UserLoginResponseDTO } from "../dtos/userLogin.dto";
 import { generateOTP } from "../utils/otpGenerator";
@@ -9,6 +9,7 @@ import { IOTPService } from "./interfaces/otp.interface";
 import { transporter } from "../config/mailer";
 import { VerifyReqOTP } from "../dtos/OTP.dto";
 import { CustomError } from "../utils/customError";
+import { comparePassword, hashPassword } from "../utils/hash";
 //import { GoogleUserDTO } from "../dtos/userLogin.dto";
 
 
@@ -61,6 +62,32 @@ export class AuthService implements IAuthService {
 
   }
 
+  async userLogin(userData: UserLoginDTO): Promise<UserLoginResponseDTO> {
+    console.log("inside user login service")
+    const { email, role, password} = userData
+    const user = await this.userRepo.findByEmailAndRole(email,role)
+    if(!user){
+      throw new CustomError("user not found ",404)
+    }
+    const passwordMatch = await comparePassword(password,user.password!)
+
+    if(!passwordMatch){
+
+      throw new CustomError("user not found ",404)
+    }
+
+    const jwtToken = await this.jwtService.sign({ id: user.id})
+
+    const responseUser:UserLoginResponseDTO = {
+      name: user.name,
+      role: user.role,
+      token: jwtToken
+    }
+    return responseUser
+
+  }
+  
+
   async googleLogin({ token }: GoogleLoginDTO): Promise<UserLoginResponseDTO> {
 
     try {
@@ -98,9 +125,9 @@ export class AuthService implements IAuthService {
 
   async signUp(data: UserSignUpDTO): Promise<UserLoginResponseDTO> {
     try {
-      console.log("inside signup service ")
-      console.log(data)
-      const user = await this.userRepo.create({...data,role:'user'})
+      
+      const hashPsd = await hashPassword(data.password)
+      const user = await this.userRepo.create({...data,role:'user', password:hashPsd})
       const jwtToken = await this.jwtService.sign({id: user.id})
       const responseUser: UserLoginResponseDTO = {
         name: user.name,

@@ -18,7 +18,7 @@ const authController = new AuthController(authService);
 
 
 
-//router.post("/login", authController);
+router.post("/login", (req, res)=> authController.loginUser(req,res));
 router.post('/google-login', (req, res) => authController.googleLogin(req, res));
 router.post('/sign-up', (req,res)=> authController.signUp(req,res))
 router.post('/send-otp', (req,res)=> authController.sendOTP(req,res))
