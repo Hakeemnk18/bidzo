@@ -7,11 +7,6 @@ import { login } from "../../slices/authSlice";
 import GoogleLogin from "./GoogleLogin";
 
 
-
-
-
-
-
 const LoginForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
@@ -33,7 +28,7 @@ const LoginForm = () => {
             newErrors.password = "Min 6 characters";
         }
 
-        console.log("inside handle submit ", newErrors)
+        
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
@@ -44,8 +39,7 @@ const LoginForm = () => {
             if (location.pathname.includes('admin')) role = 'admin'
             if (location.pathname.includes('seller')) role = 'seller'
 
-            console.log(formData)
-            console.log("role ", role)
+            
             try {
                 const res = await fetch(`http://localhost:4004/${role}/login`, {
                     method: 'POST',
@@ -58,7 +52,7 @@ const LoginForm = () => {
 
                 if (res.ok) {
                     const data: LoginResponse = await res.json();
-                    console.log(data);
+                    
                     // useStoreDispatch();
                     toast("Login successful");
                 } else {

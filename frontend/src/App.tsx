@@ -8,6 +8,7 @@ import { useStoreDispatch } from './hooks/useStore';
 import { login, logout } from './features/shared/slices/authSlice';
 import ErrorBoundary from './features/shared/components/ErrorBoundary';
 import { clearToken, isTokenValid } from './utils/tokenHelpers';
+import { useLocation } from 'react-router-dom';
 
 
 
@@ -15,6 +16,8 @@ import { clearToken, isTokenValid } from './utils/tokenHelpers';
 function App() {
 
   const dispatch = useStoreDispatch()
+  const location = useLocation()
+  const HIDDEN_PATHS = ['/login', '/signup', '/admin/login', '/seller/login'];
 
   useEffect(() => {
 
@@ -41,13 +44,15 @@ function App() {
 
         <ToastContainer position="top-right" autoClose={3000} />
         <div className="min-h-screen flex flex-col">
-          <Navbar />
+          {!HIDDEN_PATHS.includes(location.pathname)  && <Navbar />}
+          
 
           <main className="flex-1">
             <Outlet />
           </main>
-
-          <Footer />
+         
+         {!HIDDEN_PATHS.includes(location.pathname) && <Footer />}
+          
         </div>
 
       </ErrorBoundary>
