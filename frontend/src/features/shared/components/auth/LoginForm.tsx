@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useStoreDispatch } from "../../../../hooks/useStore";
@@ -11,9 +11,21 @@ import axios from "axios";
 const LoginForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+    const [role, setRole] = useState('')
+
     const location = useLocation()
     const navigate = useNavigate()
     const dispatch = useStoreDispatch()
+
+    useEffect(() => {
+        if (location.pathname.includes('admin')) {
+            setRole('admin');
+        } else if (location.pathname.includes('seller')) {
+            setRole('seller');
+        } else {
+            setRole('user');
+        }
+    }, [location.pathname]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,9 +47,7 @@ const LoginForm = () => {
             setErrors(newErrors);
             return;
         } else {
-            let role = 'user'
-            if (location.pathname.includes('admin')) role = 'admin'
-            if (location.pathname.includes('seller')) role = 'seller'
+
             try {
                 const res = await axios.post<GoogleLoginResponse>(`http://localhost:4004/${role}/login`, formData);
                 console.log(res)
@@ -111,7 +121,7 @@ const LoginForm = () => {
 
             <div className="flex items-center space-x-1 text-sm">
                 <p className="text-gray-500">You don't have account?</p>
-                <Link to="/signup" className="font-bold hover:underline text-blue-600">
+                <Link to={`/${role}/signup`} className="font-bold hover:underline text-blue-600">
                     Signup
                 </Link>
             </div>

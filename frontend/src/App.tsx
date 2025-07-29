@@ -17,7 +17,7 @@ function App() {
 
   const dispatch = useStoreDispatch()
   const location = useLocation()
-  const HIDDEN_PATHS = ['/login', '/signup', '/admin/login', '/seller/login'];
+  const HIDDEN_PATHS = ['/login', '/user/signup', '/admin/login', '/seller/login','/seller/signup'];
 
   useEffect(() => {
 
