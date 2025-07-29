@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useStoreDispatch } from "../../../../hooks/useStore";
@@ -6,6 +6,7 @@ import type { ApiResponse, GoogleLoginResponse, LoginResponse } from "../../../.
 import { login } from "../../slices/authSlice";
 import OTPVerification from "./OTPVerification";
 import axios from "axios";
+import { useRouterRole } from "../../../../hooks/useRouterRole";
 
 const SignUpForm = () => {
     const [isOTP, setIsOTP] = useState<boolean>(false)
@@ -13,6 +14,10 @@ const SignUpForm = () => {
     const [errors, setErrors] = useState<{ email?: string; password?: string, name?: string, phoneNumber?: string, rePassword?: string }>({});
     const dispatch = useStoreDispatch()
     const navigate = useNavigate()
+    const role = useRouterRole()
+   
+
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -74,7 +79,7 @@ const SignUpForm = () => {
 
     const onVerifiedOtp = async () => {
         try {
-            const res = await axios.post<GoogleLoginResponse>('http://localhost:4004/user/sign-up', formData)
+            const res = await axios.post<GoogleLoginResponse>(`http://localhost:4004/${role}/sign-up`, formData)
             if (res.data.success) {
                 toast(res.data.message)
                 const userData: LoginResponse = res.data.data!

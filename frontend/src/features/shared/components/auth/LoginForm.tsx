@@ -6,26 +6,17 @@ import type { GoogleLoginResponse, LoginResponse } from "../../../../types/user.
 import { login } from "../../slices/authSlice";
 import GoogleLogin from "./GoogleLogin";
 import axios from "axios";
+import { useRouterRole } from "../../../../hooks/useRouterRole";
 
 
 const LoginForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-    const [role, setRole] = useState('')
-
-    const location = useLocation()
+    
+    const role = useRouterRole()
     const navigate = useNavigate()
     const dispatch = useStoreDispatch()
 
-    useEffect(() => {
-        if (location.pathname.includes('admin')) {
-            setRole('admin');
-        } else if (location.pathname.includes('seller')) {
-            setRole('seller');
-        } else {
-            setRole('user');
-        }
-    }, [location.pathname]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
