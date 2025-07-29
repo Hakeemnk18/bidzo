@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useStoreDispatch } from "../../../../hooks/useStore";
@@ -86,11 +86,15 @@ const SignUpForm = () => {
                 localStorage.setItem("authToken", userData.token);
                 localStorage.setItem("userName", userData.name);
                 localStorage.setItem("userRole", userData.role);
+                setIsOTP(false)
                 dispatch(login({
                     name: userData.name,
                     role: userData.role
                 }));
-                navigate('/');
+                if(role === 'user'){
+                    navigate('/');
+                }
+                
 
             }
         } catch (error: any) {
@@ -190,7 +194,7 @@ const SignUpForm = () => {
 
                 <div className="flex items-center space-x-1 text-sm">
                     <p className="text-gray-500">You don't have account?</p>
-                    <Link to="/login" className="font-bold hover:underline text-blue-600">
+                    <Link to={`/${role}/login`} className="font-bold hover:underline text-blue-600">
                         Login
                     </Link>
                 </div>

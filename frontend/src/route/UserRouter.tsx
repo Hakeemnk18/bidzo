@@ -18,7 +18,7 @@ const userRoutes = [
         ),
     },
     {
-        path:'/login',
+        path:'/user/login',
         element:(
             <PublicRoute >
                 <Suspense fallback={< LoadingSpinner />}>

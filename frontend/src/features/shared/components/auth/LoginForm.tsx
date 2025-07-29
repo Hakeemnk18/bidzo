@@ -52,7 +52,10 @@ const LoginForm = () => {
                         name: userData.name,
                         role: userData.role
                     }));
-                    navigate('/');
+                    if(role === 'user'){
+                        navigate('/');
+                    }
+                    
                 } else {
                     toast(res.data.message || 'unknown error')
                 }

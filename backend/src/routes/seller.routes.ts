@@ -9,5 +9,6 @@ const router = Router()
 
 
 router.post('/sign-up',(req,res)=> sellerAuthController.signup(req,res))
+router.post('/login',(req,res)=> sellerAuthController.login(req,res))
 
 export default router

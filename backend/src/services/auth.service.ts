@@ -64,21 +64,25 @@ export class AuthService implements IAuthService {
 
   async userLogin(userData: UserLoginDTO): Promise<UserLoginResponseDTO> {
     console.log("inside user login service")
-    const { email, role, password} = userData
-    const user = await this.userRepo.findByEmailAndRole(email,role)
-    if(!user){
-      throw new CustomError("user not found ",404)
+    const { email, role, password } = userData
+    const user = await this.userRepo.findByEmailAndRole(email, role)
+    if (!user) {
+      throw new CustomError("user not found ", 404)
     }
-    const passwordMatch = await comparePassword(password,user.password!)
+    const passwordMatch = await comparePassword(password, user.password!)
 
-    if(!passwordMatch){
+    if (!passwordMatch) {
 
-      throw new CustomError("user not found ",404)
+      throw new CustomError("user not found ", 404)
     }
 
-    const jwtToken = await this.jwtService.sign({ id: user.id})
+    if (role === "seller" && !user.isVerified) {
+      throw new CustomError("Your seller account is not yet approved by admin", 403);
+    }
 
-    const responseUser:UserLoginResponseDTO = {
+    const jwtToken = await this.jwtService.sign({ id: user.id })
+
+    const responseUser: UserLoginResponseDTO = {
       name: user.name,
       role: user.role,
       token: jwtToken
@@ -86,7 +90,7 @@ export class AuthService implements IAuthService {
     return responseUser
 
   }
-  
+
 
   async googleLogin({ token }: GoogleLoginDTO): Promise<UserLoginResponseDTO> {
 
@@ -97,7 +101,7 @@ export class AuthService implements IAuthService {
 
       let user = await this.userRepo.findByEmailAndRole(email, "user");
       if (!user) {
-        
+
         user = await this.userRepo.createGoogleUser({
           email,
           name,
@@ -125,10 +129,10 @@ export class AuthService implements IAuthService {
 
   async signUp(data: UserSignUpDTO): Promise<UserLoginResponseDTO> {
     try {
-      
+
       const hashPsd = await hashPassword(data.password)
-      const user = await this.userRepo.create({...data, password:hashPsd})
-      const jwtToken = await this.jwtService.sign({id: user.id})
+      const user = await this.userRepo.create({ ...data, password: hashPsd })
+      const jwtToken = await this.jwtService.sign({ id: user.id })
       const responseUser: UserLoginResponseDTO = {
         name: user.name,
         role: user.role,
@@ -145,8 +149,8 @@ export class AuthService implements IAuthService {
 
     console.log("iniside otp auth service ")
     const user = await this.userRepo.findByEmail(email)
-    if(user){
-      throw new CustomError("email already exist ",409)
+    if (user) {
+      throw new CustomError("email already exist ", 409)
     }
     const otp = generateOTP()
     const expiry = new Date(Date.now() + 1 * 60 * 1000);
@@ -163,14 +167,14 @@ export class AuthService implements IAuthService {
   }
 
   async verifyOtp(otpData: VerifyReqOTP): Promise<void> {
-    
+
     const otp = await this.otpService.verifyOtp(otpData)
-    
+
     if (!otp) {
       throw new Error("Invalid OTP");
     }
 
-    
+
     if (otp && otp.expiry < new Date()) {
       throw new Error("OTP has expired");
     }
