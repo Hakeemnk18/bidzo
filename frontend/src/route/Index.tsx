@@ -2,6 +2,7 @@ import userRoutes from "./UserRouter";
 import sellerRoute from "./SellerRoute";
 import App from "../App";
 import RouteError from "../features/shared/components/404";
+import adminRoute from "./AdminRoute";
 
 
 const allRoutes = [
@@ -19,6 +20,14 @@ const allRoutes = [
       errorElement: <RouteError />,
       children: [
         ...sellerRoute
+      ]
+    },
+    {
+      path: '/admin',
+      element: <App />,
+      errorElement: <RouteError />,
+      children: [
+        ...adminRoute
       ]
     }
 ];

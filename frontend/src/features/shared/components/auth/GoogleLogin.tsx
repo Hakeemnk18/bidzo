@@ -11,18 +11,19 @@ const client_id = import.meta.env.VITE_CLIENTID;
 const GoogleLogin = () => {
     const dispatch = useStoreDispatch()
     const navigate = useNavigate()
-    const handleGoogleLogin = async () => {
-        /* global google */
-        
 
+
+    const handleGoogleLogin = async () => {
+       /* global google */
+       console.log("inside handle login")
         try {
             const client = google.accounts.oauth2.initTokenClient({
                 client_id: client_id,
                 scope: 'openid profile email',
                 callback: async (response: any) => {
-                    
 
-                    // Send token to backend
+
+                    
                     const { data: resData } = await axios.post<GoogleLoginResponse>(
                         'http://localhost:4004/user/google-login',
                         { token: response.access_token },

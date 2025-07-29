@@ -1,14 +1,49 @@
 import { FaUserCircle } from 'react-icons/fa';
 import { useStoreSelector } from '../../../hooks/useStore';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import {  useState, useMemo } from 'react';
 import UserDropdown from './userDropdown';
+import { useRouterRole } from '../../../hooks/useRouterRole';
+
 
 const Navbar = () => {
 
   const [dropDownOpen, setDropDownOpen] = useState(false)
   const user = useStoreSelector((state) => state.auth)
-  console.log("user in nav bar ", user)
+  const role = useRouterRole()
+  
+  const navItems = useMemo(() => {
+  switch (role) {
+    case "user":
+      return {
+        first: "Home",
+        second: "Auction",
+        third: "Contact",
+        firstUrl: "#",
+      };
+    case "seller":
+      return {
+        first: "DashBoard",
+        second: "Auction",
+        third: "Contact",
+        firstUrl: "/seller/dashboard",
+      };
+    case "admin":
+      return {
+        first: "DashBoard",
+        second: "Sellers",
+        third: "Users",
+        firstUrl: "/admin/dashboard",
+      };
+    default:
+      return {
+        first: "",
+        second: "",
+        third: "",
+        firstUrl: "#",
+      };
+  }
+}, [role]);
 
 
   return (
@@ -21,14 +56,14 @@ const Navbar = () => {
 
         {/* Navigation Links */}
         <div className="flex space-x-6">
+          <Link to={navItems.firstUrl} className="text-white hover:text-gray-300 transition duration-300">
+            { navItems.first}
+          </Link>
           <a href="#" className="text-white hover:text-gray-300 transition duration-300">
-            Home
+            { navItems.second }
           </a>
           <a href="#" className="text-white hover:text-gray-300 transition duration-300">
-            Products
-          </a>
-          <a href="#" className="text-white hover:text-gray-300 transition duration-300">
-            Contact
+            { navItems.third }
           </a>
         </div>
 
@@ -46,7 +81,7 @@ const Navbar = () => {
               </div>
               :
               <div className="text-white text-md cursor-pointer ">
-                <Link to={'/login'}>
+                <Link to={'/user/login'}>
                   <button className="bg-blue-400 py-2 px-4 rounded-lg">Login</button>
                 </Link>
 
