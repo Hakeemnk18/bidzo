@@ -1,19 +1,12 @@
 import { Router } from 'express';
-import { AuthService } from '../services/auth.service';
-import { UserRepository } from '../repositories/user.repo';
+import { authService } from '../di/auth.di';
 import { AuthController } from '../controllers/userController/auth.controller';
-import { JWTService } from '../services/jwt.service';
-import { OTPRepository } from '../repositories/OTP.repo';
-import { OTPService } from '../services/otp.service';
+
 
 const router = Router();
 
 
-const userRepo = new UserRepository();
-const jwtService = new JWTService()
-const otpRepo = new OTPRepository()
-const otpService = new OTPService(otpRepo)
-const authService = new AuthService(userRepo,jwtService,otpService);
+
 const authController = new AuthController(authService);
 
 

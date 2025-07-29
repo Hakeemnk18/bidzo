@@ -3,7 +3,7 @@ import { lazy } from "react";
 
 
 const UserLogin = lazy(()=> import('../features/user/pages/Login'))
-const SellerRegistration = lazy(()=> import('../features/seller/pages/SignupPage'))
+const SignupPage = lazy(()=> import('../features/user/pages/SignUpPage'))
 
 
 const sellerRoute = [
@@ -16,7 +16,7 @@ const sellerRoute = [
     {
         path: '/seller/signup',
         element:(
-            <SellerRegistration />
+            <SignupPage />
         )
     }
 

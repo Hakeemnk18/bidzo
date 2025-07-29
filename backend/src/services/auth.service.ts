@@ -97,7 +97,7 @@ export class AuthService implements IAuthService {
 
       let user = await this.userRepo.findByEmailAndRole(email, "user");
       if (!user) {
-        console.log("inside if no user found")
+        
         user = await this.userRepo.createGoogleUser({
           email,
           name,
@@ -127,7 +127,7 @@ export class AuthService implements IAuthService {
     try {
       
       const hashPsd = await hashPassword(data.password)
-      const user = await this.userRepo.create({...data,role:'user', password:hashPsd})
+      const user = await this.userRepo.create({...data, password:hashPsd})
       const jwtToken = await this.jwtService.sign({id: user.id})
       const responseUser: UserLoginResponseDTO = {
         name: user.name,

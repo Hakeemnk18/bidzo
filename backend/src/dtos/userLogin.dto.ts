@@ -16,6 +16,7 @@ export interface UserSignUpDTO {
   email: string;
   password: string;
   phoneNumber: string;
+  role: "user" | "admin" | "seller";
 }
 
 

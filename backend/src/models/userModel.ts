@@ -6,7 +6,9 @@ interface IUser extends Document {
     password: string,
     phone: number,
     googleId: string,
-    role: "user" | "admin" | "seller"
+    role: "user" | "admin" | "seller",
+    isVerified: boolean,
+    isBlocked: boolean
 }
 
 const userSchema = new Schema<IUser>(
@@ -16,6 +18,8 @@ const userSchema = new Schema<IUser>(
     password: { type: String,},
     phone: { type: Number},
     googleId: { type: String},
+    isVerified: { type: Boolean, default:false},
+    isBlocked: { type: Boolean, default:false},
     role: { 
       type: String,
       enum: ["user", "admin", "seller"],
