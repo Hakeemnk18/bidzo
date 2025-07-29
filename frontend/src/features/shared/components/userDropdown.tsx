@@ -1,4 +1,5 @@
 import { useStoreDispatch } from "../../../hooks/useStore";
+import { clearToken } from "../../../utils/tokenHelpers";
 import { logout } from "../slices/authSlice";
 import { toast } from "react-toastify";
 
@@ -9,12 +10,8 @@ const UserDropdown: React.FC = () => {
 
     const handleLogout = () => {
         dispatch(logout())
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userName");
-        localStorage.removeItem("userRole");
-
+        clearToken()
         toast.success("Logged out successfully");
-
     }
 
 

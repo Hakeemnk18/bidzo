@@ -16,4 +16,6 @@ export const isTokenValid = (): boolean => {
 
 export const clearToken = () => {
   localStorage.removeItem("authToken");
+  localStorage.removeItem("userName");
+  localStorage.removeItem("userRole");
 };

@@ -1,4 +1,4 @@
-
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -12,9 +12,12 @@ const HeroSection = () => {
           Join live auctions, track prices as they change, get instant alerts
           when bids heat up, and never miss a winning deal!
         </p>
-        <button className="bg-[#6bc3c1] text-white px-6 py-2 rounded hover:bg-[#5bb2b0] transition">
+        <Link to={'/seller/login'}>
+          <button className="bg-[#6bc3c1] text-white px-6 py-2 rounded hover:bg-[#5bb2b0] transition">
           Become a seller
         </button>
+        </Link>
+        
       </div>
 
       <div>
