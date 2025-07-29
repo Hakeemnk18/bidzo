@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useState,  } from "react";
+import { Link,  useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useStoreDispatch } from "../../../../hooks/useStore";
 import type { GoogleLoginResponse, LoginResponse } from "../../../../types/user.types";
@@ -41,7 +41,7 @@ const LoginForm = () => {
 
             try {
                 const res = await axios.post<GoogleLoginResponse>(`http://localhost:4004/${role}/login`, formData);
-                console.log(res)
+                
                 if (res.data.success) {
                     toast(res.data.message)
                     const userData: LoginResponse = res.data.data!
@@ -54,6 +54,8 @@ const LoginForm = () => {
                     }));
                     if(role === 'user'){
                         navigate('/');
+                    }if(role === 'admin'){
+                        navigate('/admin/dashboard')
                     }
                     
                 } else {

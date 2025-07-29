@@ -65,14 +65,16 @@ export class AuthService implements IAuthService {
   async userLogin(userData: UserLoginDTO): Promise<UserLoginResponseDTO> {
     console.log("inside user login service")
     const { email, role, password } = userData
+    
     const user = await this.userRepo.findByEmailAndRole(email, role)
+
     if (!user) {
       throw new CustomError("user not found ", 404)
     }
     const passwordMatch = await comparePassword(password, user.password!)
 
     if (!passwordMatch) {
-
+      
       throw new CustomError("user not found ", 404)
     }
 
