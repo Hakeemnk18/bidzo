@@ -19,4 +19,13 @@ export class UserRepository implements IUserRepository {
   async findByEmailAndRole(email: string, role: string): Promise<User | null> {
      return await UserModel.findOne({ email,role });
   }
+
+  async findAllUser(query: any, page: number, limit: number): Promise<User[]> {
+    const skip =  (page - 1) * limit;
+    return await UserModel.find(query).skip(skip).limit(limit);
+  }
+
+  async countDocument(query: any): Promise<number> {
+    return await UserModel.countDocuments(query)
+  }
 }

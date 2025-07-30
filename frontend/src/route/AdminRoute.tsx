@@ -6,6 +6,7 @@ import PublicRoute from "../features/admin/components/PublicRoutes";
 
 const UserLogin = lazy(()=> import('../features/user/pages/Login'))
 const DashBoardPage = lazy(()=> import('../features/admin/pages/AdminDashboardPage'))
+const AuctionTable = lazy(()=> import('../features/admin/components/ActionTable'))
 
 
 
@@ -26,6 +27,13 @@ const adminRoute = [
             <ProtectedRoute>
                 <DashBoardPage />
             </ProtectedRoute>
+            
+        )
+    },
+    {
+        path: '/admin/sellerManagement',
+        element:(
+            <AuctionTable role={'seller'}/>
             
         )
     },
