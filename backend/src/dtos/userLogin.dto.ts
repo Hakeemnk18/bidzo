@@ -33,6 +33,21 @@ export interface UserLoginResponseDTO {
 }
 
 
+export interface GetUsersDTO {
+  role: string,
+  search: string,
+  page: number,
+  limit: number
+}
+
+
+export interface ResGetUser {
+  name: string,
+  email: string,
+  isVerified: boolean,
+  isBlocked: boolean
+}
+
 
 
 
