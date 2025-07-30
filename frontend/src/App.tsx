@@ -22,7 +22,7 @@ function App() {
   useEffect(() => {
 
     let tokenValid = isTokenValid()
-    console.log("token is valid ",tokenValid)
+   
     if (tokenValid) {
 
       const name = localStorage.getItem("userName");

@@ -62,6 +62,7 @@ const LoginForm = () => {
                     toast(res.data.message || 'unknown error')
                 }
             } catch (error: any) {
+                console.log("inside error")
                 if (error.response && error.response.data?.message) {
                     toast.error(error.response.data.message);
                 } else {

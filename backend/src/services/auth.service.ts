@@ -65,7 +65,7 @@ export class AuthService implements IAuthService {
   async userLogin(userData: UserLoginDTO): Promise<UserLoginResponseDTO> {
     console.log("inside user login service")
     const { email, role, password } = userData
-    
+
     const user = await this.userRepo.findByEmailAndRole(email, role)
 
     if (!user) {
@@ -74,7 +74,7 @@ export class AuthService implements IAuthService {
     const passwordMatch = await comparePassword(password, user.password!)
 
     if (!passwordMatch) {
-      
+
       throw new CustomError("user not found ", 404)
     }
 
@@ -134,6 +134,18 @@ export class AuthService implements IAuthService {
 
       const hashPsd = await hashPassword(data.password)
       const user = await this.userRepo.create({ ...data, password: hashPsd })
+
+      if (user.role === 'seller' && !user.isVerified) {
+          const responseUser: UserLoginResponseDTO = {
+            name: "",
+            role: "seller",
+            token: ""
+          }
+          return responseUser
+        }
+      
+
+
       const jwtToken = await this.jwtService.sign({ id: user.id })
       const responseUser: UserLoginResponseDTO = {
         name: user.name,

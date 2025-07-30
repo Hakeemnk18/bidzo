@@ -1,4 +1,6 @@
 import { lazy } from "react";
+import ProtectedRoute from "../features/admin/components/ProtectedRoute";
+import PublicRoute from "../features/admin/components/PublicRoutes";
 
 
 
@@ -7,17 +9,24 @@ const DashBoardPage = lazy(()=> import('../features/admin/pages/AdminDashboardPa
 
 
 
+
 const adminRoute = [
     {
         path: '/admin/login',
         element:(
-            <UserLogin />
+            <PublicRoute >
+                <UserLogin />
+            </PublicRoute>
+            
         )
     },
     {
         path: '/admin/dashboard',
         element:(
-            <DashBoardPage />
+            <ProtectedRoute>
+                <DashBoardPage />
+            </ProtectedRoute>
+            
         )
     },
 

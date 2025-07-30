@@ -15,7 +15,7 @@ const SignUpForm = () => {
     const dispatch = useStoreDispatch()
     const navigate = useNavigate()
     const role = useRouterRole()
-   
+
 
 
 
@@ -82,19 +82,20 @@ const SignUpForm = () => {
             const res = await axios.post<GoogleLoginResponse>(`http://localhost:4004/${role}/sign-up`, formData)
             if (res.data.success) {
                 toast(res.data.message)
-                const userData: LoginResponse = res.data.data!
-                localStorage.setItem("authToken", userData.token);
-                localStorage.setItem("userName", userData.name);
-                localStorage.setItem("userRole", userData.role);
                 setIsOTP(false)
-                dispatch(login({
-                    name: userData.name,
-                    role: userData.role
-                }));
-                if(role === 'user'){
+
+                if (role === 'user') {
+                    const userData: LoginResponse = res.data.data!
+                    localStorage.setItem("authToken", userData.token);
+                    localStorage.setItem("userName", userData.name);
+                    localStorage.setItem("userRole", userData.role);
+                    dispatch(login({
+                        name: userData.name,
+                        role: userData.role
+                    }));
                     navigate('/');
                 }
-                
+
 
             }
         } catch (error: any) {
