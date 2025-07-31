@@ -40,9 +40,8 @@ export interface GetUsersDTO {
   search: string,
   page: number,
   limit: number,
-  filter: string,
-  filterField: string,
-  sortValue: string 
+  sortValue: string,
+  filters: Record<string, any> 
 }
 
 
