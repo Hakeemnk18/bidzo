@@ -28,6 +28,11 @@ type AuctionTableProps = {
     role: string;
 };
 
+type FilterType = {
+    isBlocked: string,
+    isVerified: string
+}
+
 
 
 
@@ -37,11 +42,16 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
     const [data, setData] = useState<IuserData[]>([])
     const [totalPages, setTotalPages] = useState(0)
     const [search, setSearch] = useState('')
-    const [filter, setFilter] = useState('')
-    const [filterField, setFIlterField] = useState('')
+
+    const [filters, setFilters] = useState<FilterType>({
+        isBlocked: '',
+        isVerified: ''
+    })
+
     const [showFilters, setShowFilters] = useState(false);
     const [showSort, setShowSort] = useState(false);
     const [sort, setSort] = useState('')
+    
 
 
 
@@ -53,14 +63,20 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
 
             const token = localStorage.getItem('authToken');
 
-            const res = await axios.get<IResGetUserData>(`http://localhost:4004/admin/${role}/management?page=${currentPage}&search=${search}&filterField=${filterField}&filter=${filter}&sort=${sort}`,
+            const res = await axios.get<IResGetUserData>(
+                `http://localhost:4004/admin/${role}/management`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
-
+                    params: {
+                        page: currentPage,
+                        search,
+                        sort, 
+                        ...filters,
+                    },
                 }
-            )
+            );
 
             if (res.data.success) {
                 setData(res.data.data)
@@ -80,7 +96,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [search, filter, sort]);
+    }, [search, sort, filters]);
 
     //fetch user data
     useEffect(() => {
@@ -89,7 +105,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
         }, 300);
 
         return () => clearTimeout(delayDebounce);
-    }, [currentPage, search, filter, filterField, sort])
+    }, [currentPage, search,sort, filters])
 
     return (
         <div className="pt-34 pb-20">
@@ -128,28 +144,27 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
                                     <label className="block mb-1 text-sm">Approvel</label>
                                     <select
                                         onChange={(e) => {
-                                            setFIlterField('isVerified')
-                                            setFilter(e.target.value)
+                                            
+                                            setFilters({...filters, isVerified: e.target.value})
                                         }}
                                         className="w-full p-2 rounded bg-[#3b3f63] text-sm"
                                     >
-                                        <option value="" selected={filter === ""}>All</option>
-                                        <option value="true" selected={filter === "true"}>Approved</option>
-                                        <option value="false" selected={filter === "false"}>Pending</option>
+                                        <option value="" selected={filters.isVerified === ""}>All</option>
+                                        <option value="true" selected={filters.isVerified === "true"}>Approved</option>
+                                        <option value="false" selected={filters.isVerified === "false"}>Pending</option>
                                     </select>
                                 </div>
-                                 <div className="mb-4">
-                                    <label className="block mb-1 text-sm">Sort by Name</label>
+                                <div className="mb-4">
+                                    <label className="block mb-1 text-sm">Status</label>
                                     <select
                                         onChange={(e) => {
-                                            setFIlterField('sortByName')
-                                            setFilter(e.target.value)
+                                            setFilters({...filters, isBlocked: e.target.value})
                                         }}
                                         className="w-full p-2 rounded bg-[#3b3f63] text-sm"
                                     >
-                                        <option value="" selected={filter === ""}>All</option>
-                                        <option value="A-Z" selected={filter === "A-Z"}>A - Z</option>
-                                        <option value="Z-A" selected={filter === "Z-A"}>Z - A</option>
+                                        <option value="" selected={filters.isBlocked === ""}>All</option>
+                                        <option value="true" selected={filters.isBlocked === "true"}>Blocked</option>
+                                        <option value="false" selected={filters.isBlocked === "false"}>Unblock</option>
                                     </select>
                                 </div>
 
@@ -201,7 +216,9 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
                                 <tr key={index} className={`border-t border-[#2c2e4a] ${index === 3 ? "bg-[#3b3c79]" : "hover:bg-[#232447]"}`}>
                                     <td className="py-3">{item.name}</td>
                                     <td>
-                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${item.isVerified ? "bg-[#1f3b7a] text-blue-300" : "bg-[#3e3f5c] text-gray-300"}`}>
+                                        <span
+
+                                            className={`px-2 py-1 rounded-full text-xs font-medium ${item.isVerified ? "bg-[#1f3b7a] text-blue-300" : "bg-[#3e3f5c] text-gray-300"}`}>
                                             {item.isVerified ? 'Approved' : 'Pending'}
                                         </span>
                                     </td>

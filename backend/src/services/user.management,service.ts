@@ -15,7 +15,7 @@ export class UserMangementService implements IUserManagementService {
 
 
 
-        const { role, page, limit, search, filter, filterField, sortValue } = getUser
+        const { role, page, limit, search,  sortValue, filters } = getUser
         let sort:Record<string, any > = {}
         const query: Record<string, any > = {
             role: role,
@@ -25,13 +25,15 @@ export class UserMangementService implements IUserManagementService {
             query.name = { $regex: `^${search.trim()}`, $options: 'i' };
         }
 
-        if(filterField && filterField.trim() !== ""){
-            if(filter && filter.trim() !== ""){
-                if(filterField === "isVerified"){
-                    query[filterField] = filter === "true"
-                }
+        if(Object.keys(filters).length !== 0){
+            for(let key in filters){
+                query[key] = filters[key] === "true"
             }
         }
+
+       
+
+     
 
         if(sortValue && sortValue.trim() !== ""){
             if(sortValue === "A-Z"){
@@ -41,7 +43,7 @@ export class UserMangementService implements IUserManagementService {
             }
         }
 
-        //console.log("query ",query)
+        
 
 
         const [data, total] = await Promise.all([

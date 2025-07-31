@@ -37,6 +37,13 @@ const adminRoute = [
             
         )
     },
+    {
+        path: '/admin/userManagement',
+        element:(
+            <AuctionTable role={'user'}/>
+            
+        )
+    },
 
 ]
 

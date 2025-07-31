@@ -22,7 +22,7 @@ export class UserRepository implements IUserRepository {
 
   async findAllUser(query: Record<string, any>, page: number, limit: number, sort:Record<string, any>): Promise<User[]> {
     const skip =  (page - 1) * limit;
-    return await UserModel.find(query).skip(skip).limit(limit).sort(sort)
+    return await UserModel.find(query).skip(skip).limit(limit).sort(sort).collation({ locale: 'en', strength: 1 })
   }
 
   async countDocument(query: any): Promise<number> {
