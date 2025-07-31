@@ -15,19 +15,37 @@ export class UserMangementService implements IUserManagementService {
 
 
 
-        const { role, page, limit, search } = getUser
-        const query: any = {
+        const { role, page, limit, search, filter, filterField, sortValue } = getUser
+        let sort:Record<string, any > = {}
+        const query: Record<string, any > = {
             role: role,
         }
 
         if (search && search.trim() !== "") {
-            query.name = { $regex: search, $options: 'i' };
+            query.name = { $regex: `^${search.trim()}`, $options: 'i' };
         }
 
+        if(filterField && filterField.trim() !== ""){
+            if(filter && filter.trim() !== ""){
+                if(filterField === "isVerified"){
+                    query[filterField] = filter === "true"
+                }
+            }
+        }
+
+        if(sortValue && sortValue.trim() !== ""){
+            if(sortValue === "A-Z"){
+                sort = { name: 1}
+            }else if(sortValue === "Z-A"){
+                sort = { name: -1 }
+            }
+        }
+
+        //console.log("query ",query)
 
 
         const [data, total] = await Promise.all([
-            this.userRepo.findAllUser(query, page, limit),
+            this.userRepo.findAllUser(query, page, limit, sort),
             this.userRepo.countDocument(query),
 
         ])

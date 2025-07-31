@@ -14,15 +14,24 @@ export class UserMangementController implements IUserManagement {
             const page = parseInt(req.query.page as string) || 1;
             const search = req.query.search as string || ''
             const limit =  2;
-            const filter = req.query.filter || ''
-            const filterField = req.query.filterField || ''
-            console.log("page ",page)
-            console.log("search ",search)
-            console.log("fillter field ",filterField)
-            console.log("filter ",filter)
-            const result = await this.userMangementService.getSeller({ role: 'seller', page, limit, search })
-            console.log("users ",result)
+            const filter = req.query.filter as string || ''
+            const filterField = req.query.filterField as string || ''
+            const sortValue = req.query.sort as string || ''
+            // console.log("page ",page)
+            // console.log("search ",search)
+            // console.log("fillter field ",filterField)
+            // console.log("filter ",filter)
+            console.log("sort ",sortValue)
 
+            const result = await this.userMangementService.getSeller(
+                { role: 'seller', 
+                    page, limit, 
+                    search, filter, 
+                    filterField, sortValue
+                })
+
+            // console.log("users ",result)
+            // console.log("total doc ",result.total)
             res.status(200).json({
                 success: true,
                 data: result.resData,
