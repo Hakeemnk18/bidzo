@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { FaTrash, FaSort, FaSearch, FaFilter } from "react-icons/fa";
-import { FiImage, FiVideo } from "react-icons/fi";
-import { GiMusicalNotes } from "react-icons/gi";
-import { useRouterRole } from "../../../hooks/useRouterRole";
+import { FaTrash, FaSort, FaFilter } from "react-icons/fa";
 import Pagination from "../../shared/components/Pagination";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { HiH1 } from "react-icons/hi2";
+import TableSort from "../../shared/components/TableSort";
+import TableSearch from "../../shared/components/TableSearch";
+import TableFilter from "../../shared/components/TableFilter";
 
 
 interface IuserData {
@@ -28,10 +27,7 @@ type AuctionTableProps = {
     role: string;
 };
 
-type FilterType = {
-    isBlocked: string,
-    isVerified: string
-}
+
 
 
 
@@ -42,16 +38,40 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
     const [data, setData] = useState<IuserData[]>([])
     const [totalPages, setTotalPages] = useState(0)
     const [search, setSearch] = useState('')
-
-    const [filters, setFilters] = useState<FilterType>({
+    const [filters, setFilters] = useState<Record<string, any>>({
         isBlocked: '',
         isVerified: ''
     })
-
     const [showFilters, setShowFilters] = useState(false);
     const [showSort, setShowSort] = useState(false);
     const [sort, setSort] = useState('')
-    
+    const sortOptions = [
+        { value: '', label: 'All' },
+        { value: 'A-Z', label: 'A-Z' },
+        { value: 'Z-A', label: 'Z-A' }
+    ];
+
+    const filterOptions = [
+        {
+            label: 'Approvel',
+            field: 'isVerified',
+            options: [
+                { value: '', label: 'All' },
+                { value: 'true', label: 'Approved' },
+                { value: 'false', label: 'Pending' }
+            ]
+        },
+        {
+            label: 'Status',
+            field: 'isBlocked',
+            options: [
+                { value: '', label: 'All' },
+                { value: 'true', label: 'Blocked' },
+                { value: 'false', label: 'Unblock' }
+            ]
+        }
+    ];
+
 
 
 
@@ -72,7 +92,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
                     params: {
                         page: currentPage,
                         search,
-                        sort, 
+                        sort,
                         ...filters,
                     },
                 }
@@ -105,7 +125,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
         }, 300);
 
         return () => clearTimeout(delayDebounce);
-    }, [currentPage, search,sort, filters])
+    }, [currentPage, search, sort, filters])
 
     return (
         <div className="pt-34 pb-20">
@@ -115,14 +135,9 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold">Sellers</h2>
                     <div className="flex gap-3">
-                        <div className="flex items-center bg-[#232447] px-3 py-1 rounded-lg">
-                            <FaSearch className="text-gray-400 mr-2" />
-                            <input
-                                onChange={(e) => {
-                                    setSearch(e.target.value)
-                                }}
-                                className="bg-transparent outline-none text-sm" placeholder="Search" />
-                        </div>
+
+                        <TableSearch search={search} setSearch={setSearch} />
+
                         <button
                             onClick={() => setShowFilters(!showFilters)}
                             className="bg-[#232447] px-3 py-2 rounded-lg flex items-center text-sm">
@@ -135,60 +150,19 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
 
                             <FaSort className="mr-1" /> Sort
                         </button>
-                        {/* filter modal */}
+
                         {showFilters && (
-                            <div className="absolute right-50 top-45 mt-2 w-56 bg-[rgba(28,29,53,0.6)] border border-gray-700 rounded-lg shadow-lg p-4 z-50 text-white">
-
-
-                                <div className="mb-4">
-                                    <label className="block mb-1 text-sm">Approvel</label>
-                                    <select
-                                        onChange={(e) => {
-                                            
-                                            setFilters({...filters, isVerified: e.target.value})
-                                        }}
-                                        className="w-full p-2 rounded bg-[#3b3f63] text-sm"
-                                    >
-                                        <option value="" selected={filters.isVerified === ""}>All</option>
-                                        <option value="true" selected={filters.isVerified === "true"}>Approved</option>
-                                        <option value="false" selected={filters.isVerified === "false"}>Pending</option>
-                                    </select>
-                                </div>
-                                <div className="mb-4">
-                                    <label className="block mb-1 text-sm">Status</label>
-                                    <select
-                                        onChange={(e) => {
-                                            setFilters({...filters, isBlocked: e.target.value})
-                                        }}
-                                        className="w-full p-2 rounded bg-[#3b3f63] text-sm"
-                                    >
-                                        <option value="" selected={filters.isBlocked === ""}>All</option>
-                                        <option value="true" selected={filters.isBlocked === "true"}>Blocked</option>
-                                        <option value="false" selected={filters.isBlocked === "false"}>Unblock</option>
-                                    </select>
-                                </div>
-
-
-                            </div>
+                            <TableFilter
+                                filters={filters}
+                                setFilters={setFilters}
+                                filterOptions={filterOptions}
+                            />
                         )}
 
                         {/* sort modal */}
 
                         {showSort && (
-                            <div className="absolute right-30 top-45 mt-2 w-56 bg-[rgba(28,29,53,0.6)] border border-gray-700 rounded-lg shadow-lg p-4 z-50 text-white">
-                                <div className="mb-4">
-                                    <select
-                                        onChange={(e) => {
-                                            setSort(e.target.value)
-                                        }}
-                                        className="w-full p-2 rounded bg-[#3b3f63] text-sm"
-                                    >
-                                        <option value="" selected={sort === ""}>All</option>
-                                        <option value="A-Z" selected={sort === "A-Z"}>A - Z</option>
-                                        <option value="Z-A" selected={sort === "Z-A"}>Z - A</option>
-                                    </select>
-                                </div>
-                            </div>
+                            <TableSort sort={sort} setSort={setSort} options={sortOptions} />
                         )}
                     </div>
                 </div>
