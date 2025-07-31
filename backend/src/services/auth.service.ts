@@ -82,7 +82,7 @@ export class AuthService implements IAuthService {
       throw new CustomError("Your seller account is not yet approved by admin", 403);
     }
 
-    const jwtToken = await this.jwtService.sign({ id: user.id })
+    const jwtToken = await this.jwtService.sign({ id: user.id, role: user.role })
 
     const responseUser: UserLoginResponseDTO = {
       name: user.name,
@@ -112,7 +112,7 @@ export class AuthService implements IAuthService {
         });
       }
 
-      const jwtToken = await this.jwtService.sign({ id: user.id })
+      const jwtToken = await this.jwtService.sign({ id: user.id, role: user.role })
 
 
       const responseUser: UserLoginResponseDTO = {
@@ -146,7 +146,7 @@ export class AuthService implements IAuthService {
       
 
 
-      const jwtToken = await this.jwtService.sign({ id: user.id })
+      const jwtToken = await this.jwtService.sign({ id: user.id, role: user.role })
       const responseUser: UserLoginResponseDTO = {
         name: user.name,
         role: user.role,

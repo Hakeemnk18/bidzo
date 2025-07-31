@@ -57,7 +57,7 @@ export class AuthController implements IAuthController {
     try {
       
       const { name, password, email, phoneNumber } = req.body
-      const user = await this.authService.signUp({ name, email, password, phoneNumber, role: "user" })
+      const user = await this.authService.signUp({ name, email, password, phoneNumber, role: "user", isVerified: true })
       res.status(200).json({
         success: true,
         message: "Signup successful",

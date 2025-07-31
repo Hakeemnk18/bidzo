@@ -17,6 +17,7 @@ export interface UserSignUpDTO {
   password: string;
   phoneNumber: string;
   role: "user" | "admin" | "seller";
+  isVerified:boolean
 }
 
 
@@ -33,11 +34,15 @@ export interface UserLoginResponseDTO {
 }
 
 
+
 export interface GetUsersDTO {
   role: string,
   search: string,
   page: number,
-  limit: number
+  limit: number,
+  filter: string,
+  filterField: string,
+  sortValue: string 
 }
 
 

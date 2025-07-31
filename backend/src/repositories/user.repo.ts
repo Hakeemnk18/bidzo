@@ -20,12 +20,13 @@ export class UserRepository implements IUserRepository {
      return await UserModel.findOne({ email,role });
   }
 
-  async findAllUser(query: any, page: number, limit: number): Promise<User[]> {
+  async findAllUser(query: Record<string, any>, page: number, limit: number, sort:Record<string, any>): Promise<User[]> {
     const skip =  (page - 1) * limit;
-    return await UserModel.find(query).skip(skip).limit(limit);
+    return await UserModel.find(query).skip(skip).limit(limit).sort(sort)
   }
 
   async countDocument(query: any): Promise<number> {
+    
     return await UserModel.countDocuments(query)
   }
 }
