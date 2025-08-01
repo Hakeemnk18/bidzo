@@ -16,7 +16,7 @@ export class UserMangementController implements IUserManagement {
             const filters: Record<string, any> = {};
             allowedFilters.forEach((key) => {
                 if (req.query[key]) {
-                    console.log("inside if key ",key)
+                    
                     filters[key] = req.query[key];
                 }
             });
@@ -30,7 +30,7 @@ export class UserMangementController implements IUserManagement {
 
             const result = await this.userMangementService.getSeller(
                 {
-                    role: 'user',
+                    role: 'seller',
                     page, limit,
                     search, sortValue,
                     filters
@@ -60,7 +60,6 @@ export class UserMangementController implements IUserManagement {
             const filters: Record<string, any> = {};
             allowedFilters.forEach((key) => {
                 if (req.query[key]) {
-                    console.log("inside if key ",key)
                     filters[key] = req.query[key];
                 }
             });
@@ -92,4 +91,24 @@ export class UserMangementController implements IUserManagement {
             handleError(res, err)
         }
     }
+
+    async blockAndUnblock(req: Request, res: Response): Promise<void> {
+        try {
+            console.log("inside block and unblock")
+            console.log(req.body)
+            const { userId } = req.body
+            
+            await this.userMangementService.blockAndUnBlock(userId)
+
+            res.status(200).json({
+                success: true,
+                message: "successfully updated"
+            })
+            
+        } catch (err) {
+            console.log("error in  block and unblock user controller ",err)
+            handleError(res, err)
+        }
+    }
+
 }

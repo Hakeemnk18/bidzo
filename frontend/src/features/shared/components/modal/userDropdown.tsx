@@ -1,6 +1,6 @@
-import { useStoreDispatch } from "../../../hooks/useStore";
-import { clearToken } from "../../../utils/tokenHelpers";
-import { logout } from "../slices/authSlice";
+import { useStoreDispatch } from "../../../../hooks/useStore";
+import { clearToken } from "../../../../utils/tokenHelpers";
+import { logout } from "../../slices/authSlice";
 import { toast } from "react-toastify";
 
 

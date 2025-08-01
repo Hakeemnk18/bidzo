@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import { useEffect } from 'react';
 import { useStoreDispatch } from './hooks/useStore';
-import { login, logout } from './features/shared/slices/authSlice';
+import { authChecked, login, logout } from './features/shared/slices/authSlice';
 import ErrorBoundary from './features/shared/components/ErrorBoundary';
 import { clearToken, isTokenValid } from './utils/tokenHelpers';
 import { useLocation } from 'react-router-dom';
@@ -20,19 +20,23 @@ function App() {
   const HIDDEN_PATHS = ['/login', '/user/signup', '/admin/login', '/seller/login','/seller/signup'];
 
   useEffect(() => {
-
+    if (HIDDEN_PATHS.includes(location.pathname)) return;
     let tokenValid = isTokenValid()
    
     if (tokenValid) {
-
+      console.log("inside use efect token valid")
       const name = localStorage.getItem("userName");
       const role = localStorage.getItem("userRole");
       dispatch(login({ name, role }));
 
     }else{
+      console.log("token non valid")
       dispatch(logout())
       clearToken()
     }
+
+    dispatch(authChecked())
+    console.log("use effect completed")
 
   }, []);
 

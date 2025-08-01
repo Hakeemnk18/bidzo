@@ -33,14 +33,21 @@ const adminRoute = [
     {
         path: '/admin/sellerManagement',
         element:(
-            <AuctionTable role={'seller'}/>
+            <ProtectedRoute >
+                <AuctionTable role={'seller'}/>
+            </ProtectedRoute>
+            
             
         )
     },
     {
         path: '/admin/userManagement',
         element:(
-            <AuctionTable role={'user'}/>
+            <ProtectedRoute>
+                <AuctionTable role={'user'}/>
+
+            </ProtectedRoute>
+            
             
         )
     },

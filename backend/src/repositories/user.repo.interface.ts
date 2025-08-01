@@ -1,5 +1,6 @@
 import { User } from "../types/userType";
 import { CreateGoogleUserDTO } from "../dtos/userLogin.dto";
+import { UpdateResult } from "mongoose";
 
 
 export interface IUserRepository {
@@ -9,4 +10,6 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<User | null>;
   findAllUser(query: Record<string, any>, page: number, limit: number, sort: Record<string, any>): Promise<User[]>;
   countDocument(query: Record<string, any>): Promise<number>;
+  blockAndunBlock(id: string,query: Record< string, any >): Promise<UpdateResult>
+  findById(id: string): Promise<User | null >
 }

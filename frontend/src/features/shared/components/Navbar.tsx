@@ -2,7 +2,7 @@ import { FaUserCircle } from 'react-icons/fa';
 import { useStoreSelector } from '../../../hooks/useStore';
 import { Link } from 'react-router-dom';
 import {  useState, useMemo } from 'react';
-import UserDropdown from './userDropdown';
+import UserDropdown from './modal/userDropdown';
 import { useRouterRole } from '../../../hooks/useRouterRole';
 
 
@@ -20,6 +20,8 @@ const Navbar = () => {
         second: "Auction",
         third: "Contact",
         firstUrl: "#",
+        secondUrl: "#",
+        thirdUrl: "#"
       };
     case "seller":
       return {
@@ -27,6 +29,8 @@ const Navbar = () => {
         second: "Auction",
         third: "Contact",
         firstUrl: "/seller/dashboard",
+        secondUrl: "#",
+        thirdUrl: "#"
       };
     case "admin":
       return {
@@ -34,6 +38,8 @@ const Navbar = () => {
         second: "Sellers",
         third: "Users",
         firstUrl: "/admin/dashboard",
+        secondUrl: '/admin/sellerManagement',
+        thirdUrl: '/admin/userManagement'
       };
     default:
       return {
@@ -41,6 +47,8 @@ const Navbar = () => {
         second: "",
         third: "",
         firstUrl: "#",
+        secondUrl: "#",
+        thirdUrl: "#"
       };
   }
 }, [role]);
@@ -59,12 +67,12 @@ const Navbar = () => {
           <Link to={navItems.firstUrl} className="text-white hover:text-gray-300 transition duration-300">
             { navItems.first}
           </Link>
-          <a href="#" className="text-white hover:text-gray-300 transition duration-300">
+          <Link to={navItems.secondUrl} className="text-white hover:text-gray-300 transition duration-300">
             { navItems.second }
-          </a>
-          <a href="#" className="text-white hover:text-gray-300 transition duration-300">
+          </Link>
+          <Link to={navItems.thirdUrl} className="text-white hover:text-gray-300 transition duration-300">
             { navItems.third }
-          </a>
+          </Link>
         </div>
 
         {/* User Icon */}

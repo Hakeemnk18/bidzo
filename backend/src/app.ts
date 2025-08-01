@@ -5,6 +5,8 @@ import { connectdb } from './config/db'
 import userRoutes from "./routes/user.routes";
 import sellerRoutes from './routes/seller.routes'
 import adminRoutes from './routes/admin.routes'
+import { Request, Response, NextFunction } from 'express';
+import { handleError } from './utils/customError';
 import cors from "cors"
 
 connectdb()
@@ -18,5 +20,13 @@ app.use("/user/", userRoutes);
 app.use("/seller/",sellerRoutes)
 app.use('/admin/',adminRoutes)
 
+
+
+app.use((err:any, req: Request, res: Response, next: NextFunction) => {
+  handleError(res, err);
+});
+
 app.listen(4004)
+
+
 
