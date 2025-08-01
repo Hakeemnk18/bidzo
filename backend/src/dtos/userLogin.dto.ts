@@ -46,6 +46,7 @@ export interface GetUsersDTO {
 
 
 export interface ResGetUser {
+  id: string
   name: string,
   email: string,
   isVerified: boolean,

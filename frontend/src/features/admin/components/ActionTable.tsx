@@ -1,43 +1,32 @@
 import { useEffect, useState } from "react";
-import { FaTrash, FaSort, FaFilter } from "react-icons/fa";
-import Pagination from "../../shared/components/Pagination";
+import { FaTrash, FaSort, FaFilter, FaUnlock } from "react-icons/fa";
+import Pagination from "../../shared/components/table/Pagination";
 import { toast } from "react-toastify";
 import axios from "axios";
-import TableSort from "../../shared/components/TableSort";
-import TableSearch from "../../shared/components/TableSearch";
-import TableFilter from "../../shared/components/TableFilter";
+import TableSort from "../../shared/components/table/TableSort";
+import TableSearch from "../../shared/components/table/TableSearch";
+import TableFilter from "../../shared/components/table/TableFilter";
+import type { IuserData, IResGetUserData, ApiResponse } from "../../../types/user.types";
+import ConfirmModal from "../../shared/components/modal/ConfirmationModal";
+import instance from "../../../api/axios";
 
-
-interface IuserData {
-    name: string,
-    email: string,
-    isVerified: boolean,
-    isBlocked: boolean
-}
-
-interface IResGetUserData {
-    success: boolean
-    data: IuserData[],
-    total: number,
-    currentPage: number,
-    totalPages: number
-}
 
 type AuctionTableProps = {
     role: string;
 };
 
 
-
-
-
-
-
 const AuctionTable = ({ role }: AuctionTableProps) => {
+
+
+
     const [currentPage, setCurrentPage] = useState(1);
     const [data, setData] = useState<IuserData[]>([])
     const [totalPages, setTotalPages] = useState(0)
     const [search, setSearch] = useState('')
+    const [userId, setUserId] = useState<string | null>(null)
+    const [isConfirmModal, setIsConfirmModal] = useState(false)
+    const [isBlocked, setIsBlocked] = useState<boolean>(true)
     const [filters, setFilters] = useState<Record<string, any>>({
         isBlocked: '',
         isVerified: ''
@@ -45,6 +34,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
     const [showFilters, setShowFilters] = useState(false);
     const [showSort, setShowSort] = useState(false);
     const [sort, setSort] = useState('')
+
     const sortOptions = [
         { value: '', label: 'All' },
         { value: 'A-Z', label: 'A-Z' },
@@ -74,21 +64,13 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
 
 
 
-
-
-
     const fetchData = async () => {
 
         try {
 
-            const token = localStorage.getItem('authToken');
-
-            const res = await axios.get<IResGetUserData>(
-                `http://localhost:4004/admin/${role}/management`,
+            const res = await instance.get<IResGetUserData>(
+                `/admin/${role}/management`,
                 {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
                     params: {
                         page: currentPage,
                         search,
@@ -114,6 +96,51 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
 
     }
 
+
+    const handleBlockAndUnblock = async () => {
+        setIsConfirmModal(false)
+
+        try {
+
+            const res = await instance.patch<ApiResponse>(
+                '/admin/user/management',
+                {
+                    userId,
+                },
+            );
+
+            if (res.data.success) {
+                toast(res.data.message)
+                fetchData()
+            }
+
+
+        } catch (error: any) {
+            if (error.response && error.response.data?.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("Failed to block/unblock");
+            }
+        }
+    }
+
+    useEffect(() => {
+        setCurrentPage(1);
+        setData([]);
+        setTotalPages(0);
+        setSearch('');
+        setUserId(null);
+        setIsConfirmModal(false);
+        setIsBlocked(true); 
+        setFilters({
+            isBlocked: '',
+            isVerified: ''
+        });
+        setShowFilters(false);
+        setShowSort(false);
+        setSort('');
+    }, [role]);
+
     useEffect(() => {
         setCurrentPage(1);
     }, [search, sort, filters]);
@@ -125,7 +152,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
         }, 300);
 
         return () => clearTimeout(delayDebounce);
-    }, [currentPage, search, sort, filters])
+    }, [currentPage, search, sort, filters, role])
 
     return (
         <div className="pt-34 pb-20">
@@ -200,7 +227,38 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
 
                                     <td className="">
 
-                                        <FaTrash className="text-red-400 cursor-pointer" />
+                                        {
+                                            item.isBlocked ?
+                                                <button
+                                                    onClick={() => {
+                                                        setIsConfirmModal(true)
+                                                        setUserId(item.id)
+                                                        setIsBlocked(false)
+                                                    }}
+                                                >
+                                                    <FaUnlock className="text-red-400 cursor-pointer" />
+                                                </button> :
+                                                <button
+                                                    onClick={() => {
+                                                        setIsConfirmModal(true)
+                                                        setUserId(item.id)
+                                                        setIsBlocked(true)
+                                                    }}
+                                                >
+                                                    <FaTrash className="text-red-400 cursor-pointer" />
+                                                </button>
+
+                                        }
+
+                                        {/* confirm modal */}
+                                        {
+                                            isConfirmModal && <ConfirmModal
+                                                isOpen={isConfirmModal}
+                                                onConfirm={handleBlockAndUnblock}
+                                                onClose={() => setIsConfirmModal(false)}
+                                                message={isBlocked ? "Do You want delete this user" : "Do You want unblock this user"}
+                                            />
+                                        }
 
 
                                     </td>

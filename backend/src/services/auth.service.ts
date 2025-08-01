@@ -71,6 +71,9 @@ export class AuthService implements IAuthService {
     if (!user) {
       throw new CustomError("user not found ", 404)
     }
+    if(user.isBlocked){
+      throw new CustomError("acces denied", 403)
+    }
     const passwordMatch = await comparePassword(password, user.password!)
 
     if (!passwordMatch) {
@@ -102,6 +105,9 @@ export class AuthService implements IAuthService {
       const { email, name, sub } = await this.fetchGoogleProfile(token);
 
       let user = await this.userRepo.findByEmailAndRole(email, "user");
+      if(user && user.isBlocked){
+        throw new CustomError("acces denied", 403)
+      }
       if (!user) {
 
         user = await this.userRepo.createGoogleUser({

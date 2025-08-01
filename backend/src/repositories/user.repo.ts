@@ -2,6 +2,7 @@ import UserModel from "../models/userModel";
 import { IUserRepository } from "./user.repo.interface";
 import { User } from "../types/userType";
 import { CreateGoogleUserDTO } from "../dtos/userLogin.dto";
+import { UpdateResult } from "mongoose";
 
 export class UserRepository implements IUserRepository {
   async create(user: User): Promise<User> {
@@ -28,5 +29,13 @@ export class UserRepository implements IUserRepository {
   async countDocument(query: any): Promise<number> {
     
     return await UserModel.countDocuments(query)
+  }
+
+  async blockAndunBlock(id: string,query: Record< string, any >): Promise<UpdateResult> {
+    return await UserModel.updateOne({_id: id}, { $set:query})
+  }
+
+  async findById(id: string): Promise<User | null> {
+    return await UserModel.findById(id)
   }
 }

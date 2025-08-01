@@ -5,6 +5,7 @@ import { AdminAuthController } from "../controllers/adminController/auth.control
 import { UserMangementController } from "../controllers/adminController/user.management.controller";
 import { authenticate } from "../middileware/authmiddileware";
 import { authorizeRoles } from "../middileware/role.middileware";
+import { isBlockedMiddleware } from "../middileware/isBlocked.middleware";
 
 
 
@@ -18,13 +19,23 @@ router.post('/login',(req,res)=> adminAuthController.login(req,res))
 
 router.get(
     '/seller/management', 
+    authenticate,
+    authorizeRoles('admin'),
     (req,res)=> adminUserManagementController.getSeller(req, res)
 )
 
-// authenticate,
-//     authorizeRoles('admin')
 
-router.get('/user/management', (req,res)=> adminUserManagementController.getUser(req, res))
+
+router.patch('/user/management',
+    authenticate,
+    authorizeRoles('admin'),
+    
+    (req,res)=> adminUserManagementController.blockAndUnblock(req, res))
+
+router.get('/user/management', 
+    authenticate,
+    authorizeRoles('admin'),
+    (req,res)=> adminUserManagementController.getUser(req, res))
 
 
 

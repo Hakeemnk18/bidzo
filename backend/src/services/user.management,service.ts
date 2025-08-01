@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { IUserManagementService } from "./interfaces/user.management.interface";
 import { IUserRepository } from "../repositories/user.repo.interface";
-
+import { CustomError } from "../utils/customError";
 import {  GetUsersDTO, ResGetUser } from "../dtos/userLogin.dto";
 import { User } from "../types/userType";
 
@@ -52,13 +52,24 @@ export class UserMangementService implements IUserManagementService {
 
         ])
         const resData: ResGetUser[] = data.map((user: User) => {
-            return { name: user.name, email: user.email, isVerified: user.isVerified!, isBlocked: user.isBlocked! }
+            return { id: user.id!, name: user.name, email: user.email, isVerified: user.isVerified!, isBlocked: user.isBlocked! }
         })
 
         return { resData, total }
     }
 
-    // async getUser(req: Request, res: Response): Promise<{ data: User[]; total: number }> {
+    async blockAndUnBlock(id: string): Promise<void> {
 
-    // }
+        const user = await this.userRepo.findById(id)
+
+        if(!user){
+            throw new CustomError('no user matched', 404)
+        }
+        const updateData = await this.userRepo.blockAndunBlock(id,{ isBlocked: !user.isBlocked})
+
+        if(updateData.matchedCount === 0){
+            throw new CustomError('error in update ', 404)
+        }
+    }
+    
 }
