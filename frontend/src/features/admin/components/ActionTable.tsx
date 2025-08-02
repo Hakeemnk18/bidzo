@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import { FaTrash, FaSort, FaFilter, FaUnlock } from "react-icons/fa";
 import Pagination from "../../shared/components/table/Pagination";
 import { toast } from "react-toastify";
-import axios from "axios";
 import TableSort from "../../shared/components/table/TableSort";
 import TableSearch from "../../shared/components/table/TableSearch";
 import TableFilter from "../../shared/components/table/TableFilter";
-import type { IuserData, IResGetUserData, ApiResponse } from "../../../types/user.types";
+import type { IuserData, IResGetUserData, ApiResponse, GoogleLoginResponse } from "../../../types/user.types";
 import ConfirmModal from "../../shared/components/modal/ConfirmationModal";
 import instance from "../../../api/axios";
 
@@ -67,6 +66,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
     const fetchData = async () => {
 
         try {
+            console.log("fetch called")
 
             const res = await instance.get<IResGetUserData>(
                 `/admin/${role}/management`,
@@ -131,7 +131,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
         setSearch('');
         setUserId(null);
         setIsConfirmModal(false);
-        setIsBlocked(true); 
+        setIsBlocked(true);
         setFilters({
             isBlocked: '',
             isVerified: ''
@@ -153,6 +153,35 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
 
         return () => clearTimeout(delayDebounce);
     }, [currentPage, search, sort, filters, role])
+
+
+    const aprovelHandling = async (id: string) => {
+
+        try {
+
+
+            const res = await instance.patch<GoogleLoginResponse>('/admin/seller/management',
+
+                {
+                    id
+                }
+            )
+
+            if (res.data.success) {
+                toast(res.data.message)
+                fetchData()
+            }
+
+        } catch (error: any) {
+             if (error.response && error.response.data?.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("Failed to block/unblock");
+            }
+        }
+
+
+    }
 
     return (
         <div className="pt-34 pb-20">
@@ -217,11 +246,18 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
                                 <tr key={index} className={`border-t border-[#2c2e4a] ${index === 3 ? "bg-[#3b3c79]" : "hover:bg-[#232447]"}`}>
                                     <td className="py-3">{item.name}</td>
                                     <td>
-                                        <span
 
-                                            className={`px-2 py-1 rounded-full text-xs font-medium ${item.isVerified ? "bg-[#1f3b7a] text-blue-300" : "bg-[#3e3f5c] text-gray-300"}`}>
-                                            {item.isVerified ? 'Approved' : 'Pending'}
-                                        </span>
+                                        <button
+                                            disabled={item.isVerified}
+                                            onClick={() => aprovelHandling(item.id)}
+                                        >
+                                            <span
+
+                                                className={`px-2 py-1 rounded-full text-xs font-medium ${item.isVerified ? "bg-[#1f3b7a] text-blue-300" : "bg-[#3e3f5c] text-gray-300"}`}>
+                                                {item.isVerified ? 'Approved' : 'Pending'}
+                                            </span>
+                                        </button>
+
                                     </td>
                                     <td className="py-3 flex items-center gap-2">{item.email}</td>
 

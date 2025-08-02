@@ -36,7 +36,7 @@ function App() {
     }
 
     dispatch(authChecked())
-    console.log("use effect completed")
+    
 
   }, []);
 
@@ -46,7 +46,7 @@ function App() {
       <ErrorBoundary >
 
 
-        <ToastContainer position="top-right" autoClose={3000} />
+        <ToastContainer position="top-right" autoClose={1000} />
         <div className="min-h-screen flex flex-col">
           {!HIDDEN_PATHS.includes(location.pathname)  && <Navbar />}
           
