@@ -66,7 +66,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
     const fetchData = async () => {
 
         try {
-            console.log("fetch called")
+            
 
             const res = await instance.get<IResGetUserData>(
                 `/admin/${role}/management`,
