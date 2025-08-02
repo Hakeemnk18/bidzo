@@ -1,12 +1,13 @@
 import { lazy } from "react";
-import ProtectedRoute from "../features/admin/components/ProtectedRoute";
-import PublicRoute from "../features/admin/components/PublicRoutes";
+
 
 
 
 const UserLogin = lazy(()=> import('../features/user/pages/Login'))
 const DashBoardPage = lazy(()=> import('../features/admin/pages/AdminDashboardPage'))
 const AuctionTable = lazy(()=> import('../features/admin/components/ActionTable'))
+const PublicRoute = lazy(()=> import("../features/admin/components/PublicRoutes"))
+const ProtectedRoute = lazy(()=> import("../features/admin/components/ProtectedRoute"))
 
 
 

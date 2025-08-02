@@ -14,45 +14,57 @@ const GoogleLogin = () => {
 
 
     const handleGoogleLogin = async () => {
-       /* global google */
-       console.log("inside handle login")
+        /* global google */
+        
         try {
             const client = google.accounts.oauth2.initTokenClient({
                 client_id: client_id,
                 scope: 'openid profile email',
                 callback: async (response: any) => {
 
+                    try {
+                        
 
-                    
-                    const { data: resData } = await axios.post<GoogleLoginResponse>(
-                        'http://localhost:4004/user/google-login',
-                        { token: response.access_token },
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
+                        const { data: resData } = await axios.post<GoogleLoginResponse>(
+                            'http://localhost:4004/user/google-login',
+                            { token: response.access_token },
+                            {
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                            }
+                        );
+
+                        if (resData.success) {
+                            
+                            toast(resData.message);
+                            const userData: LoginResponse = resData.data!;
+                            localStorage.setItem("authToken", userData.token);
+                            localStorage.setItem("userName", userData.name);
+                            localStorage.setItem("userRole", userData.role);
+                            dispatch(login({
+                                name: userData.name,
+                                role: userData.role
+                            }));
+                            navigate('/');
+                        } else {
+                            toast.error(resData.message || "Google login failed");
                         }
-                    );
-
-                    if (resData.success) {
-                        toast(resData.message);
-                        const userData: LoginResponse = resData.data!;
-                        localStorage.setItem("authToken", userData.token);
-                        localStorage.setItem("userName", userData.name);
-                        localStorage.setItem("userRole", userData.role);
-                        dispatch(login({
-                            name: userData.name,
-                            role: userData.role
-                        }));
-                        navigate('/');
-                    } else {
-                        toast.error(resData.message || "Google login failed");
+                    } catch (error: any) {
+                        
+                        if (error.response && error.response.data?.message) {
+                            toast.error(error.response.data.message);
+                        } else {
+                            toast.error("Failed ");
+                        }
                     }
+
 
                 },
             });
             client.requestAccessToken();
         } catch (err) {
+            
             toast.error("Something went wrong. Please try again.");
             console.error("Google Login Error:", err);
         }

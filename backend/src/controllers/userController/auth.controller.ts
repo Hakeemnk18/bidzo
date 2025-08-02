@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { IAuthController } from "./interfaces/auth.controller.interface";
 import { IAuthService } from "../../services/interfaces/auth.interfaces";
-import { CustomError } from "../../utils/customError";
+import { CustomError, handleError } from "../../utils/customError";
 
 
 
@@ -44,11 +44,7 @@ export class AuthController implements IAuthController {
       });
     } catch (err) {
       console.error("Google Login Failed", err);
-      res.status(500).json({
-        success: false,
-        message: "Google login failed",
-        error: err instanceof Error ? err.message : "Unknown error",
-      });
+      handleError(res,err)
     }
   }
 
@@ -65,11 +61,7 @@ export class AuthController implements IAuthController {
       });
     } catch (err) {
       console.error("Signup filed controller", err);
-      res.status(500).json({
-        success: false,
-        message: "Google login failed",
-        error: err instanceof Error ? err.message : "Unknown error",
-      });
+      handleError(res,err)
     }
   }
 

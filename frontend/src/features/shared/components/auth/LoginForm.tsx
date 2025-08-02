@@ -54,15 +54,17 @@ const LoginForm = () => {
                     }));
                     if(role === 'user'){
                         navigate('/');
-                    }if(role === 'admin'){
+                    }else if(role === 'admin'){
                         navigate('/admin/dashboard')
+                    }else if(role === 'seller'){
+                        navigate('/seller/dashboard')
                     }
                     
                 } else {
                     toast(res.data.message || 'unknown error')
                 }
             } catch (error: any) {
-                console.log("inside error")
+                
                 if (error.response && error.response.data?.message) {
                     toast.error(error.response.data.message);
                 } else {

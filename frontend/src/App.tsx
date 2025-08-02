@@ -20,17 +20,17 @@ function App() {
   const HIDDEN_PATHS = ['/login', '/user/signup', '/admin/login', '/seller/login','/seller/signup'];
 
   useEffect(() => {
-    if (HIDDEN_PATHS.includes(location.pathname)) return;
+    
     let tokenValid = isTokenValid()
    
     if (tokenValid) {
-      console.log("inside use efect token valid")
+      
       const name = localStorage.getItem("userName");
       const role = localStorage.getItem("userRole");
       dispatch(login({ name, role }));
 
     }else{
-      console.log("token non valid")
+      
       dispatch(logout())
       clearToken()
     }
