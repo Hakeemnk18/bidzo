@@ -3,7 +3,7 @@ import { IJWTService } from './interfaces/jwt.interface';
 
 export class JWTService implements IJWTService {
   sign(payload: object): string {
-    return jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '2m' });
+    return jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '20m' });
   }
 
   verify(token: string): any {

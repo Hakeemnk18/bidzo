@@ -95,10 +95,27 @@ export class UserMangementController implements IUserManagement {
     async blockAndUnblock(req: Request, res: Response): Promise<void> {
         try {
             console.log("inside block and unblock")
-            console.log(req.body)
             const { userId } = req.body
             
-            await this.userMangementService.blockAndUnBlock(userId)
+            await this.userMangementService.blockAndUnBlock(userId, "isBlocked")
+
+            res.status(200).json({
+                success: true,
+                message: "successfully updated"
+            })
+            
+        } catch (err) {
+            console.log("error in  block and unblock user controller ",err)
+            handleError(res, err)
+        }
+    }
+
+    async approveSeller(req: Request, res: Response): Promise<void> {
+         try {
+            console.log("inside block and unblock")
+            const { id } = req.body
+            
+            await this.userMangementService.blockAndUnBlock(id, "isVerified")
 
             res.status(200).json({
                 success: true,

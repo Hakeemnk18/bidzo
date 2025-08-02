@@ -58,16 +58,24 @@ export class UserMangementService implements IUserManagementService {
         return { resData, total }
     }
 
-    async blockAndUnBlock(id: string): Promise<void> {
+    async blockAndUnBlock(id: string, field: string): Promise<void> {
 
         const user = await this.userRepo.findById(id)
 
         if(!user){
             throw new CustomError('no user matched', 404)
         }
-        const updateData = await this.userRepo.blockAndunBlock(id,{ isBlocked: !user.isBlocked})
+        let updateData
+        if(field === 'isBlocked'){
+            console.log("inside is blocked")
+            updateData = await this.userRepo.blockAndunBlock(id,{ isBlocked: !user.isBlocked})
+        }else if(field === 'isVerified'){
+            console.log("inside is verified")
+            updateData = await this.userRepo.blockAndunBlock(id,{ isVerified: true})
+        }
+        
 
-        if(updateData.matchedCount === 0){
+        if(updateData!.matchedCount === 0){
             throw new CustomError('error in update ', 404)
         }
     }

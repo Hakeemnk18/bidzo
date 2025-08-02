@@ -5,12 +5,10 @@ import { useStoreSelector } from '../../../hooks/useStore';
 const PublicRoute = ({ children }: { children: ReactElement }) => {
   
   const user = useStoreSelector((state)=> state.auth)
-  console.log("public route")
-  console.log(user)
-  if(user.loading){
-    console.log("inside if")
-    return null
-  }
+  
+  // if(user.loading){
+  //   return null
+  // }
   const isAuthenticated = user.isAuthenticated && user.role === 'admin'
 
   return isAuthenticated ? <Navigate to="/admin/dashboard" replace /> : children ;

@@ -15,18 +15,25 @@ const adminRoute = [
     {
         path: '/admin/login',
         element:(
-            <PublicRoute >
+            <PublicRoute>
                 <UserLogin />
             </PublicRoute>
+                
+            
+                
+            
             
         )
     },
     {
         path: '/admin/dashboard',
         element:(
-            <ProtectedRoute>
+            <ProtectedRoute >
                 <DashBoardPage />
+
             </ProtectedRoute>
+                
+            
             
         )
     },

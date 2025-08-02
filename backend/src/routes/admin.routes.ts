@@ -30,12 +30,20 @@ router.patch('/user/management',
     authenticate,
     authorizeRoles('admin'),
     
-    (req,res)=> adminUserManagementController.blockAndUnblock(req, res))
+    (req,res)=> adminUserManagementController.blockAndUnblock(req, res)
+)
 
 router.get('/user/management', 
     authenticate,
     authorizeRoles('admin'),
-    (req,res)=> adminUserManagementController.getUser(req, res))
+    (req,res)=> adminUserManagementController.getUser(req, res)
+)
+
+router.patch('/seller/management',
+    (req, res)=> adminUserManagementController.approveSeller(req,res)
+)
+
+
 
 
 
