@@ -1,5 +1,5 @@
-import React, { useState,  } from "react";
-import { Link,  useNavigate } from "react-router-dom";
+import React, { useState, } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useStoreDispatch } from "../../../../hooks/useStore";
 import type { GoogleLoginResponse, LoginResponse } from "../../../../types/user.types";
@@ -7,12 +7,13 @@ import { login } from "../../slices/authSlice";
 import GoogleLogin from "./GoogleLogin";
 import axios from "axios";
 import { useRouterRole } from "../../../../hooks/useRouterRole";
+import ResetPasswordModal from "../modal/ResetPasswordModal";
 
 
 const LoginForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-    
+    const [resetPassword, setresetPassword] = useState(false)
     const role = useRouterRole()
     const navigate = useNavigate()
     const dispatch = useStoreDispatch()
@@ -25,6 +26,7 @@ const LoginForm = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("inside submit")
         const newErrors: typeof errors = {};
         if (!formData.email.includes("@") || formData.email.trim().length < 1) {
             newErrors.email = "Invalid email";
@@ -41,7 +43,7 @@ const LoginForm = () => {
 
             try {
                 const res = await axios.post<GoogleLoginResponse>(`http://localhost:4004/${role}/login`, formData);
-                
+
                 if (res.data.success) {
                     toast(res.data.message)
                     const userData: LoginResponse = res.data.data!
@@ -52,19 +54,19 @@ const LoginForm = () => {
                         name: userData.name,
                         role: userData.role
                     }));
-                    if(role === 'user'){
+                    if (role === 'user') {
                         navigate('/');
-                    }else if(role === 'admin'){
+                    } else if (role === 'admin') {
                         navigate('/admin/dashboard')
-                    }else if(role === 'seller'){
+                    } else if (role === 'seller') {
                         navigate('/seller/dashboard')
                     }
-                    
+
                 } else {
                     toast(res.data.message || 'unknown error')
                 }
             } catch (error: any) {
-                
+
                 if (error.response && error.response.data?.message) {
                     toast.error(error.response.data.message);
                 } else {
@@ -95,7 +97,7 @@ const LoginForm = () => {
             </div>
 
 
-            <div className="w-full mb-4">
+            <div className="w-full mb-1">
 
                 <input
                     type="password"
@@ -108,6 +110,23 @@ const LoginForm = () => {
                 />
                 {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
             </div>
+            <div className="w-full mb-2 text-right text-sm">
+                <button
+                type="button" 
+                onClick={()=> setresetPassword(true)}>
+
+                    forgot password ?
+
+                </button>
+            </div>
+
+                        {
+                            resetPassword && <ResetPasswordModal 
+                            onClose={()=> setresetPassword(false)}
+                            isOpen={resetPassword}
+                            />
+
+                        }
 
             <button
                 type="submit"

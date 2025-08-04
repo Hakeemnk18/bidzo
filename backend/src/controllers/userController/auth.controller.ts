@@ -12,15 +12,15 @@ export class AuthController implements IAuthController {
 
   async loginUser(req: Request, res: Response): Promise<void> {
     try {
-      console.log("inside login ",req.body)
-      const { email, password} = req.body
-      const user = await this.authService.userLogin({email, password, role:'user'})
+      console.log("inside login ", req.body)
+      const { email, password } = req.body
+      const user = await this.authService.userLogin({ email, password, role: 'user' })
       res.status(200).json({
         success: true,
         message: "Login successful",
         data: user,
       });
-      
+
     } catch (err) {
       console.log("error in  login user controller ")
       if (err instanceof CustomError) {
@@ -44,14 +44,14 @@ export class AuthController implements IAuthController {
       });
     } catch (err) {
       console.error("Google Login Failed", err);
-      handleError(res,err)
+      handleError(res, err)
     }
   }
 
 
   async signUp(req: Request, res: Response): Promise<void> {
     try {
-      
+
       const { name, password, email, phoneNumber } = req.body
       const user = await this.authService.signUp({ name, email, password, phoneNumber, role: "user", isVerified: true })
       res.status(200).json({
@@ -61,7 +61,7 @@ export class AuthController implements IAuthController {
       });
     } catch (err) {
       console.error("Signup filed controller", err);
-      handleError(res,err)
+      handleError(res, err)
     }
   }
 
@@ -105,6 +105,45 @@ export class AuthController implements IAuthController {
       });
     }
 
+  }
+
+  async verifyEmail(req: Request, res: Response): Promise<void> {
+
+    try {
+      console.log("inside verify email")
+      const { email } = req.body
+
+      await this.authService.generateResetToken(email)
+      
+
+      res.status(200).json({
+        success: true,
+        message: "link sent to emal",
+      })
+    } catch (err) {
+      console.log("error in verify email controller ",err)
+      handleError(res, err)
+    }
+
+  }
+
+  async forgotPassword(req: Request, res: Response): Promise<void> {
+    try {
+      console.log("inside forgot controller ",req.body)
+      const { password, token} = req.body
+
+      const role = await this.authService.fogetPassword(token, password)
+
+      res.status(200).json({
+        success: true,
+        message: "password updated",
+        data:role
+      })
+
+    } catch (err) {
+      console.log("error in verify email controller ",err)
+      handleError(res, err)
+    }
   }
 }
 

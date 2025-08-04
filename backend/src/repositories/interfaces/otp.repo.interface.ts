@@ -1,5 +1,5 @@
-import { OTP } from "../types/OTP.type"
-import { ReqOTP, VerifyReqOTP } from "../dtos/OTP.dto"
+import { OTP } from "../../types/OTP.type"
+import { ReqOTP, VerifyReqOTP } from "../../dtos/OTP.dto"
 
 
 export interface IOTPRepository {

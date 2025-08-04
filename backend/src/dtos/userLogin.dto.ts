@@ -1,4 +1,4 @@
-import { IUserRepository } from "../repositories/user.repo.interface";
+import { IUserRepository } from "../repositories/interfaces/user.repo.interface";
 
 export interface GoogleLoginDTO {
   token: string;
