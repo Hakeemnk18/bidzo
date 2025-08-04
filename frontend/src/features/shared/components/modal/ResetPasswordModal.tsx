@@ -22,8 +22,6 @@ const ResetPasswordModal = ({ isOpen, onClose, }: ConfirmModalProps) => {
 
     const [formData, setFormData] = useState({ email: "", password: "", rePassword: "" });
     const [errors, setErrors] = useState<{ email?: string; password?: string, rePassword?: string }>({});
-    
-    const [isPasswordField, setIsPassswordField] = useState(false)
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,7 +101,7 @@ const ResetPasswordModal = ({ isOpen, onClose, }: ConfirmModalProps) => {
                 )}
                 <div className="mb-4" >
                     <input
-                        disabled={isPasswordField}
+                        
                         type="email"
                         name="email"
                         onChange={handleChange}
