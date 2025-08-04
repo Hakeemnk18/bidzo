@@ -1,8 +1,6 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import instance from '../../../api/axios';
-import { fromJSON } from 'postcss';
-import type { ApiResponse } from '../../../types/user.types';
 import { toast } from 'react-toastify';
 
 
@@ -19,7 +17,6 @@ const ResetPassword = () => {
 
     const [formData, setFormData] = useState({ password: "", rePassword: "" });
     const [errors, setErrors] = useState<{ password?: string, rePassword?: string }>({});
-    const [isPasswordField, setIsPassswordField] = useState(false)
     const navigate = useNavigate()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

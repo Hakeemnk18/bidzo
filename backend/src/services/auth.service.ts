@@ -11,6 +11,7 @@ import { VerifyReqOTP } from "../dtos/OTP.dto";
 import { CustomError } from "../utils/customError";
 import { comparePassword, hashPassword, hashResetToken } from "../utils/hash";
 import { IResetPasswordRepo } from "../repositories/interfaces/reset.password.repo.interface";
+import { ISendEMAIL, sendEmail } from "../utils/send.email";
 //import { GoogleUserDTO } from "../dtos/userLogin.dto";
 
 
@@ -225,17 +226,21 @@ export class AuthService implements IAuthService {
       used: false
     })
     
-   
+    
 
     const resetLink = `http://localhost:5173/user/reset-password?token=${token}`;
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
+    const sendData: ISendEMAIL = {
+      email: email,
       subject: "Reset Password",
-      text: `reset password`,
-      html: `<p>Your password reset link: <a href="${resetLink}">${resetLink}</a><br>This link will expire in 5 minutes.</p>`,
-    });
+      text: "reset password",
+      html: `<p>Your password reset link: <a href="${resetLink}">${resetLink}</a><br>This link will expire in 5 minutes.</p>`
+    }
+
+
+
+    await sendEmail(sendData)
+
   }
 
   async fogetPassword(token: string, password: string): Promise<string> {
@@ -245,7 +250,7 @@ export class AuthService implements IAuthService {
     if(!curToken){
       throw new CustomError("Invalid or expired token", 400);
     }
-
+    await this.resetRepo.markUsed(curToken.id!)
     const haspsd = await hashPassword(password)
     
     const updateData = await this.userRepo.resetPassword(curToken.userId, haspsd)

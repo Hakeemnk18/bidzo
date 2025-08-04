@@ -4,6 +4,7 @@ import { IUserRepository } from "../repositories/interfaces/user.repo.interface"
 import { CustomError } from "../utils/customError";
 import {  GetUsersDTO, ResGetUser } from "../dtos/userLogin.dto";
 import { User } from "../types/userType";
+import { ISendEMAIL, sendEmail } from "../utils/send.email";
 
 
 
@@ -72,6 +73,13 @@ export class UserMangementService implements IUserManagementService {
         }else if(field === 'isVerified'){
             console.log("inside is verified")
             updateData = await this.userRepo.blockAndunBlock(id,{ isVerified: true})
+            const sendMail: ISendEMAIL = {
+                email: user.email,
+                subject: "Account Verified",
+                text: "your account is verified",
+                html: "<h2>Your Seller Account is verified"
+            }
+            await sendEmail(sendMail)
         }
         
 

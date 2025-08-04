@@ -17,5 +17,9 @@ export class ResetRepo implements IResetPasswordRepo {
         });
     }
 
+    async markUsed(id: string): Promise<void> {
+        await ResetPasswordModel.findByIdAndUpdate(id,{ used: true})
+    }
+
     
 }

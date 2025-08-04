@@ -12,7 +12,7 @@ export class AuthController implements IAuthController {
 
   async loginUser(req: Request, res: Response): Promise<void> {
     try {
-      console.log("inside login ", req.body)
+      console.log("inside login ")
       const { email, password } = req.body
       const user = await this.authService.userLogin({ email, password, role: 'user' })
       res.status(200).json({
@@ -129,7 +129,7 @@ export class AuthController implements IAuthController {
 
   async forgotPassword(req: Request, res: Response): Promise<void> {
     try {
-      console.log("inside forgot controller ",req.body)
+      console.log("inside forgot controller ")
       const { password, token} = req.body
 
       const role = await this.authService.fogetPassword(token, password)

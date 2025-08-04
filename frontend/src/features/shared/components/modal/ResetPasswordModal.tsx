@@ -22,7 +22,7 @@ const ResetPasswordModal = ({ isOpen, onClose, }: ConfirmModalProps) => {
 
     const [formData, setFormData] = useState({ email: "", password: "", rePassword: "" });
     const [errors, setErrors] = useState<{ email?: string; password?: string, rePassword?: string }>({});
-    const [token, setToken] = useState('')
+    
     const [isPasswordField, setIsPassswordField] = useState(false)
     const [loading, setLoading] = useState(false);
 
@@ -57,6 +57,7 @@ const ResetPasswordModal = ({ isOpen, onClose, }: ConfirmModalProps) => {
                     onClose()
                 }
             } catch (error: any) {
+                setLoading(false)
                 if (error.response && error.response.data?.message) {
                     toast.error(error.response.data.message);
                 } else {
