@@ -1,7 +1,7 @@
 import { ReqOTP, VerifyReqOTP } from "../dtos/OTP.dto";
 import OTPModel from "../models/otp.model";
 import { OTP } from "../types/OTP.type";
-import { IOTPRepository } from "./otp.repo.interface";
+import { IOTPRepository } from "./interfaces/otp.repo.interface";
 
 
 export class OTPRepository implements IOTPRepository {

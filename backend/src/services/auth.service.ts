@@ -1,15 +1,16 @@
-import { IUserRepository } from "../repositories/user.repo.interface";
+import { IUserRepository } from "../repositories/interfaces/user.repo.interface";
 import { IAuthService } from "./interfaces/auth.interfaces";
 import { GoogleLoginDTO, UserLoginDTO, UserSignUpDTO } from "../dtos/userLogin.dto";
 import { IJWTService } from "./interfaces/jwt.interface";
 import { UserLoginResponseDTO } from "../dtos/userLogin.dto";
 import { generateOTP } from "../utils/otpGenerator";
-import { IOTPRepository } from "../repositories/otp.repo.interface";
+import { User } from "../types/userType";
 import { IOTPService } from "./interfaces/otp.interface";
 import { transporter } from "../config/mailer";
 import { VerifyReqOTP } from "../dtos/OTP.dto";
 import { CustomError } from "../utils/customError";
-import { comparePassword, hashPassword } from "../utils/hash";
+import { comparePassword, hashPassword, hashResetToken } from "../utils/hash";
+import { IResetPasswordRepo } from "../repositories/interfaces/reset.password.repo.interface";
 //import { GoogleUserDTO } from "../dtos/userLogin.dto";
 
 
@@ -36,7 +37,8 @@ export class AuthService implements IAuthService {
   constructor(
     private readonly userRepo: IUserRepository,
     private readonly jwtService: IJWTService,
-    private readonly otpService: IOTPService
+    private readonly otpService: IOTPService,
+    private readonly resetRepo: IResetPasswordRepo
   ) { }
 
 
@@ -71,7 +73,7 @@ export class AuthService implements IAuthService {
     if (!user) {
       throw new CustomError("user not found ", 404)
     }
-    if(user.isBlocked){
+    if (user.isBlocked) {
       throw new CustomError("acces denied", 403)
     }
     const passwordMatch = await comparePassword(password, user.password!)
@@ -105,7 +107,7 @@ export class AuthService implements IAuthService {
       const { email, name, sub } = await this.fetchGoogleProfile(token);
 
       let user = await this.userRepo.findByEmailAndRole(email, "user");
-      if(user && user.isBlocked){
+      if (user && user.isBlocked) {
         throw new CustomError("acces denied", 403)
       }
       if (!user) {
@@ -142,14 +144,14 @@ export class AuthService implements IAuthService {
       const user = await this.userRepo.create({ ...data, password: hashPsd })
 
       if (user.role === 'seller' && !user.isVerified) {
-          const responseUser: UserLoginResponseDTO = {
-            name: "",
-            role: "seller",
-            token: ""
-          }
-          return responseUser
+        const responseUser: UserLoginResponseDTO = {
+          name: "",
+          role: "seller",
+          token: ""
         }
-      
+        return responseUser
+      }
+
 
 
       const jwtToken = await this.jwtService.sign({ id: user.id, role: user.role })
@@ -198,6 +200,62 @@ export class AuthService implements IAuthService {
     if (otp && otp.expiry < new Date()) {
       throw new Error("OTP has expired");
     }
+  }
+
+  async verifyEmail(email: string): Promise<User> {
+    const user = await this.userRepo.findByEmail(email)
+
+    if (!user) {
+      throw new CustomError("user not found ", 404)
+    }
+    return user
+  }
+
+  async generateResetToken(email: string): Promise<void> {
+
+
+    const user = await this.verifyEmail(email); 
+
+    const token = hashResetToken()
+
+    await this.resetRepo.create({
+      userId: user.id!,
+      token: token,
+      expire: new Date(Date.now() + 5 * 60 * 1000),
+      used: false
+    })
+    
+   
+
+    const resetLink = `http://localhost:5173/user/reset-password?token=${token}`;
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Reset Password",
+      text: `reset password`,
+      html: `<p>Your password reset link: <a href="${resetLink}">${resetLink}</a><br>This link will expire in 5 minutes.</p>`,
+    });
+  }
+
+  async fogetPassword(token: string, password: string): Promise<string> {
+
+    const curToken = await this.resetRepo.validate(token)
+
+    if(!curToken){
+      throw new CustomError("Invalid or expired token", 400);
+    }
+
+    const haspsd = await hashPassword(password)
+    
+    const updateData = await this.userRepo.resetPassword(curToken.userId, haspsd)
+
+    if(!updateData){
+      throw new CustomError('error in update password ', 404)
+    }
+
+    return updateData.role
+
   }
 
 }

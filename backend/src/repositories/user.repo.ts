@@ -1,5 +1,5 @@
 import UserModel from "../models/userModel";
-import { IUserRepository } from "./user.repo.interface";
+import { IUserRepository } from "./interfaces/user.repo.interface";
 import { User } from "../types/userType";
 import { CreateGoogleUserDTO } from "../dtos/userLogin.dto";
 import { UpdateResult } from "mongoose";
@@ -37,5 +37,9 @@ export class UserRepository implements IUserRepository {
 
   async findById(id: string): Promise<User | null> {
     return await UserModel.findById(id)
+  }
+
+  async resetPassword(id: string,password: string): Promise<User | null> {
+    return await UserModel.findOneAndUpdate({ _id: id }, { $set:{password: password}}, { new: true })
   }
 }

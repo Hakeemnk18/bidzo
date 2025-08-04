@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react"
 import PublicRoute from "../features/user/components/PublicRoute"
 import LoadingSpinner from "../features/shared/components/LoadingSpinner"
+import ResetPassword from "../features/shared/components/ResetPassword"
 
 
 const Home = lazy(()=> import ("../features/user/pages/Home"))
@@ -37,6 +38,13 @@ const userRoutes = [
                     <SignupPage />
                 </Suspense>
             </PublicRoute>
+            
+        ),
+    },
+    {
+        path:'/user/reset-password',
+        element:(
+            <ResetPassword />
             
         ),
     }

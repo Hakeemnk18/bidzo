@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IUserManagementService } from "./interfaces/user.management.interface";
-import { IUserRepository } from "../repositories/user.repo.interface";
+import { IUserRepository } from "../repositories/interfaces/user.repo.interface";
 import { CustomError } from "../utils/customError";
 import {  GetUsersDTO, ResGetUser } from "../dtos/userLogin.dto";
 import { User } from "../types/userType";

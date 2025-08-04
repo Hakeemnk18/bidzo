@@ -1,5 +1,5 @@
 import { ReqOTP, VerifyReqOTP } from "../dtos/OTP.dto";
-import { IOTPRepository } from "../repositories/otp.repo.interface";
+import { IOTPRepository } from "../repositories/interfaces/otp.repo.interface";
 import { OTP } from "../types/OTP.type";
 import { IOTPService } from "./interfaces/otp.interface";
 

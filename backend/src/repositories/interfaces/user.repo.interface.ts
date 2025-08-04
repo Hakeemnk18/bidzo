@@ -1,5 +1,5 @@
-import { User } from "../types/userType";
-import { CreateGoogleUserDTO } from "../dtos/userLogin.dto";
+import { User } from "../../types/userType";
+import { CreateGoogleUserDTO } from "../../dtos/userLogin.dto";
 import { UpdateResult } from "mongoose";
 
 
@@ -12,4 +12,5 @@ export interface IUserRepository {
   countDocument(query: Record<string, any>): Promise<number>;
   blockAndunBlock(id: string,query: Record< string, any >): Promise<UpdateResult>
   findById(id: string): Promise<User | null >
+  resetPassword(id: string, password: string): Promise<User | null>
 }

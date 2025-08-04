@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import PublicRoute from "../features/seller/components/PublicRoute";
 import ProtectedRoute from "../features/seller/components/ProtectedRoute";
 
