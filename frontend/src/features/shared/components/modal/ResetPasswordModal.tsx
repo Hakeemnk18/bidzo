@@ -1,6 +1,5 @@
 import { useState } from "react";
 import instance from "../../../../api/axios";
-import type { ApiResponse } from "../../../../types/user.types";
 import { toast } from "react-toastify";
 
 
