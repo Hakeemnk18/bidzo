@@ -37,6 +37,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
     const [sellerModal, setSellerModal] = useState(false)
     const [sellerId, setSellerId] = useState("")
     const [rejected, setRejected] = useState(false)
+    const [currentUrl, setCurrentUrl] = useState('')
 
     const sortOptions = [
         { value: '', label: 'All' },
@@ -182,9 +183,10 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
 
     }
 
-    const sellerHandler = (id: string)=>{
+    const sellerHandler = (id: string, documentUrl:string)=>{
         setSellerModal(true)
         setSellerId(id)
+        setCurrentUrl(documentUrl)
     }
 
     return (
@@ -253,7 +255,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
 
                                         <button
                                             disabled={item.isVerified !== 'pending'}
-                                            onClick={()=> sellerHandler(item.id)}
+                                            onClick={()=> sellerHandler(item.id, item.documentUrl)}
                                         >
                                             <span
 
@@ -307,6 +309,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
                                             handleApprove={aprovelHandling}
                                             id={sellerId}
                                             rejcted={()=> setRejected(true)}
+                                            documentUrl={currentUrl}
                                             />
                                         }
 

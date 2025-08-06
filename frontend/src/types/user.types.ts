@@ -33,6 +33,7 @@ export interface IuserData {
     id: string;
     name: string,
     email: string,
+    documentUrl: string,
     isVerified: "approved" | "pending" | "rejected",
     isBlocked: boolean
 }
@@ -42,5 +43,6 @@ export interface IResGetUserData {
     data: IuserData[],
     total: number,
     currentPage: number,
+    documentUrl?: string,
     totalPages: number
 }

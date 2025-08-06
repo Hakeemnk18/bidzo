@@ -8,10 +8,16 @@ import OTPVerification from "./OTPVerification";
 import axios from "axios";
 import { useRouterRole } from "../../../../hooks/useRouterRole";
 
+
+
+interface IResCloudinaryURL {
+    secure_url: string
+}
+
 const SignUpForm = () => {
     const [isOTP, setIsOTP] = useState<boolean>(false)
-    const [formData, setFormData] = useState({ email: "", password: "", rePassword: "", phone: "", name: "" });
-    const [errors, setErrors] = useState<{ email?: string; password?: string, name?: string, phone?: string, rePassword?: string }>({});
+    const [formData, setFormData] = useState({ email: "", password: "", rePassword: "", phone: "", name: "", document: null as File | null , documentUrl: ''});
+    const [errors, setErrors] = useState<{ email?: string; password?: string, name?: string, phone?: string, rePassword?: string, document?: string; }>({});
     const dispatch = useStoreDispatch()
     const navigate = useNavigate()
     const role = useRouterRole()
@@ -22,6 +28,14 @@ const SignUpForm = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         setErrors({ ...errors, [e.target.name]: "" });
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setFormData(prev => ({ ...prev, document: file }));
+            setErrors(prev => ({ ...prev, document: "" }));
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -50,11 +64,41 @@ const SignUpForm = () => {
             newErrors.phone = 'invalid phone number'
         }
 
+        if (role === "seller" && !formData.document) {
+            newErrors.document = "Please upload a document";
+        }
+
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
         } else {
+
+            //store file to clodinary
+            if (role === "seller" && formData.document) {
+                console.log("inside file submition")
+                const file = formData.document as File;
+                console.log("file type ",file.type);
+                const formDataUpload = new FormData();
+                formDataUpload.append("file", file);
+                formDataUpload.append("upload_preset", "pdf_unsigned"); 
+                formDataUpload.append("folder", "pdf_upload");
+               
+
+                console.log(formDataUpload)
+
+                try {
+                    const uploadRes = await axios.post<IResCloudinaryURL>("https://api.cloudinary.com/v1_1/dijkesgb1/raw/upload",formDataUpload);
+                    const uploadedUrl = uploadRes.data.secure_url;
+                    formData.documentUrl = uploadedUrl; 
+                } catch (error) {
+                    toast.error("Failed to upload document to Cloudinary");
+                    console.log("Cloudinary upload error", error);
+                    return;
+                }
+            }
+
+
             try {
                 const res = await axios.post<ApiResponse>("http://localhost:4004/user/send-otp", { email });
 
@@ -183,6 +227,22 @@ const SignUpForm = () => {
                     />
                     {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 </div>
+
+                {
+                    role === 'seller' &&
+                    <div className="w-full mb-4">
+
+                        <input
+                            type="file"
+                            name="document"
+                            placeholder="submit the file"
+                            onChange={handleFileChange}
+                            className={`w-full px-4 py-2 border ${errors.document ? "border-red-500" : "border-gray-300"
+                                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                        />
+                        {errors.document && <p className="text-red-500 text-xs mt-1">{errors.document}</p>}
+                    </div>
+                }
 
                 <button
                     type="submit"

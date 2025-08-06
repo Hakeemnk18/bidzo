@@ -53,7 +53,14 @@ export class UserMangementService implements IUserManagementService {
 
         ])
         const resData: ResGetUser[] = data.map((user: User) => {
-            return { id: user.id!, name: user.name, email: user.email, isVerified: user.isVerified!, isBlocked: user.isBlocked! }
+            return { 
+                id: user.id!, 
+                name: user.name, 
+                email: user.email, 
+                isVerified: user.isVerified!, 
+                isBlocked: user.isBlocked!,
+                documentUrl: user.documentUrl 
+            }
         })
 
         return { resData, total }

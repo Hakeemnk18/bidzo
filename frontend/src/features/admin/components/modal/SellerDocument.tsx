@@ -10,14 +10,16 @@ interface ConfirmModalProps {
     onClose: () => void;
     handleApprove: () => void;
     rejcted: () => void
-    id: string
+    id: string,
+    documentUrl: string
 }
 
 
 
-const SellerDocumentModal = ({ isOpen, onClose, handleApprove, id, rejcted }: ConfirmModalProps) => {
+const SellerDocumentModal = ({ isOpen, onClose, handleApprove, id, rejcted, documentUrl }: ConfirmModalProps) => {
     if (!isOpen) return null
 
+    console.log("pdf url ", documentUrl)
     const [isReason, setIsReason] = useState(false)
     const [loading, setLoading] = useState(false);
     const [reason, setReason] = useState('')
@@ -25,30 +27,30 @@ const SellerDocumentModal = ({ isOpen, onClose, handleApprove, id, rejcted }: Co
 
 
 
-    const handleApproveButton =  () => {
+    const handleApproveButton = () => {
         handleApprove()
         onClose()
     }
 
-    const handleChange = (e : React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setReason(e.target.value)
         setReasonError('')
     }
 
     const handleRejectButton = async () => {
-        if(reason.trim() === ''){
+        if (reason.trim() === '') {
             setReasonError('text area is empty')
             return
-        }else{
+        } else {
             setLoading(true)
             try {
-                const res = await instance.patch<ApiResponse>(`/admin/seller/management/${id}/reject`,{
+                const res = await instance.patch<ApiResponse>(`/admin/seller/management/${id}/reject`, {
                     reason: reason
                 })
                 setLoading(false)
                 onClose()
 
-                if(res.data.success){
+                if (res.data.success) {
                     toast(res.data.message)
                     rejcted()
 
@@ -67,7 +69,7 @@ const SellerDocumentModal = ({ isOpen, onClose, handleApprove, id, rejcted }: Co
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.4)]">
 
-            <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm relative">
+            <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-2xl relative">
                 {loading && (
                     <div className="absolute inset-0 bg-white/70 flex items-center justify-center rounded-xl z-10">
                         <svg
@@ -104,15 +106,12 @@ const SellerDocumentModal = ({ isOpen, onClose, handleApprove, id, rejcted }: Co
                 </div>
 
 
-                <div className="mt-4">
-                    <p className="text-sm text-gray-500 mb-1">name</p>
-                    <p className="text-lg font-semibold mb-4 text-black" >David</p>
-
-                    <p className="text-sm text-gray-500 mb-1">email</p>
-                    <p className="text-lg font-semibold mb-4 text-black">david@gmail.com</p>
-
-                    <p className="text-sm text-gray-500 mb-1">phone</p>
-                    <p className="text-lg font-semibold mb-4 text-black" >1231231234</p>
+                <div className="mb-4">
+                    <iframe
+                        src={documentUrl}
+                        title="Seller Document"
+                        className="w-full h-[500px] border rounded"
+                    ></iframe>
                 </div>
 
 
@@ -126,13 +125,13 @@ const SellerDocumentModal = ({ isOpen, onClose, handleApprove, id, rejcted }: Co
                             name="reason"
                             id="reason"
                             value={reason}
-                            onChange={(e)=> handleChange(e)}
+                            onChange={(e) => handleChange(e)}
                             className={` text-black w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500  border-gray-300`}
                         >
 
                         </textarea>
                         {reasonError && <p className="text-red-500">text area is empty</p>}
-                        
+
                     </div>
 
                 }
@@ -141,7 +140,7 @@ const SellerDocumentModal = ({ isOpen, onClose, handleApprove, id, rejcted }: Co
                 <div className="flex justify-center gap-3">
                     <button
                         type="button"
-                        onClick={isReason ? handleRejectButton : ()=> setIsReason(true)}
+                        onClick={isReason ? handleRejectButton : () => setIsReason(true)}
                         className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
                     >
                         Reject

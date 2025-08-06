@@ -7,6 +7,7 @@ export type User = {
   role: "user" | "admin" | "seller",
   isVerified: "pending" | "rejected" | "approved",
   isBlocked?: boolean,
+  documentUrl?: string
   googleId?:string
   createdAt?: Date;
   updatedAt?: Date;

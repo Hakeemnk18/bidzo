@@ -6,6 +6,7 @@ interface IUser extends Document {
     password: string,
     phone: string,
     googleId: string,
+    documentUrl: string
     role: "user" | "admin" | "seller",
     isVerified: "pending" | "rejected" | "approved",
     isBlocked: boolean
@@ -18,6 +19,7 @@ const userSchema = new Schema<IUser>(
     password: { type: String,},
     phone: { type: String},
     googleId: { type: String},
+    documentUrl: { type: String},
     isVerified: { 
       type: String, 
       enum: ["pending" ,"rejected" , "approved"]

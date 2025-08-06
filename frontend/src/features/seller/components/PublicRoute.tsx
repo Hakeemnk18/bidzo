@@ -6,9 +6,9 @@ const PublicRoute = ({ children }: { children: ReactElement }) => {
   const user = useStoreSelector((state)=> state.auth)
   const isAuthenticated = user.isAuthenticated && user.role === 'seller'
 
-  console.log(user)
+  
 
-  console.log("is authentic ",isAuthenticated)
+  
 
   return isAuthenticated ? <Navigate to="/seller/dashboard" replace /> : children ;
 };

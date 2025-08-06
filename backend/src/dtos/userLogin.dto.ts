@@ -16,6 +16,7 @@ export interface UserSignUpDTO {
   email: string;
   password: string;
   phone: string;
+  documentUrl?: string
   role: "user" | "admin" | "seller";
   isVerified: "pending" | "rejected" | "approved"
 }
@@ -49,6 +50,7 @@ export interface ResGetUser {
   id: string
   name: string,
   email: string,
+  documentUrl?:string,
   isVerified: "pending" | "rejected" | "approved",
   isBlocked: boolean
 }
