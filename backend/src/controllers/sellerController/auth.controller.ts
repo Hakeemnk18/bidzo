@@ -2,11 +2,16 @@ import { Request, Response } from "express";
 import { ISellerAuthController } from "./interfaces/auth.controller.interface";
 import { IAuthService } from "../../services/interfaces/auth.interfaces";
 import { CustomError } from "../../utils/customError";
+import { IUserManagementService } from "../../services/interfaces/user.management.interface";
 
 
 export class SellerAuthController implements ISellerAuthController {
 
-    constructor(private readonly authService: IAuthService) { }
+    constructor(
+        private readonly authService: IAuthService,
+        private readonly userMangementService: IUserManagementService
+
+    ) { }
     async signup(req: Request, res: Response): Promise<void> {
         try {
 
@@ -41,6 +46,24 @@ export class SellerAuthController implements ISellerAuthController {
             });
 
         } catch (err: any) {
+            console.log("error in  login user controller ")
+            if (err instanceof CustomError) {
+                res.status(err.statusCode).json({ message: err.message });
+            } else {
+                res.status(500).json({ message: "Internal server error" });
+            }
+        }
+    }
+
+    async reapply(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params
+            await this.userMangementService.sellerReapply(id)
+            res.status(200).json({
+                success: true,
+                message: "Application submitted",
+            });
+        } catch (err) {
             console.log("error in  login user controller ")
             if (err instanceof CustomError) {
                 res.status(err.statusCode).json({ message: err.message });
