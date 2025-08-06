@@ -3,21 +3,30 @@ import { useStoreDispatch } from "../../../../hooks/useStore";
 import { clearToken } from "../../../../utils/tokenHelpers";
 import { logout } from "../../slices/authSlice";
 import { toast } from "react-toastify";
+import { useRouterRole } from "../../../../hooks/useRouterRole";
+
+interface UserDropdownProps {
+    onClose: ()=> void ;
+}
 
 
-const UserDropdown: React.FC = () => {
+const UserDropdown = ({ onClose }: UserDropdownProps) => {
 
     const dispatch = useStoreDispatch()
     const navigate = useNavigate()
+    const role = useRouterRole()
 
     const handleLogout = () => {
         dispatch(logout())
         clearToken()
         toast.success("Logged out successfully");
+        onClose()
     }
 
     const handleProfile = () => {
-        navigate('/user/profile')
+        
+        navigate(`/${role}/profile`)
+        onClose()
     }
 
 

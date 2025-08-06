@@ -3,9 +3,9 @@ export type User = {
   name: string;
   email: string;
   password?: string;
-  phone?: number;
+  phone?: string;
   role: "user" | "admin" | "seller",
-  isVerified?: boolean,
+  isVerified: "pending" | "rejected" | "approved",
   isBlocked?: boolean,
   googleId?:string
   createdAt?: Date;

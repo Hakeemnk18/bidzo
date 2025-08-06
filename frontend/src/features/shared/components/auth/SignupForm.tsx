@@ -10,7 +10,7 @@ import { useRouterRole } from "../../../../hooks/useRouterRole";
 
 const SignUpForm = () => {
     const [isOTP, setIsOTP] = useState<boolean>(false)
-    const [formData, setFormData] = useState({ email: "", password: "", rePassword: "", phoneNumber: "", name: "" });
+    const [formData, setFormData] = useState({ email: "", password: "", rePassword: "", phone: "", name: "" });
     const [errors, setErrors] = useState<{ email?: string; password?: string, name?: string, phoneNumber?: string, rePassword?: string }>({});
     const dispatch = useStoreDispatch()
     const navigate = useNavigate()
@@ -28,7 +28,7 @@ const SignUpForm = () => {
 
         e.preventDefault();
         const newErrors: typeof errors = {};
-        const { name, email, password, rePassword, phoneNumber } = formData
+        const { name, email, password, rePassword, phone } = formData
         const nameRegex = /^[A-Za-z\s'-]{2,50}$/;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^[6-9]\d{9}$/
@@ -46,7 +46,7 @@ const SignUpForm = () => {
         if (rePassword !== password) {
             newErrors.rePassword = "password doesn't match"
         }
-        if (!phoneRegex.test(phoneNumber.trim())) {
+        if (!phoneRegex.test(phone.trim())) {
             newErrors.phoneNumber = 'invalid phone number'
         }
 
@@ -174,8 +174,8 @@ const SignUpForm = () => {
 
                     <input
                         type="text"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
+                        name="phone"
+                        value={formData.phone}
                         onChange={handleChange}
                         placeholder="Phone Number"
                         className={`w-full px-4 py-2 border ${errors.phoneNumber ? "border-red-500" : "border-gray-300"

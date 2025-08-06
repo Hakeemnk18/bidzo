@@ -39,8 +39,17 @@ router.get('/user/management',
     (req,res)=> adminUserManagementController.getUser(req, res)
 )
 
-router.patch('/seller/management',
+router.patch('/seller/management/:id',
+    authenticate,
+    authorizeRoles('admin'),
     (req, res)=> adminUserManagementController.approveSeller(req,res)
+)
+
+
+router.patch('/seller/management/:id/reject',
+    authenticate,
+    authorizeRoles('admin'),
+    (req, res)=> adminUserManagementController.rejectSeller(req,res)
 )
 
 

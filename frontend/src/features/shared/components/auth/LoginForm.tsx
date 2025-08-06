@@ -26,7 +26,7 @@ const LoginForm = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("inside submit")
+        
         const newErrors: typeof errors = {};
         if (!formData.email.includes("@") || formData.email.trim().length < 1) {
             newErrors.email = "Invalid email";

@@ -53,10 +53,11 @@ const userRoutes = [
     {
         path:'/user/profile',
         element:(
-            
+            <ProtectedRoute>
                 <Suspense fallback={< LoadingSpinner />}>
                     <ProfilePage />
                 </Suspense>
+            </ProtectedRoute>
            
             
         ),

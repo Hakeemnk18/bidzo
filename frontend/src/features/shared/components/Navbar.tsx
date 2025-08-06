@@ -85,7 +85,7 @@ const Navbar = () => {
               >
                 <FaUserCircle />
               </div>
-              { dropDownOpen && <UserDropdown />}
+              { dropDownOpen && <UserDropdown onClose={()=> setDropDownOpen(false)}/>}
               </div>
               :
               <div className="text-white text-md cursor-pointer ">
@@ -96,9 +96,7 @@ const Navbar = () => {
               </div>
 
         }
-              {
-
-              }
+              
 
             </div>
     </nav>

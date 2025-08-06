@@ -84,7 +84,7 @@ export class AuthService implements IAuthService {
       throw new CustomError("user not found ", 404)
     }
 
-    if (role === "seller" && !user.isVerified) {
+    if (role === "seller" && user.isVerified === "pending") {
       throw new CustomError("Your seller account is not yet approved by admin", 403);
     }
 
@@ -144,7 +144,7 @@ export class AuthService implements IAuthService {
       const hashPsd = await hashPassword(data.password)
       const user = await this.userRepo.create({ ...data, password: hashPsd })
 
-      if (user.role === 'seller' && !user.isVerified) {
+      if (user.role === 'seller' && user.isVerified === "pending") {
         const responseUser: UserLoginResponseDTO = {
           name: "",
           role: "seller",

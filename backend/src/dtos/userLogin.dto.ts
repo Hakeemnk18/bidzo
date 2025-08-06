@@ -1,4 +1,4 @@
-import { IUserRepository } from "../repositories/interfaces/user.repo.interface";
+
 
 export interface GoogleLoginDTO {
   token: string;
@@ -15,9 +15,9 @@ export interface UserSignUpDTO {
   name: string;
   email: string;
   password: string;
-  phoneNumber: string;
+  phone: string;
   role: "user" | "admin" | "seller";
-  isVerified:boolean
+  isVerified: "pending" | "rejected" | "approved"
 }
 
 
@@ -49,9 +49,19 @@ export interface ResGetUser {
   id: string
   name: string,
   email: string,
-  isVerified: boolean,
+  isVerified: "pending" | "rejected" | "approved",
   isBlocked: boolean
 }
+
+export interface IResProfile {
+  name: string,
+  email: string,
+  phoneNumber: string
+}
+
+
+
+
 
 
 

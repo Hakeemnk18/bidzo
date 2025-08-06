@@ -10,8 +10,9 @@ export class SellerAuthController implements ISellerAuthController {
     async signup(req: Request, res: Response): Promise<void> {
         try {
 
-            const { name, password, email, phoneNumber } = req.body
-            const user = await this.authService.signUp({ name, email, password, phoneNumber, role: "seller", isVerified: false })
+            const { name, password, email, phone } = req.body
+
+            const user = await this.authService.signUp({ name, email, password, phone, role: "seller", isVerified: "pending" })
             res.status(200).json({
                 success: true,
                 message: "Signup successful. Your account requires admin approval before you can access seller features.",
