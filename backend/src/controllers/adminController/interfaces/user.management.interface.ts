@@ -5,4 +5,5 @@ export interface IUserManagement {
     getSeller(req: Request, res: Response):Promise<void>
     blockAndUnblock(req: Request, res: Response): Promise<void>
     approveSeller(req: Request, res: Response): Promise<void>
+    rejectSeller(req: Request, res: Response): Promise<void>
 }

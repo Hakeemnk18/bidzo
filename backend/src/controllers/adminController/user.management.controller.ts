@@ -113,8 +113,9 @@ export class UserMangementController implements IUserManagement {
     async approveSeller(req: Request, res: Response): Promise<void> {
          try {
             console.log("inside block and unblock")
-            const { id } = req.body
-            
+
+            const { id } = req.params
+            console.log(id)
             await this.userMangementService.blockAndUnBlock(id, "isVerified")
 
             res.status(200).json({
@@ -124,6 +125,27 @@ export class UserMangementController implements IUserManagement {
             
         } catch (err) {
             console.log("error in  block and unblock user controller ",err)
+            handleError(res, err)
+        }
+    }
+
+    async rejectSeller(req: Request, res: Response): Promise<void> {
+        try {
+            console.log("inside reject seller")
+
+            const { id } = req.params
+            const { reason } = req.body
+            console.log("id ",id)
+            console.log("reason ",reason)
+            await this.userMangementService.sellerreject(id,reason)
+
+            res.status(200).json({
+                success: true,
+                message: "account rejected"
+            })
+            
+        } catch (err) {
+            console.log("error in  reject seller user controller ",err)
             handleError(res, err)
         }
     }

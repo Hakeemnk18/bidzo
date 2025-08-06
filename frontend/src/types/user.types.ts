@@ -33,7 +33,7 @@ export interface IuserData {
     id: string;
     name: string,
     email: string,
-    isVerified: boolean,
+    isVerified: "approved" | "pending" | "rejected",
     isBlocked: boolean
 }
 

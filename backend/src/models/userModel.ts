@@ -4,10 +4,10 @@ interface IUser extends Document {
     name: string,
     email: string,
     password: string,
-    phone: number,
+    phone: string,
     googleId: string,
     role: "user" | "admin" | "seller",
-    isVerified: boolean,
+    isVerified: "pending" | "rejected" | "approved",
     isBlocked: boolean
 }
 
@@ -16,9 +16,12 @@ const userSchema = new Schema<IUser>(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String,},
-    phone: { type: Number},
+    phone: { type: String},
     googleId: { type: String},
-    isVerified: { type: Boolean, default:false},
+    isVerified: { 
+      type: String, 
+      enum: ["pending" ,"rejected" , "approved"]
+    },
     isBlocked: { type: Boolean, default:false},
     role: { 
       type: String,

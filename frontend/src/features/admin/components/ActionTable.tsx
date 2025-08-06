@@ -8,6 +8,7 @@ import TableFilter from "../../shared/components/table/TableFilter";
 import type { IuserData, IResGetUserData, ApiResponse, GoogleLoginResponse } from "../../../types/user.types";
 import ConfirmModal from "../../shared/components/modal/ConfirmationModal";
 import instance from "../../../api/axios";
+import SellerDocumentModal from "./modal/SellerDocument";
 
 
 type AuctionTableProps = {
@@ -33,6 +34,9 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
     const [showFilters, setShowFilters] = useState(false);
     const [showSort, setShowSort] = useState(false);
     const [sort, setSort] = useState('')
+    const [sellerModal, setSellerModal] = useState(false)
+    const [sellerId, setSellerId] = useState("")
+    const [rejected, setRejected] = useState(false)
 
     const sortOptions = [
         { value: '', label: 'All' },
@@ -152,20 +156,15 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
         }, 300);
 
         return () => clearTimeout(delayDebounce);
-    }, [currentPage, search, sort, filters, role])
+    }, [currentPage, search, sort, filters, role, rejected])
 
 
-    const aprovelHandling = async (id: string) => {
+    const aprovelHandling = async () => {
 
         try {
 
 
-            const res = await instance.patch<GoogleLoginResponse>('/admin/seller/management',
-
-                {
-                    id
-                }
-            )
+            const res = await instance.patch<ApiResponse>(`/admin/seller/management/${sellerId}`)
 
             if (res.data.success) {
                 toast(res.data.message)
@@ -181,6 +180,11 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
         }
 
 
+    }
+
+    const sellerHandler = (id: string)=>{
+        setSellerModal(true)
+        setSellerId(id)
     }
 
     return (
@@ -248,13 +252,13 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
                                     <td>
 
                                         <button
-                                            disabled={item.isVerified}
-                                            onClick={() => aprovelHandling(item.id)}
+                                            disabled={item.isVerified !== 'pending'}
+                                            onClick={()=> sellerHandler(item.id)}
                                         >
                                             <span
 
                                                 className={`px-2 py-1 rounded-full text-xs font-medium ${item.isVerified ? "bg-[#1f3b7a] text-blue-300" : "bg-[#3e3f5c] text-gray-300"}`}>
-                                                {item.isVerified ? 'Approved' : 'Pending'}
+                                                {item.isVerified}
                                             </span>
                                         </button>
 
@@ -293,6 +297,16 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
                                                 onConfirm={handleBlockAndUnblock}
                                                 onClose={() => setIsConfirmModal(false)}
                                                 message={isBlocked ? "Do You want delete this user" : "Do You want unblock this user"}
+                                            />
+                                        }
+                                        {/* sellerModal */}
+                                        {
+                                            <SellerDocumentModal 
+                                            onClose={()=> setSellerModal(false)}
+                                            isOpen={sellerModal}
+                                            handleApprove={aprovelHandling}
+                                            id={sellerId}
+                                            rejcted={()=> setRejected(true)}
                                             />
                                         }
 
