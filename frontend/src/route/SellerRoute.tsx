@@ -7,6 +7,7 @@ import ProtectedRoute from "../features/seller/components/ProtectedRoute";
 const UserLogin = lazy(()=> import('../features/user/pages/Login'))
 const SignupPage = lazy(()=> import('../features/user/pages/SignUpPage'))
 const SellerDashBoardPage = lazy(()=> import('../features/seller/page/SellerdashboardPage'))
+const ReapplyComponent = lazy(()=> import('../features/seller/components/Reapply'))
 
 
 const sellerRoute = [
@@ -34,6 +35,13 @@ const sellerRoute = [
             <ProtectedRoute>
                 <SellerDashBoardPage />
             </ProtectedRoute>
+            
+        )
+    },
+     {
+        path: '/seller/reapply',
+        element:(
+            <ReapplyComponent />
             
         )
     }

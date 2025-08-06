@@ -120,15 +120,30 @@ export class UserMangementService implements IUserManagementService {
             throw new CustomError('error in update ', 404)
 
         }
-        const resetLink = `http://localhost:5173/seller/reapply`;
+        const resetLink = `http://localhost:5173/seller/reapply?id=${id}`;
 
         const sendMail: ISendEMAIL = {
             email: user.email,
-            subject: "Account Verified",
+            subject: "Account is Rejected",
             text: `Your seller account has been rejected for the following reason: ${reason}`,
             html: `<p>Your Seller Account has been rejected</p><p><strong>Reason:</strong> ${reason}</p> <h3>Reapply ${resetLink} </h3>`
         }
         await sendEmail(sendMail)
+
+    }
+
+    async sellerReapply(id: string): Promise<void> {
+        
+        const user = await this.userRepo.findById(id)
+        if (!user  || user?.isVerified !== "rejected") {
+            throw new CustomError('no user matched', 404)
+        }
+
+        const updateData = await this.userRepo.blockAndunBlock(id, { isVerified: "pending" })
+        if (updateData!.matchedCount === 0) {
+            throw new CustomError('error in update ', 404)
+
+        }
 
     }
 

@@ -9,7 +9,7 @@ export class UserMangementController implements IUserManagement {
     constructor(private readonly userMangementService: IUserManagementService) { }
 
     async getSeller(req: Request, res: Response): Promise<void> {
-        console.log("inside seller get")
+        
          try {
 
             const allowedFilters = ['isVerified', 'isBlocked'];
@@ -52,7 +52,7 @@ export class UserMangementController implements IUserManagement {
     }
 
     async getUser(req: Request, res: Response): Promise<void> {
-        console.log("inside user get")
+        
         
         try {
 
