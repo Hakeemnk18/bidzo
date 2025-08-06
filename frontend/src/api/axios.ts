@@ -2,7 +2,7 @@ import axios from "axios";
 import { clearToken } from "../utils/tokenHelpers";
 
 const instance = axios.create({
-  baseURL: "http://localhost:4004",
+  baseURL: import.meta.env.VITE_BASE_URL  || "http://localhost:4004",
 });
 
 instance.interceptors.request.use((config) => {

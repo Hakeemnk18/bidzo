@@ -95,7 +95,7 @@ const Reapply = () => {
                         onClick={handleNewPassword}
                         className="w-full bg-indigo-600 text-white font-semibold py-2 rounded-md mt-2"
                     >
-                        Submit
+                        Reapply
                     </button>
 
                 </div>

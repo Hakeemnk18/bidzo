@@ -11,7 +11,7 @@ import { useRouterRole } from "../../../../hooks/useRouterRole";
 const SignUpForm = () => {
     const [isOTP, setIsOTP] = useState<boolean>(false)
     const [formData, setFormData] = useState({ email: "", password: "", rePassword: "", phone: "", name: "" });
-    const [errors, setErrors] = useState<{ email?: string; password?: string, name?: string, phoneNumber?: string, rePassword?: string }>({});
+    const [errors, setErrors] = useState<{ email?: string; password?: string, name?: string, phone?: string, rePassword?: string }>({});
     const dispatch = useStoreDispatch()
     const navigate = useNavigate()
     const role = useRouterRole()
@@ -47,7 +47,7 @@ const SignUpForm = () => {
             newErrors.rePassword = "password doesn't match"
         }
         if (!phoneRegex.test(phone.trim())) {
-            newErrors.phoneNumber = 'invalid phone number'
+            newErrors.phone = 'invalid phone number'
         }
 
 
@@ -178,10 +178,10 @@ const SignUpForm = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         placeholder="Phone Number"
-                        className={`w-full px-4 py-2 border ${errors.phoneNumber ? "border-red-500" : "border-gray-300"
+                        className={`w-full px-4 py-2 border ${errors.phone ? "border-red-500" : "border-gray-300"
                             } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                     />
-                    {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
+                    {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 </div>
 
                 <button
