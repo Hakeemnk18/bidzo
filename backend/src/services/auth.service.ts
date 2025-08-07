@@ -12,26 +12,11 @@ import { CustomError } from "../utils/customError";
 import { comparePassword, hashPassword, hashResetToken } from "../utils/hash";
 import { IResetPasswordRepo } from "../repositories/interfaces/reset.password.repo.interface";
 import { ISendEMAIL, sendEmail } from "../utils/send.email";
-//import { GoogleUserDTO } from "../dtos/userLogin.dto";
+import { GoogleProfile } from "../interfaces/AuthenticatedRequest";
+import { ResponseMessages } from "../constants/responseMessages";
+import { HttpStatusCode } from "../constants/httpStatusCode";
 
 
-interface GoogleProfile {
-  sub: string;
-  email: string;
-  name: string;
-}
-
-
-
-export const loginUser = async (
-  email: string,
-  password: string,
-  role: string,
-  repo: IUserRepository
-) => {
-  const user = await repo.findByEmailAndRole(email, role);
-  if (!user) throw new Error("Invalid credentials");
-};
 
 
 export class AuthService implements IAuthService {
@@ -48,7 +33,7 @@ export class AuthService implements IAuthService {
 
     try {
       console.log("inside fech google")
-      const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+      const res = await fetch(process.env.GOOGLE_PROFILE_URL!, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -72,20 +57,20 @@ export class AuthService implements IAuthService {
     const user = await this.userRepo.findByEmailAndRole(email, role)
 
     if (!user) {
-      throw new CustomError("user not found ", 404)
+      throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
     }
     if (user.isBlocked) {
-      throw new CustomError("acces denied", 403)
+      throw new CustomError(ResponseMessages.ACCESS_DENIED, HttpStatusCode.FORBIDDEN)
     }
     const passwordMatch = await comparePassword(password, user.password!)
 
     if (!passwordMatch) {
 
-      throw new CustomError("user not found ", 404)
+      throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
     }
 
     if (role === "seller" && user.isVerified === "pending") {
-      throw new CustomError("Your seller account is not yet approved by admin", 403);
+      throw new CustomError(ResponseMessages.SELLER_SIGNUP_PENDING, HttpStatusCode.FORBIDDEN);
     }
 
     const jwtToken = await this.jwtService.sign({ id: user.id, role: user.role })
@@ -109,7 +94,7 @@ export class AuthService implements IAuthService {
 
       let user = await this.userRepo.findByEmailAndRole(email, "user");
       if (user && user.isBlocked) {
-        throw new CustomError("acces denied", 403)
+        throw new CustomError(ResponseMessages.ACCESS_DENIED, HttpStatusCode.FORBIDDEN)
       }
       if (!user) {
 
@@ -173,7 +158,7 @@ export class AuthService implements IAuthService {
     console.log("iniside otp auth service ")
     const user = await this.userRepo.findByEmail(email)
     if (user) {
-      throw new CustomError("email already exist ", 409)
+      throw new CustomError(ResponseMessages.EMAIL_EXIST, HttpStatusCode.CONFLICT)
     }
     const otp = generateOTP()
     const expiry = new Date(Date.now() + 1 * 60 * 1000);
@@ -194,12 +179,12 @@ export class AuthService implements IAuthService {
     const otp = await this.otpService.verifyOtp(otpData)
 
     if (!otp) {
-      throw new Error("Invalid OTP");
+      throw new CustomError(ResponseMessages.INVALID_OTP,HttpStatusCode.NOT_FOUND);
     }
 
 
     if (otp && otp.expiry < new Date()) {
-      throw new Error("OTP has expired");
+      throw new CustomError(ResponseMessages.OTP_EXPIRED,HttpStatusCode.GONE);
     }
   }
 
@@ -207,7 +192,7 @@ export class AuthService implements IAuthService {
     const user = await this.userRepo.findByEmail(email)
 
     if (!user) {
-      throw new CustomError("user not found ", 404)
+      throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
     }
     return user
   }
@@ -248,7 +233,7 @@ export class AuthService implements IAuthService {
     const curToken = await this.resetRepo.validate(token)
 
     if(!curToken){
-      throw new CustomError("Invalid or expired token", 400);
+      throw new CustomError(ResponseMessages.BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
     }
     await this.resetRepo.markUsed(curToken.id!)
     const haspsd = await hashPassword(password)
@@ -256,7 +241,7 @@ export class AuthService implements IAuthService {
     const updateData = await this.userRepo.resetPassword(curToken.userId, haspsd)
 
     if(!updateData){
-      throw new CustomError('error in update password ', 404)
+      throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
     }
 
     return updateData.role
@@ -265,16 +250,3 @@ export class AuthService implements IAuthService {
 
 }
 
-// export const findOrCreateByGoogle = async ({
-//   email,
-//   name,
-//   googleId,
-//   role,
-//   repo,
-// }: GoogleUserDTO) => {
-
-//   const user = await repo.findByEmail(email, role);
-//   if (!user) {
-//     return await repo.createGoogleUser({ email, name, googleId, role });
-//   }
-// };

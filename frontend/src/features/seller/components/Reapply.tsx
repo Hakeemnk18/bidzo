@@ -53,33 +53,25 @@ const Reapply = () => {
                 const uploadedUrl = uploadRes.data.secure_url;
                 formData.documentUrl = uploadedUrl;
 
-                console.log("inside else")
-                console.log(id)
-                const res = await instance.patch<IResReapply>(`/seller/reapply/${id}`,formData)
+                
+                const res = await instance.patch<IResReapply>(`/seller/reapply/${id}`, formData)
 
                 if (res.data.success) {
                     toast(res.data.message)
                     navigate('/seller/login')
                 }
-            } catch (error) {
-                toast.error("Failed to upload document to Cloudinary");
-                console.log("Cloudinary upload error", error);
+            } catch (error: any) {
+                if (error.response && error.response.data?.message) {
+                    toast.error(error.response.data.message);
+                } else {
+                    toast.error("Failed to resubmit");
+                }
+                console.log("error in re apply", error)
                 return;
             }
 
 
 
-            // try {
-
-
-            // } catch (error: any) {
-            //     if (error.response && error.response.data?.message) {
-            //         toast.error(error.response.data.message);
-            //     } else {
-            //         toast.error("Failed to fetch user data");
-            //     }
-            //     console.log("error in reset password sumbit ", error)
-            // }
 
 
         }

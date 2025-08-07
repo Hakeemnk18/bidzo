@@ -11,6 +11,7 @@ export type User = {
   googleId?:string
   createdAt?: Date;
   updatedAt?: Date;
+  submitCount?: number;
 };
 
 

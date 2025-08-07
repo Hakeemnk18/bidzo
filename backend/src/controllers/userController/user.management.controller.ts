@@ -3,6 +3,7 @@ import { IUserManagement } from "./interfaces/user.management.interface";
 import { handleError } from "../../utils/customError";
 import { IUserManagementService } from "../../services/interfaces/user.management.interface";
 import { AuthenticatedRequest } from "../../interfaces/AuthenticatedRequest";
+import { HttpStatusCode } from "../../constants/httpStatusCode";
 
 
 
@@ -20,7 +21,7 @@ export class UserManagement implements IUserManagement {
             console.log("user id",id)
             const userData = await this.userManagementService.getUserProfile(id)
             console.log(userData)
-            res.status(200).json({
+            res.status(HttpStatusCode.OK).json({
                 success: true,
                 data: userData
             })

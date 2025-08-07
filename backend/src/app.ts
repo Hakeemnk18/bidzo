@@ -26,7 +26,7 @@ app.use((err:any, req: Request, res: Response, next: NextFunction) => {
   handleError(res, err);
 });
 
-app.listen(4004)
+app.listen(process.env.PORT)
 
 
 
