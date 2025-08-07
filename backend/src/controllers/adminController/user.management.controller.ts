@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { IUserManagement } from "./interfaces/user.management.interface";
 import { IUserManagementService } from "../../services/interfaces/user.management.interface";
 import { handleError } from "../../utils/customError";
+import { ResponseMessages } from "../../constants/responseMessages";
+import { HttpStatusCode } from "../../constants/httpStatusCode";
 
 
 export class UserMangementController implements IUserManagement {
@@ -36,7 +38,7 @@ export class UserMangementController implements IUserManagement {
                     filters
                 })
 
-            res.status(200).json({
+            res.status(HttpStatusCode.OK).json({
                 success: true,
                 data: result.resData,
                 total: result.total,
@@ -79,7 +81,7 @@ export class UserMangementController implements IUserManagement {
                     filters
                 })
 
-            res.status(200).json({
+            res.status(HttpStatusCode.OK).json({
                 success: true,
                 data: result.resData,
                 total: result.total,
@@ -99,9 +101,9 @@ export class UserMangementController implements IUserManagement {
             
             await this.userMangementService.blockAndUnBlock(userId, "isBlocked")
 
-            res.status(200).json({
+            res.status(HttpStatusCode.OK).json({
                 success: true,
-                message: "successfully updated"
+                message: ResponseMessages.UPDATED
             })
             
         } catch (err) {
@@ -118,9 +120,9 @@ export class UserMangementController implements IUserManagement {
             console.log(id)
             await this.userMangementService.blockAndUnBlock(id, "isVerified")
 
-            res.status(200).json({
+            res.status(HttpStatusCode.OK).json({
                 success: true,
-                message: "successfully updated"
+                message: ResponseMessages.UPDATED
             })
             
         } catch (err) {
@@ -139,9 +141,9 @@ export class UserMangementController implements IUserManagement {
             console.log("reason ",reason)
             await this.userMangementService.sellerreject(id,reason)
 
-            res.status(200).json({
+            res.status(HttpStatusCode.OK).json({
                 success: true,
-                message: "account rejected"
+                message: ResponseMessages.ACCOUNT_REJECTED
             })
             
         } catch (err) {

@@ -5,6 +5,8 @@ import { CustomError } from "../utils/customError";
 import { GetUsersDTO, IResProfile, ResGetUser } from "../dtos/userLogin.dto";
 import { User } from "../types/userType";
 import { ISendEMAIL, sendEmail } from "../utils/send.email";
+import { HttpStatusCode } from "../constants/httpStatusCode";
+import { ResponseMessages } from "../constants/responseMessages";
 
 
 
@@ -53,13 +55,13 @@ export class UserMangementService implements IUserManagementService {
 
         ])
         const resData: ResGetUser[] = data.map((user: User) => {
-            return { 
-                id: user.id!, 
-                name: user.name, 
-                email: user.email, 
-                isVerified: user.isVerified!, 
+            return {
+                id: user.id!,
+                name: user.name,
+                email: user.email,
+                isVerified: user.isVerified!,
                 isBlocked: user.isBlocked!,
-                documentUrl: user.documentUrl 
+                documentUrl: user.documentUrl
             }
         })
 
@@ -70,7 +72,7 @@ export class UserMangementService implements IUserManagementService {
 
         const user = await this.userRepo.findById(id)
         if (!user) {
-            throw new CustomError('no user matched', 404)
+            throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
         let updateData
         if (field === 'isBlocked') {
@@ -91,7 +93,7 @@ export class UserMangementService implements IUserManagementService {
 
 
         if (updateData!.matchedCount === 0) {
-            throw new CustomError('error in update ', 404)
+            throw new CustomError('error in update ', HttpStatusCode.NOT_FOUND)
         }
     }
 
@@ -102,7 +104,7 @@ export class UserMangementService implements IUserManagementService {
         const user = await this.userRepo.findById(id)
         console.log(user)
         if (!user) {
-            throw new CustomError('no user matched', 404)
+            throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
 
         const userData: IResProfile = {
@@ -119,12 +121,12 @@ export class UserMangementService implements IUserManagementService {
         console.log("inside reject seller service")
         const user = await this.userRepo.findById(id)
         if (!user) {
-            throw new CustomError('no user matched', 404)
+            throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
 
         const updateData = await this.userRepo.findByidAndUpdate(id, { isVerified: "rejected" })
         if (updateData!.matchedCount === 0) {
-            throw new CustomError('error in update ', 404)
+            throw new CustomError('error in update ', HttpStatusCode.NOT_FOUND)
 
         }
         const resetLink = `http://localhost:5173/seller/reapply?id=${id}`;
@@ -140,15 +142,20 @@ export class UserMangementService implements IUserManagementService {
     }
 
     async sellerReapply(id: string, documentUrl: string): Promise<void> {
-        
+
         const user = await this.userRepo.findById(id)
-        if (!user  || user?.isVerified !== "rejected") {
-            throw new CustomError('no user matched', 404)
+        if (!user || user?.isVerified !== "rejected") {
+            throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
 
-        const updateData = await this.userRepo.findByidAndUpdate(id, { isVerified: "pending", documentUrl })
+        if(user.submitCount === 3){
+            throw new CustomError(ResponseMessages.SUBMITION_LIMIT,HttpStatusCode.TOO_MANY_REQUEST)
+        }
+        const count = user.submitCount! + 1
+
+        const updateData = await this.userRepo.findByidAndUpdate(id, { isVerified: "pending", documentUrl, submitCount: count })
         if (updateData!.matchedCount === 0) {
-            throw new CustomError('error in update ', 404)
+            throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
 
         }
 

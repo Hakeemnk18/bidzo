@@ -1,4 +1,6 @@
 import { Response } from "express";
+import { HttpStatusCode } from "../constants/httpStatusCode";
+import { ResponseMessages } from "../constants/responseMessages";
 
 export class CustomError extends Error {
   statusCode: number;
@@ -15,6 +17,6 @@ export const handleError = (res: Response, err: unknown): void => {
   if (err instanceof CustomError) {
     res.status(err.statusCode).json({ success: false, message: err.message });
   } else {
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({ success: false, message: ResponseMessages.SERVER_ERROR });
   }
 }
