@@ -7,5 +7,5 @@ export interface IUserManagementService {
     getSeller(getUser: GetUsersDTO): Promise<{ resData: ResGetUser[]; total: number }>
     getUserProfile(id: string): Promise<IResProfile>
     sellerreject(id: string, reason: string): Promise<void>
-    sellerReapply(id: string): Promise<void>
+    sellerReapply(id: string, documentUrl: string): Promise<void>
 }

@@ -59,7 +59,9 @@ export class SellerAuthController implements ISellerAuthController {
     async reapply(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params
-            await this.userMangementService.sellerReapply(id)
+            const { documentUrl } = req.body
+            
+            await this.userMangementService.sellerReapply(id,documentUrl)
             res.status(200).json({
                 success: true,
                 message: "Application submitted",

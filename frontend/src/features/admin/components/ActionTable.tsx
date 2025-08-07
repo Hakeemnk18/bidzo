@@ -298,7 +298,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
                                                 isOpen={isConfirmModal}
                                                 onConfirm={handleBlockAndUnblock}
                                                 onClose={() => setIsConfirmModal(false)}
-                                                message={isBlocked ? "Do You want delete this user" : "Do You want unblock this user"}
+                                                message={isBlocked ? "Do You want block this user" : "Do You want unblock this user"}
                                             />
                                         }
                                         {/* sellerModal */}
