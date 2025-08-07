@@ -33,6 +33,13 @@ const SignUpForm = () => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            const isPdf =  file.type === "application/pdf";
+
+            if(!isPdf){
+                setErrors(prev => ({ ...prev, document: "only pdf file allowed" }));
+                e.target.value = "";
+                return
+            }
             setFormData(prev => ({ ...prev, document: file }));
             setErrors(prev => ({ ...prev, document: "" }));
         }
@@ -234,6 +241,7 @@ const SignUpForm = () => {
 
                         <input
                             type="file"
+                            accept=".pdf"
                             name="document"
                             placeholder="submit the file"
                             onChange={handleFileChange}
