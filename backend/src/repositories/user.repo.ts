@@ -31,7 +31,7 @@ export class UserRepository implements IUserRepository {
     return await UserModel.countDocuments(query)
   }
 
-  async blockAndunBlock(id: string,query: Record< string, any >): Promise<UpdateResult> {
+  async findByidAndUpdate(id: string,query: Record< string, any >): Promise<UpdateResult> {
     return await UserModel.updateOne({_id: id}, { $set:query})
   }
 

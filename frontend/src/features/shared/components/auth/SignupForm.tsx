@@ -83,16 +83,16 @@ const SignUpForm = () => {
 
             //store file to clodinary
             if (role === "seller" && formData.document) {
-                console.log("inside file submition")
+                
                 const file = formData.document as File;
-                console.log("file type ",file.type);
+                
                 const formDataUpload = new FormData();
                 formDataUpload.append("file", file);
                 formDataUpload.append("upload_preset", "pdf_unsigned"); 
                 formDataUpload.append("folder", "pdf_upload");
                
 
-                console.log(formDataUpload)
+                
 
                 try {
                     const uploadRes = await axios.post<IResCloudinaryURL>("https://api.cloudinary.com/v1_1/dijkesgb1/raw/upload",formDataUpload);

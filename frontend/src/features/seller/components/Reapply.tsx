@@ -2,11 +2,16 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import instance from '../../../api/axios';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 
 interface IResReapply {
     success: boolean,
     message: string,
+}
+
+interface IResCloudinaryURL {
+    secure_url: string
 }
 
 const Reapply = () => {
@@ -16,83 +21,105 @@ const Reapply = () => {
     const id = searchParams.get("id");
 
 
-    const [formData, setFormData] = useState({ name: "", email: "" });
-    const [errors, setErrors] = useState<{ name?: string, email?: string }>({});
+    const [formData, setFormData] = useState({ document: null as File | null, documentUrl: '' });
+    const [errors, setErrors] = useState<{ document?: string }>({});
     const navigate = useNavigate()
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: "" });
-    };
 
-    const handleNewPassword = async () => {
+
+    const handleDocumentSubmit = async () => {
         const newErrors: typeof errors = {};
-        const { name, email } = formData
 
-        if (name.trim().length < 6) {
-            newErrors.name = "Enter your name";
+        if (!formData.document) {
+            newErrors.document = "Please upload a document";
         }
-        if (email.trim() === '') {
-            newErrors.email = "Invalid email"
-        }
-
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors)
             return
         } else {
 
+            const file = formData.document as File;
+
+            const formDataUpload = new FormData();
+            formDataUpload.append("file", file);
+            formDataUpload.append("upload_preset", "pdf_unsigned");
+            formDataUpload.append("folder", "pdf_upload");
+
+
+
+
             try {
+                const uploadRes = await axios.post<IResCloudinaryURL>("https://api.cloudinary.com/v1_1/dijkesgb1/raw/upload", formDataUpload);
+                const uploadedUrl = uploadRes.data.secure_url;
+                formData.documentUrl = uploadedUrl;
 
                 console.log("inside else")
                 console.log(id)
-                const res = await instance.patch<IResReapply>(`/seller/reapply/${id}`)
+                const res = await instance.patch<IResReapply>(`/seller/reapply/${id}`,formData)
 
                 if (res.data.success) {
                     toast(res.data.message)
                     navigate('/seller/login')
                 }
-            } catch (error: any) {
-                if (error.response && error.response.data?.message) {
-                    toast.error(error.response.data.message);
-                } else {
-                    toast.error("Failed to fetch user data");
-                }
-                console.log("error in reset password sumbit ", error)
+            } catch (error) {
+                toast.error("Failed to upload document to Cloudinary");
+                console.log("Cloudinary upload error", error);
+                return;
             }
+
+
+
+            // try {
+
+
+            // } catch (error: any) {
+            //     if (error.response && error.response.data?.message) {
+            //         toast.error(error.response.data.message);
+            //     } else {
+            //         toast.error("Failed to fetch user data");
+            //     }
+            //     console.log("error in reset password sumbit ", error)
+            // }
 
 
         }
     }
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const isPdf = file.type === "application/pdf";
+
+            if (!isPdf) {
+                setErrors(prev => ({ document: "only pdf file allowed" }));
+                e.target.value = "";
+                return
+            }
+            setFormData(prev => ({ ...prev, document: file }));
+            setErrors(prev => ({ document: "" }));
+        }
+    };
+
     return (
         <>
             <div className='mt-50 inset-0 z-50 flex items-center justify-center'>
                 <div className='bg-white w-100 p-10 rounded-xl'>
-                    <div className="mb-4 ">
+                    <div className="w-full mb-4">
+
                         <input
-                            type="text"
-                            name="name"
-                            onChange={handleChange}
-                            value={formData.name}
-                            placeholder="Enter name"
-                            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500  border-gray-300`}
+                            type="file"
+                            accept=".pdf"
+                            name="document"
+                            placeholder="submit the file"
+                            onChange={handleFileChange}
+                            className={`w-full px-4 py-2 border ${errors.document ? "border-red-500" : "border-gray-300"
+                                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                         />
-                        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-                    </div>
-                    <div className="mb-4">
-                        <input
-                            type="email"
-                            name="email"
-                            onChange={handleChange}
-                            value={formData.email}
-                            placeholder="Enter email "
-                            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500  border-gray-300`}
-                        />
-                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                        {errors.document && <p className="text-red-500 text-xs mt-1">{errors.document}</p>}
                     </div>
                     <button
                         type="button"
-                        onClick={handleNewPassword}
+                        onClick={handleDocumentSubmit}
                         className="w-full bg-indigo-600 text-white font-semibold py-2 rounded-md mt-2"
                     >
                         Reapply

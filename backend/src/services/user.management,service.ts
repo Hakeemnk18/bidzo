@@ -75,10 +75,10 @@ export class UserMangementService implements IUserManagementService {
         let updateData
         if (field === 'isBlocked') {
             console.log("inside is blocked")
-            updateData = await this.userRepo.blockAndunBlock(id, { isBlocked: !user.isBlocked })
+            updateData = await this.userRepo.findByidAndUpdate(id, { isBlocked: !user.isBlocked })
         } else if (field === 'isVerified') {
             console.log("inside is verified")
-            updateData = await this.userRepo.blockAndunBlock(id, { isVerified: "approved" })
+            updateData = await this.userRepo.findByidAndUpdate(id, { isVerified: "approved" })
             const sendMail: ISendEMAIL = {
                 email: user.email,
                 subject: "Account Verified",
@@ -122,7 +122,7 @@ export class UserMangementService implements IUserManagementService {
             throw new CustomError('no user matched', 404)
         }
 
-        const updateData = await this.userRepo.blockAndunBlock(id, { isVerified: "rejected" })
+        const updateData = await this.userRepo.findByidAndUpdate(id, { isVerified: "rejected" })
         if (updateData!.matchedCount === 0) {
             throw new CustomError('error in update ', 404)
 
@@ -139,14 +139,14 @@ export class UserMangementService implements IUserManagementService {
 
     }
 
-    async sellerReapply(id: string): Promise<void> {
+    async sellerReapply(id: string, documentUrl: string): Promise<void> {
         
         const user = await this.userRepo.findById(id)
         if (!user  || user?.isVerified !== "rejected") {
             throw new CustomError('no user matched', 404)
         }
 
-        const updateData = await this.userRepo.blockAndunBlock(id, { isVerified: "pending" })
+        const updateData = await this.userRepo.findByidAndUpdate(id, { isVerified: "pending", documentUrl })
         if (updateData!.matchedCount === 0) {
             throw new CustomError('error in update ', 404)
 
