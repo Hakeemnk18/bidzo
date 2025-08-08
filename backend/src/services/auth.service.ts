@@ -15,16 +15,19 @@ import { ISendEMAIL, sendEmail } from "../utils/send.email";
 import { GoogleProfile } from "../interfaces/AuthenticatedRequest";
 import { ResponseMessages } from "../constants/responseMessages";
 import { HttpStatusCode } from "../constants/httpStatusCode";
+import { inject, injectable } from "tsyringe";
 
 
 
 
+@injectable()
 export class AuthService implements IAuthService {
   constructor(
-    private readonly userRepo: IUserRepository,
-    private readonly jwtService: IJWTService,
-    private readonly otpService: IOTPService,
-    private readonly resetRepo: IResetPasswordRepo
+    @inject('IUserRepository') private readonly userRepo: IUserRepository,
+
+    @inject('IJWTService') private readonly jwtService: IJWTService,
+    @inject('IOTPService') private readonly otpService: IOTPService,
+    @inject('IResetPasswordRepo') private readonly resetRepo: IResetPasswordRepo
   ) { }
 
 

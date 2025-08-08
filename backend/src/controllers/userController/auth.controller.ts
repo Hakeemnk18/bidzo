@@ -4,13 +4,14 @@ import { IAuthService } from "../../services/interfaces/auth.interfaces";
 import { CustomError, handleError } from "../../utils/customError";
 import { HttpStatusCode } from "../../constants/httpStatusCode";
 import { ResponseMessages } from "../../constants/responseMessages";
+import { inject, injectable } from "tsyringe";
 
 
 
-
+@injectable()
 export class AuthController implements IAuthController {
 
-  constructor(private readonly authService: IAuthService) { }
+  constructor( @inject('IAuthService') private readonly authService: IAuthService) { }
 
   async loginUser(req: Request, res: Response): Promise<void> {
     try {

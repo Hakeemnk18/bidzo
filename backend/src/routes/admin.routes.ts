@@ -6,13 +6,14 @@ import { UserMangementController } from "../controllers/adminController/user.man
 import { authenticate } from "../middileware/authmiddileware";
 import { authorizeRoles } from "../middileware/role.middileware";
 import { isBlockedMiddleware } from "../middileware/isBlocked.middleware";
+import { container } from '../di/container'
 
 
 
 
 const router = Router()
-const adminAuthController = new AdminAuthController(authService)
-const adminUserManagementController = new UserMangementController(userService)
+const adminAuthController = container.resolve(AdminAuthController)
+const adminUserManagementController = container.resolve(UserMangementController)
 
 
 router.post('/login',(req,res)=> adminAuthController.login(req,res))

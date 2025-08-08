@@ -4,11 +4,15 @@ import { IUserManagementService } from "../../services/interfaces/user.managemen
 import { handleError } from "../../utils/customError";
 import { ResponseMessages } from "../../constants/responseMessages";
 import { HttpStatusCode } from "../../constants/httpStatusCode";
+import { inject, injectable } from "tsyringe";
 
 
+
+@injectable()
 export class UserMangementController implements IUserManagement {
 
-    constructor(private readonly userMangementService: IUserManagementService) { }
+    constructor(
+       @inject('IUserManagementService') private readonly userMangementService: IUserManagementService) { }
 
     async getSeller(req: Request, res: Response): Promise<void> {
         

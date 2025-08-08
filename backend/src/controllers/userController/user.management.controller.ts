@@ -4,12 +4,13 @@ import { handleError } from "../../utils/customError";
 import { IUserManagementService } from "../../services/interfaces/user.management.interface";
 import { AuthenticatedRequest } from "../../interfaces/AuthenticatedRequest";
 import { HttpStatusCode } from "../../constants/httpStatusCode";
+import { injectable, inject } from "tsyringe";
 
 
-
+@injectable()
 export class UserManagement implements IUserManagement {
 
-    constructor(private readonly userManagementService : IUserManagementService){}
+    constructor(@inject('IUserManagementService') private readonly userManagementService : IUserManagementService){}
 
     async getUser(req: AuthenticatedRequest, res: Response): Promise<void> {
         

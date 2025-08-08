@@ -2,8 +2,10 @@ import { ReqOTP, VerifyReqOTP } from "../dtos/OTP.dto";
 import OTPModel from "../models/otp.model";
 import { OTP } from "../types/OTP.type";
 import { IOTPRepository } from "./interfaces/otp.repo.interface";
+import { injectable } from "tsyringe";
 
 
+@injectable()
 export class OTPRepository implements IOTPRepository {
 
     async create(otp: ReqOTP): Promise<OTP> {

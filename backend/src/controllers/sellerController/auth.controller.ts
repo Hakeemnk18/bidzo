@@ -5,13 +5,15 @@ import { CustomError, handleError } from "../../utils/customError";
 import { IUserManagementService } from "../../services/interfaces/user.management.interface";
 import { HttpStatusCode } from "../../constants/httpStatusCode";
 import { ResponseMessages } from "../../constants/responseMessages";
+import { inject, injectable } from "tsyringe";
 
 
+@injectable()
 export class SellerAuthController implements ISellerAuthController {
 
     constructor(
-        private readonly authService: IAuthService,
-        private readonly userMangementService: IUserManagementService
+       @inject('IAuthService') private readonly authService: IAuthService,
+       @inject('IUserManagementService') private readonly userMangementService: IUserManagementService
 
     ) { }
     async signup(req: Request, res: Response): Promise<void> {

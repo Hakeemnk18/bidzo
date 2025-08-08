@@ -7,12 +7,14 @@ import { User } from "../types/userType";
 import { ISendEMAIL, sendEmail } from "../utils/send.email";
 import { HttpStatusCode } from "../constants/httpStatusCode";
 import { ResponseMessages } from "../constants/responseMessages";
+import { injectable, inject } from "tsyringe";
 
 
-
+@injectable()
 export class UserMangementService implements IUserManagementService {
 
-    constructor(private readonly userRepo: IUserRepository) { }
+    constructor(
+        @inject('IUserRepository') private readonly userRepo: IUserRepository) { }
 
     async getSeller(getUser: GetUsersDTO): Promise<{ resData: ResGetUser[]; total: number }> {
 
