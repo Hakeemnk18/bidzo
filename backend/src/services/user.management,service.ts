@@ -8,6 +8,8 @@ import { ISendEMAIL, sendEmail } from "../utils/send.email";
 import { HttpStatusCode } from "../constants/httpStatusCode";
 import { ResponseMessages } from "../constants/responseMessages";
 import { injectable, inject } from "tsyringe";
+import { UpdateUserDTO } from "../dtos/editUser.dto";
+import { validateUserUpdate } from "../utils/userValidation";
 
 
 @injectable()
@@ -104,7 +106,7 @@ export class UserMangementService implements IUserManagementService {
 
         console.log("inside service get user profile")
         const user = await this.userRepo.findById(id)
-        console.log(user)
+       
         if (!user) {
             throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
@@ -161,6 +163,16 @@ export class UserMangementService implements IUserManagementService {
 
         }
 
+    }
+
+    async userUpdate(userData: UpdateUserDTO): Promise<void> {
+        validateUserUpdate(userData)
+        const { id, name, phone} = userData
+        const updateData = await this.userRepo.findByidAndUpdate(id, { name, phone })
+        if (updateData!.matchedCount === 0) {
+            throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
+
+        }
     }
 
 

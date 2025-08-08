@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import PublicRoute from "../features/seller/components/PublicRoute";
 import ProtectedRoute from "../features/seller/components/ProtectedRoute";
+import LoadingSpinner from "../features/shared/components/LoadingSpinner"
 
 
 
@@ -8,6 +9,7 @@ const UserLogin = lazy(()=> import('../features/user/pages/Login'))
 const SignupPage = lazy(()=> import('../features/user/pages/SignUpPage'))
 const SellerDashBoardPage = lazy(()=> import('../features/seller/page/SellerdashboardPage'))
 const ReapplyComponent = lazy(()=> import('../features/seller/components/Reapply'))
+const ProfilePage = lazy(()=> import('../features/shared/pages/ProfilePage'))
 
 
 const sellerRoute = [
@@ -44,6 +46,18 @@ const sellerRoute = [
             <ReapplyComponent />
             
         )
+    },
+    {
+        path:'/seller/profile',
+        element:(
+            <ProtectedRoute>
+                <Suspense fallback={< LoadingSpinner />}>
+                    <ProfilePage />
+                </Suspense>
+            </ProtectedRoute>
+           
+            
+        ),
     }
 
 ]
