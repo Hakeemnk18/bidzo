@@ -1,10 +1,9 @@
 import { Router } from 'express';
-import { authService } from '../di/auth.di';
 import { AuthController } from '../controllers/userController/auth.controller';
 import { UserManagement } from '../controllers/userController/user.management.controller';
-import { userService } from '../di/user.di';
 import { AuthenticatedRequest } from '../interfaces/AuthenticatedRequest';
 import { authenticate } from '../middileware/authmiddileware';
+import { container } from '../di/container';
 
 
 
@@ -12,8 +11,8 @@ const router = Router();
 
 
 
-const authController = new AuthController(authService);
-const userController = new UserManagement(userService)
+const authController = container.resolve(AuthController)
+const userController = container.resolve(UserManagement)
 
 
 
@@ -30,3 +29,5 @@ router.get('/profile',
 );
 
 export default router;
+
+

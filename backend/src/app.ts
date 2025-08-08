@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
+import 'reflect-metadata';
 import express from 'express'
 import { connectdb } from './config/db'
 import userRoutes from "./routes/user.routes";

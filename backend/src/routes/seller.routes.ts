@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { authService } from "../di/auth.di";
 import { SellerAuthController } from "../controllers/sellerController/auth.controller";
-import { userService } from "../di/user.di";
+import { container } from'../di/container'
 
-const sellerAuthController = new SellerAuthController (authService, userService)
+
+const sellerAuthController = container.resolve(SellerAuthController)
 
 const router = Router()
 

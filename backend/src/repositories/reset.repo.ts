@@ -1,8 +1,11 @@
 import ResetPasswordModel from "../models/reset.password.model";
 import { ResetPassword } from "../types/reset.password.type";
 import { IResetPasswordRepo } from "./interfaces/reset.password.repo.interface";
+import { injectable } from "tsyringe";
 
 
+
+@injectable()
 export class ResetRepo implements IResetPasswordRepo {
     async create(psd: ResetPassword): Promise<void> {
         ResetPasswordModel.create(psd)

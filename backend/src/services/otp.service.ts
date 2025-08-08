@@ -2,9 +2,14 @@ import { ReqOTP, VerifyReqOTP } from "../dtos/OTP.dto";
 import { IOTPRepository } from "../repositories/interfaces/otp.repo.interface";
 import { OTP } from "../types/OTP.type";
 import { IOTPService } from "./interfaces/otp.interface";
+import { injectable, inject } from 'tsyringe';
 
+
+@injectable()
 export class OTPService implements IOTPService {
-    constructor(private readonly otpRepository: IOTPRepository) {}
+    constructor(
+        @inject('IOTPRepository') private readonly otpRepository: IOTPRepository
+    ) {}
 
     async saveOTP(otp: ReqOTP): Promise<void> {
         await this.otpRepository.create(otp)

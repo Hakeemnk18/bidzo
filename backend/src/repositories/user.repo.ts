@@ -3,7 +3,9 @@ import { IUserRepository } from "./interfaces/user.repo.interface";
 import { User } from "../types/userType";
 import { CreateGoogleUserDTO } from "../dtos/userLogin.dto";
 import { UpdateResult } from "mongoose";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class UserRepository implements IUserRepository {
   async create(user: User): Promise<User> {
     return await UserModel.create(user);
