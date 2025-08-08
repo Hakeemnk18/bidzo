@@ -1,3 +1,4 @@
+import { UpdateUserDTO } from "../../dtos/editUser.dto";
 import { IResProfile, ResGetUser } from "../../dtos/userLogin.dto";
 import { GetUsersDTO } from "../../dtos/userLogin.dto";
 
@@ -8,4 +9,5 @@ export interface IUserManagementService {
     getUserProfile(id: string): Promise<IResProfile>
     sellerreject(id: string, reason: string): Promise<void>
     sellerReapply(id: string, documentUrl: string): Promise<void>
+    userUpdate(userData: UpdateUserDTO): Promise<void>
 }

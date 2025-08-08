@@ -46,3 +46,14 @@ export interface IResGetUserData {
     documentUrl?: string,
     totalPages: number
 }
+
+export interface IResUserProfileData {
+  success: boolean,
+  data?: IUserProfileData
+}
+
+export interface IUserProfileData {
+  name: string,
+  email: string,
+  phoneNumber: string
+}

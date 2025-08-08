@@ -5,6 +5,7 @@ import { IUserManagementService } from "../../services/interfaces/user.managemen
 import { AuthenticatedRequest } from "../../interfaces/AuthenticatedRequest";
 import { HttpStatusCode } from "../../constants/httpStatusCode";
 import { injectable, inject } from "tsyringe";
+import { ResponseMessages } from "../../constants/responseMessages";
 
 
 @injectable()
@@ -19,15 +20,35 @@ export class UserManagement implements IUserManagement {
             console.log("inside get user controller")
             
             const { id } = req.user!
-            console.log("user id",id)
+            
             const userData = await this.userManagementService.getUserProfile(id)
-            console.log(userData)
+            
             res.status(HttpStatusCode.OK).json({
                 success: true,
                 data: userData
             })
         } catch (err) {
             handleError(res, err)
+            console.log("error in get user user controller ", err)
+        }
+    }
+
+    async editUser(req: AuthenticatedRequest, res: Response): Promise<void> {
+        try {
+            console.log("inside edit user ")
+            const { id } = req.user!
+            const { name, phone } = req.body
+
+            await this.userManagementService.userUpdate({id, name, phone})
+
+            res.status(HttpStatusCode.OK).json({
+                success: true,
+                message: ResponseMessages.APPLICATION_SUBMITTED
+            })
+            
+        } catch (err) {
+            handleError(res, err)
+            console.log("error in user edit controlled ", err)
         }
     }
 }

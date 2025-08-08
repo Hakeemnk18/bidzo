@@ -28,6 +28,11 @@ router.get('/profile',
   (req , res) => userController.getUser(req as AuthenticatedRequest, res)
 );
 
+router.patch('/profile',
+  authenticate,
+  (req, res)=> userController.editUser(req as AuthenticatedRequest, res)
+)
+
 export default router;
 
 
