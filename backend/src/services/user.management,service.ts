@@ -10,6 +10,7 @@ import { ResponseMessages } from "../constants/responseMessages";
 import { injectable, inject } from "tsyringe";
 import { UpdateUserDTO } from "../dtos/editUser.dto";
 import { validateUserUpdate } from "../utils/userValidation";
+import { comparePassword, hashPassword } from "../utils/hash";
 
 
 @injectable()
@@ -172,6 +173,26 @@ export class UserMangementService implements IUserManagementService {
         if (updateData!.matchedCount === 0) {
             throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
 
+        }
+    }
+
+    async passwordMatch(password: string, _id: string): Promise<boolean> {
+
+        
+        const user = await this.userRepo.findOne({_id})
+        if (!user) return false;
+        
+        const isMatch = await comparePassword(password, user?.password!)
+        return isMatch
+    }
+
+
+    async changePassword(id: string, password: string): Promise<void> {
+        const hashPsd = await hashPassword(password)
+        const user = await this.userRepo.resetPassword(id, hashPsd)
+
+        if(!user){
+            throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
     }
 

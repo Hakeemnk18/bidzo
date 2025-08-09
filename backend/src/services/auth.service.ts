@@ -234,8 +234,10 @@ export class AuthService implements IAuthService {
   async fogetPassword(token: string, password: string): Promise<string> {
 
     const curToken = await this.resetRepo.validate(token)
-
+    
+    
     if(!curToken){
+     
       throw new CustomError(ResponseMessages.BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
     }
     await this.resetRepo.markUsed(curToken.id!)
