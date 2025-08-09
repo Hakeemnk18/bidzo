@@ -23,6 +23,7 @@ router.post('/send-otp', (req,res)=> authController.sendOTP(req,res))
 router.post('/verify-otp', (req,res)=> authController.verifyOTP(req,res))
 router.post('/email',(req,res)=> authController.verifyEmail(req,res))
 router.post('/forgot-password',(req,res)=> authController.forgotPassword(req,res))
+
 router.get('/profile', 
   authenticate,
   (req , res) => userController.getUser(req as AuthenticatedRequest, res)
@@ -31,6 +32,16 @@ router.get('/profile',
 router.patch('/profile',
   authenticate,
   (req, res)=> userController.editUser(req as AuthenticatedRequest, res)
+)
+
+router.post('/check-password',
+  authenticate,
+  (req, res)=> userController.checkPassword(req as AuthenticatedRequest, res)
+)
+
+router.patch('/password',
+  authenticate,
+  (req, res)=> userController.changePassword(req as AuthenticatedRequest, res)
 )
 
 export default router;

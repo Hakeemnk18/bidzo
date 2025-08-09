@@ -44,4 +44,8 @@ export class UserRepository implements IUserRepository {
   async resetPassword(id: string,password: string): Promise<User | null> {
     return await UserModel.findOneAndUpdate({ _id: id }, { $set:{password: password}}, { new: true })
   }
+
+  async findOne(query: Record<string, any>): Promise<User | null> {
+    return await UserModel.findOne(query)
+  }
 }

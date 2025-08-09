@@ -13,4 +13,5 @@ export interface IUserRepository {
   findByidAndUpdate(id: string,query: Record< string, any >): Promise<UpdateResult>
   findById(id: string): Promise<User | null >
   resetPassword(id: string, password: string): Promise<User | null>
+  findOne(query: Record<string, any>): Promise<User | null>
 }

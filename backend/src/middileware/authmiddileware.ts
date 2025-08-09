@@ -9,6 +9,7 @@ interface AuthRequest extends Request {
 
 export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
+  console.log("inside authentic")
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(HttpStatusCode.UNAUTHORIZED).json({ message: ResponseMessages.UNAUTHORIZED });

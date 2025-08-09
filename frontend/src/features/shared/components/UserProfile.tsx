@@ -1,11 +1,10 @@
 import { FaEdit } from 'react-icons/fa';
-import { useRouterRole } from '../../../hooks/useRouterRole';
 import { useEffect, useState } from 'react';
 import instance from '../../../api/axios';
-import { toast } from 'react-toastify/unstyled';
 import type { IResUserProfileData, IUserProfileData } from '../../../types/user.types';
 import { showErrorToast } from '../../../utils/showErrorToast';
 import ProfileEdit from './modal/UserProfileEditModal';
+import ChangePassword from './modal/ChangePsd';
 
 
 
@@ -16,6 +15,8 @@ const Profile = () => {
   const [userData, setUserData] = useState<IUserProfileData | null>(null)
   const [isProfileEdit, setIsProfileedit] = useState(false)
   const [isUpdated, setIsupdated] = useState(true)
+  const [isChangePsd, setIsChangePsd] = useState(false)
+
   const fetchData = async () => {
     try {
       const res = await instance.get<IResUserProfileData>('/user/profile')
@@ -64,11 +65,21 @@ const Profile = () => {
             <p className="text-lg font-semibold mb-4">{userData?.phoneNumber}</p>
           </div>
 
-          <button className=" absolute bottom-8 right-8 self-start mt-8 px-6 py-2 bg-[#4338ca] text-white rounded-full hover:bg-[#3730a3] transition duration-200">
+          <button 
+          onClick={()=> setIsChangePsd(true)}
+          className=" absolute bottom-8 right-8 self-start mt-8 px-6 py-2 bg-[#4338ca] text-white rounded-full hover:bg-[#3730a3] transition duration-200">
             change password
           </button>
         </div>
       </div>
+      {
+        isChangePsd &&
+        <ChangePassword 
+        onClose={()=> setIsChangePsd(false)}
+        isOpen={isChangePsd}
+        />
+      }
+
       { isProfileEdit && 
        <ProfileEdit 
         updated={()=> setIsupdated(!isUpdated)}
