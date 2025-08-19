@@ -14,6 +14,10 @@ import { IResetPasswordRepo } from '../repositories/interfaces/reset.password.re
 import { ResetRepo } from '../repositories/reset.repo';
 import { IUserManagementService } from '../services/interfaces/user.management.interface';
 import { UserMangementService } from '../services/user.management,service';
+import { IPlanRepo } from '../repositories/interfaces/plan.repo.interface';
+import { PlanRepository } from '../repositories/plan.repo';
+import { IPlanService } from '../services/interfaces/plan.interface';
+import { PlanService } from '../services/plan.service';
 
 container.register<IOTPRepository>('IOTPRepository', {useClass: OTPRepository})
 container.register<IOTPService>('IOTPService', { useClass: OTPService})
@@ -24,8 +28,11 @@ container.register<IJWTService>('IJWTService', { useClass: JWTService})
 container.register<IResetPasswordRepo>('IResetPasswordRepo', { useClass: ResetRepo})
 
 container.register<IAuthService>('IAuthService', { useClass: AuthService})
-
 container.register<IUserManagementService>('IUserManagementService', { useClass: UserMangementService})
+
+container.register<IPlanRepo>('IPlanRepo', { useClass: PlanRepository})
+container.register<IPlanService>('IPlanService', { useClass: PlanService})
+
 
 
 

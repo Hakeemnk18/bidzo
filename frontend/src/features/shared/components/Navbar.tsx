@@ -19,27 +19,39 @@ const Navbar = () => {
         first: "Home",
         second: "Auction",
         third: "Contact",
+        fourth: "",
+        fifth: "",
         firstUrl: "#",
         secondUrl: "#",
-        thirdUrl: "#"
+        thirdUrl: "#",
+        fourthUrl: "",
+        fifthUrl: ""
       };
     case "seller":
       return {
         first: "DashBoard",
         second: "Auction",
         third: "Contact",
+        fourth: "",
+        fifth: "",
         firstUrl: "/seller/dashboard",
         secondUrl: "#",
-        thirdUrl: "#"
+        thirdUrl: "#",
+        fourthUrl: "",
+        fifthUrl: ""
       };
     case "admin":
       return {
         first: "DashBoard",
         second: "Sellers",
         third: "Users",
+        fourth: "Plans",
+        fifth: "Auctions",
         firstUrl: "/admin/dashboard",
         secondUrl: '/admin/sellerManagement',
-        thirdUrl: '/admin/userManagement'
+        thirdUrl: '/admin/userManagement',
+        fourthUrl: "",
+        fifthUrl: ""
       };
     default:
       return {
@@ -55,7 +67,7 @@ const Navbar = () => {
 
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 p-4 bg-transparent backdrop-blur-md">
+    <nav className="fixed top-0 left-0 right-0 z-50 p-4 bg-transparent backdrop-blur-md ">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo/Brand */}
         <div className="text-white text-2xl font-bold cursor-pointer">
@@ -73,6 +85,17 @@ const Navbar = () => {
           <Link to={navItems.thirdUrl} className="text-white hover:text-gray-300 transition duration-300">
             { navItems.third }
           </Link>
+          { role === 'admin' && 
+          <>
+            <Link to={navItems.secondUrl} className="text-white hover:text-gray-300 transition duration-300">
+            { navItems.fourth }
+          </Link>
+          <Link to={navItems.thirdUrl} className="text-white hover:text-gray-300 transition duration-300">
+            { navItems.fifth }
+          </Link>
+          </>
+            
+          }
         </div>
 
         {/* User Icon */}
