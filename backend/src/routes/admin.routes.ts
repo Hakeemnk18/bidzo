@@ -7,6 +7,7 @@ import { authenticate } from "../middileware/authmiddileware";
 import { authorizeRoles } from "../middileware/role.middileware";
 import { isBlockedMiddleware } from "../middileware/isBlocked.middleware";
 import { container } from '../di/container'
+import { PlanMangementController } from "../controllers/adminController/plan.management";
 
 
 
@@ -14,6 +15,7 @@ import { container } from '../di/container'
 const router = Router()
 const adminAuthController = container.resolve(AdminAuthController)
 const adminUserManagementController = container.resolve(UserMangementController)
+const planManagementController = container.resolve(PlanMangementController)
 
 
 router.post('/login',(req,res)=> adminAuthController.login(req,res))
@@ -51,6 +53,10 @@ router.patch('/seller/management/:id/reject',
     authenticate,
     authorizeRoles('admin'),
     (req, res)=> adminUserManagementController.rejectSeller(req,res)
+)
+
+router.post('/plan',
+    (req, res)=> planManagementController.createPlan(req,res)
 )
 
 

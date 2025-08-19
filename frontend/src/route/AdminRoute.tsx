@@ -8,6 +8,8 @@ const DashBoardPage = lazy(()=> import('../features/admin/pages/AdminDashboardPa
 const AuctionTable = lazy(()=> import('../features/admin/components/ActionTable'))
 const PublicRoute = lazy(()=> import("../features/admin/components/PublicRoutes"))
 const ProtectedRoute = lazy(()=> import("../features/admin/components/ProtectedRoute"))
+const PlanTable = lazy(()=> import("../features/admin/components/plan/PlanTable"))
+const PlanCreatePage = lazy(()=> import('../features/admin/components/plan/CreatePlanForm'))
 
 
 
@@ -58,6 +60,20 @@ const adminRoute = [
             </ProtectedRoute>
             
             
+        )
+    },
+    {
+        path: '/admin/planManagement',
+        element:( 
+                <PlanTable role={'user'}/>
+
+        )
+    },
+    {
+        path: '/admin/addPlan',
+        element:( 
+                <PlanCreatePage id={null}/>
+
         )
     },
 
