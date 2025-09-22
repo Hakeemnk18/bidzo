@@ -27,7 +27,7 @@ app.use((err:any, req: Request, res: Response, next: NextFunction) => {
   handleError(res, err);
 });
 
-app.listen(process.env.PORT)
+app.listen(process.env.PORT,()=> console.log('server started at ',process.env.PORT))
 
 
 

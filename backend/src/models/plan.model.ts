@@ -1,20 +1,35 @@
 // models/Plan.ts
 import mongoose, { Document, Schema } from "mongoose";
+import { IFeature } from "../dtos/plan.dto";
 
-export interface IPlan extends Document {
+
+
+
+const featureSchema = new Schema<IFeature>(
+  {
+    feature: { type: String, required: true },
+    type: { type: String, required: true },
+    value: { type: Number, required: true },
+  },
+  { _id: false } 
+);
+
+interface IPlan extends Document {
     planName: string;
     yearlyAmount: number;
     monthlyAmount: number;
     target: "user" | "seller";
-    features: string[]
+    features: IFeature[]
     isDeleted: boolean;
 }
+
 
 const planSchema = new Schema<IPlan>(
     {
         planName: {
             type: String,
             required: true,
+            set: (v: string) => v.charAt(0).toUpperCase() + v.slice(1).toLowerCase()
         },
         yearlyAmount: {
             type: Number,
@@ -30,7 +45,7 @@ const planSchema = new Schema<IPlan>(
             required: true,
         },
         features: {
-            type: [String], 
+            type: [featureSchema], 
             required: true,
         },
         isDeleted: {

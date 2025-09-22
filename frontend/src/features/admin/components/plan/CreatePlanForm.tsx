@@ -39,12 +39,12 @@ const CreatePlanForm = ({ id }: IPlanFormProp) => {
 
     const featureConfig = {
         user: [
-            { value: "liveAuction", label: "Live Auction", allowedTypes: ["count"] },
-            { value: "priceDiscount", label: "Price Discount", allowedTypes: ["flat", "percentage"] },
+            { value: "autoBid", label: "Auto Bid", allowedTypes: ["count"] },
+            { value: "bidDiscount", label: "Bid Discount", allowedTypes: ["flat", "percentage"] },
         ],
         seller: [
-            { value: "bulkUpload", label: "Bulk Upload", allowedTypes: ["count"] },
-            { value: "featuredListing", label: "Featured Listing", allowedTypes: ["flat"] },
+            { value: "autoliveAuction", label: "Auto Live Auction", allowedTypes: ["count"] },
+            { value: "auctionDiscount", label: "Auction Discount", allowedTypes: ["flat", "percentage"] },
         ],
     };
 
@@ -119,10 +119,12 @@ const CreatePlanForm = ({ id }: IPlanFormProp) => {
             try {
                 const res = await instance.post<ApiResponse>('/admin/plan',{
                     ...formData,
-                    fetures: rows
+                    features: rows
                 } )
                 if (res.data.success) {
+
                     toast("form submitted")
+                    navigate('/admin/planManagement')
                 }
             } catch (error: any) {
                 console.log("error in plan submit form ", error)

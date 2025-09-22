@@ -1,8 +1,8 @@
 
-import { CreatePlanDto } from "../../dtos/plan.dto";
+import { ICreatePlanDto } from "../../dtos/plan.dto";
 
 
 
 export interface IPlanService {
-    creat(data: CreatePlanDto): Promise<void>
+    creat(data: ICreatePlanDto): Promise<void>
 }
