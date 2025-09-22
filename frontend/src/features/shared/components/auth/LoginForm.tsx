@@ -134,8 +134,10 @@ const LoginForm = () => {
             >
                 Submit
             </button>
-
-            <GoogleLogin />
+            {
+                role === 'user' && <GoogleLogin />
+            }
+            
 
             <div className="flex items-center space-x-1 text-sm">
                 <p className="text-gray-500">You don't have account?</p>

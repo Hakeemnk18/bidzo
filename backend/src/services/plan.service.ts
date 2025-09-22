@@ -1,4 +1,4 @@
-import { CreatePlanDto } from "../dtos/plan.dto";
+import { ICreatePlanDto } from "../dtos/plan.dto";
 import { IPlanRepo } from "../repositories/interfaces/plan.repo.interface";
 import { IPlanService } from "./interfaces/plan.interface";
 import { injectable,inject } from "tsyringe";
@@ -12,7 +12,7 @@ export class PlanService implements IPlanService {
         @inject('IPlanRepo') private readonly planRepo: IPlanRepo
     ){}
 
-    async creat(data: CreatePlanDto): Promise<void> {
+    async creat(data: ICreatePlanDto): Promise<void> {
         await this.planRepo.createPlan(data)
     }
 }

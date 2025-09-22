@@ -36,7 +36,7 @@ const GoogleLogin = () => {
                         );
 
                         if (resData.success) {
-                            
+                            console.log("google successed")
                             toast(resData.message);
                             const userData: LoginResponse = resData.data!;
                             localStorage.setItem("authToken", userData.token);
@@ -55,6 +55,7 @@ const GoogleLogin = () => {
                         if (error.response && error.response.data?.message) {
                             toast.error(error.response.data.message);
                         } else {
+                            console.log(error)
                             toast.error("Failed ");
                         }
                     }

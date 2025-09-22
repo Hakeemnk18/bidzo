@@ -5,7 +5,8 @@ import { IPlanService } from "../../services/interfaces/plan.interface";
 import { HttpStatusCode } from "../../constants/httpStatusCode";
 import { success } from "zod";
 import { handleError } from "../../utils/customError";
-import { CreatePlanDto } from "../../dtos/plan.dto";
+import { ICreatePlanDto } from "../../dtos/plan.dto";
+import { PlanMapper } from "../../mappers/plan.mapper";
 
 
 @injectable()
@@ -17,23 +18,15 @@ export class PlanMangementController implements IPlanController {
         try {
             console.log("inside plan create controller")
             console.log(req.body)
-            const { planName, yearlyAmount, monthlyAmount, target, features } = req.body
-            const arrFeatures = features.split(',')
-            const planData: CreatePlanDto = {
-                planName: planName,
-                yearlyAmount: parseInt(yearlyAmount),
-                monthlyAmount: parseInt(monthlyAmount),
-                target: target,
-                features: arrFeatures
-            }
-
+            const planData = PlanMapper.toCreatePlanDTO(req.body)
+            console.log(planData)
             await this.planService.creat(planData)
 
             res.status(HttpStatusCode.OK).json({
                 success: true
             })
         } catch (err) {
-            console.log("error in plana create contoller")
+            console.log("error in plane create contoller ",err)
             handleError(res, err)
         }
     }

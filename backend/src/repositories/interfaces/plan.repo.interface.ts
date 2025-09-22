@@ -1,6 +1,6 @@
-import { CreatePlanDto } from "../../dtos/plan.dto";
+import { ICreatePlanDto } from "../../dtos/plan.dto";
 
 
 export interface IPlanRepo {
-    createPlan(data: CreatePlanDto): Promise<void>
+    createPlan(data: ICreatePlanDto): Promise<void>
 }

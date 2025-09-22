@@ -15,18 +15,15 @@ const PlanCreatePage = lazy(()=> import('../features/admin/components/plan/Creat
 
 
 
+
 const adminRoute = [
+    
     {
         path: '/admin/login',
         element:(
             <PublicRoute>
                 <UserLogin />
             </PublicRoute>
-                
-            
-                
-            
-            
         )
     },
     {
@@ -35,10 +32,7 @@ const adminRoute = [
             <ProtectedRoute >
                 <DashBoardPage />
 
-            </ProtectedRoute>
-                
-            
-            
+            </ProtectedRoute>   
         )
     },
     {
