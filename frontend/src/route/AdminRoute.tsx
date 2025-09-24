@@ -59,7 +59,7 @@ const adminRoute = [
     {
         path: '/admin/planManagement',
         element:( 
-                <PlanTable role={'user'}/>
+                <PlanTable />
 
         )
     },

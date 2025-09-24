@@ -1,6 +1,9 @@
-import { ICreatePlanDto } from "../../dtos/plan.dto";
+import { ICreatePlanDto, IFetchAllDoc } from "../../dtos/plan.dto";
+import { Plan } from "../../types/plan.type";
 
 
 export interface IPlanRepo {
     createPlan(data: ICreatePlanDto): Promise<void>
+    findAllPlans(data: IFetchAllDoc): Promise<Plan[]>
+    countDocument(query: Record<string, any>): Promise<number>
 }
