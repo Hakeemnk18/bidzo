@@ -4,7 +4,7 @@ import { Plan } from "../types/plan.type";
 
 export class PlanMapper {
 
-    static toCreatePlanDTO (plan:any): ICreatePlanDto{
+    static toCreatePlanDTO(plan: any): ICreatePlanDto {
         return {
             planName: plan.planName,
             yearlyAmount: plan.yearlyAmount,
@@ -14,11 +14,11 @@ export class PlanMapper {
         }
     }
 
-    static toPlanResponseDTO (plan: Plan[]): IResGetPlan[] {
+    static toPlanResponseDTO(plan: Plan[]): IResGetPlan[] {
         const plans: IResGetPlan[] = []
 
-        plan.forEach((item: Plan)=>{
-            plans.push({ 
+        plan.forEach((item: Plan) => {
+            plans.push({
                 id: item.id,
                 planName: item.planName,
                 monthlyAmount: item.monthlyAmount,
@@ -26,9 +26,21 @@ export class PlanMapper {
                 target: item.target,
                 features: item.features,
                 isDeleted: item.isDeleted
-             })
+            })
         })
 
         return plans
+    }
+
+    static toGetPlanResDTO(plan: Plan): IResGetPlan {
+        return {
+            id: plan.id,
+            planName: plan.planName,
+            monthlyAmount: plan.monthlyAmount,
+            yearlyAmount: plan.yearlyAmount,
+            target: plan.target,
+            features: plan.features,
+            isDeleted: plan.isDeleted
+        }
     }
 }

@@ -66,4 +66,20 @@ export class PlanService implements IPlanService {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
     }
+
+    async getPlan(id: string): Promise<Plan> {
+        const plan = await this.planRepo.findById(id)
+
+        if(!plan){
+            throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
+        }
+        return plan
+    }
+
+    async editPlan(id: string, data: ICreatePlanDto): Promise<void> {
+        const updateResult = await this.planRepo.updatePlan(id, data)
+        if(updateResult.matchedCount === 0){
+            throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
+        }
+    }
 }

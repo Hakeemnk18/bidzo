@@ -10,6 +10,7 @@ const PublicRoute = lazy(()=> import("../features/admin/components/PublicRoutes"
 const ProtectedRoute = lazy(()=> import("../features/admin/components/ProtectedRoute"))
 const PlanTable = lazy(()=> import("../features/admin/components/plan/PlanTable"))
 const PlanCreatePage = lazy(()=> import('../features/admin/components/plan/CreatePlanForm'))
+const PlanEditPage = lazy(()=> import('../features/admin/components/plan/EditPlan'))
 
 
 
@@ -67,6 +68,13 @@ const adminRoute = [
         path: '/admin/addPlan',
         element:( 
                 <PlanCreatePage id={null}/>
+
+        )
+    },
+    {
+        path: '/admin/editPlan',
+        element:( 
+                <PlanEditPage />
 
         )
     },

@@ -55,6 +55,8 @@ router.patch('/seller/management/:id/reject',
     (req, res)=> adminUserManagementController.rejectSeller(req,res)
 )
 
+
+//plan
 router.post('/plan',
     (req, res)=> planManagementController.createPlan(req,res)
 )
@@ -65,6 +67,14 @@ router.get('/plan/management',
 
 router.patch('/plan',
     (req, res)=> planManagementController.blockAndUnblockPlan(req,res)
+)
+
+router.get('/plan/:id',
+    (req,res)=> planManagementController.getPlan(req,res)
+)
+
+router.put('/plan',
+    (req,res)=> planManagementController.editPlan(req,res)
 )
 
 
