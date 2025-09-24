@@ -25,3 +25,21 @@ export interface IFeatureRow {
     type: FeatureType | ""; 
     value: number | "";     
 }
+
+export interface IPlanData {
+    id: string
+    planName: string,
+    yearlyAmount: string,
+    monthlyAmount: string,
+    target: TargetType,
+    isDeleted: boolean,
+    features: IFeaturesOptions[]
+}
+
+export interface IResGetPlanData {
+    success: boolean
+    data: IPlanData[],
+    total: number,
+    currentPage: number,
+    totalPages: number
+}

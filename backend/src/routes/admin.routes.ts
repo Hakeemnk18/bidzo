@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { authService } from "../di/auth.di";
-import { userService } from "../di/user.di";
+// import { authService } from "../di/auth.di";
+//import { userService } from "../di/user.di";
 import { AdminAuthController } from "../controllers/adminController/auth.controller";
 import { UserMangementController } from "../controllers/adminController/user.management.controller";
 import { authenticate } from "../middileware/authmiddileware";
@@ -57,6 +57,10 @@ router.patch('/seller/management/:id/reject',
 
 router.post('/plan',
     (req, res)=> planManagementController.createPlan(req,res)
+)
+
+router.get('/plan/management',
+    (req, res)=> planManagementController.getPlans(req,res)
 )
 
 
