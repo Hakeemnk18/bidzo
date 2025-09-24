@@ -60,4 +60,18 @@ export class PlanMangementController implements IPlanController {
         }
 
     }
+
+    async blockAndUnblockPlan(req: Request, res: Response): Promise<void> {
+        try {
+            const { planId } = req.body
+            await this.planService.blockAndUnblockPlan(planId)
+            res.status(HttpStatusCode.OK).json({
+                success: true,
+                message: "updated successfuly"
+            })
+        } catch (err) {
+            console.log("error in get remove plan contoller ", err)
+            handleError(res, err)
+        }
+    }
 }

@@ -23,14 +23,11 @@ const PlanTable = () => {
     const [data, setData] = useState<IPlanData[]>([])
     const [totalPages, setTotalPages] = useState(0)
     const [search, setSearch] = useState('')
-    const [userId, setUserId] = useState<string | null>(null)
+    const [planId, setPlanId] = useState<string | null>(null)
     const [isConfirmModal, setIsConfirmModal] = useState(false)
     const [isBlocked, setIsBlocked] = useState<boolean>(true)
     const [isFeatureModal, setIsFeatureModal] = useState(false)
-    const [filters, setFilters] = useState<Record<string, any>>({
-        isBlocked: '',
-        isVerified: ''
-    })
+    const [filters, setFilters] = useState<Record<string, any>>({})
     const [showFilters, setShowFilters] = useState(false);
     const [showSort, setShowSort] = useState(false);
     const [sort, setSort] = useState('')
@@ -101,9 +98,9 @@ const PlanTable = () => {
         try {
 
             const res = await instance.patch<ApiResponse>(
-                '/admin/user/management',
+                '/admin/plan',
                 {
-                    userId,
+                    planId,
                 },
             );
 
@@ -237,11 +234,21 @@ const PlanTable = () => {
                                         {
                                             item.isDeleted ?
                                                 <button
-                                                    className="ml-5"
+                                                    onClick={()=>{
+                                                        setIsConfirmModal(true)
+                                                        setPlanId(item.id)
+                                                        setIsBlocked(false)
+                                                    } }
+                                                    className="mr-5"
                                                 >
                                                     <FaUnlock className="text-red-400 cursor-pointer" />
                                                 </button> :
                                                 <button
+                                                    onClick={()=>{
+                                                        setIsConfirmModal(true)
+                                                        setPlanId(item.id)
+                                                        setIsBlocked(true)
+                                                    } }
                                                     className="mr-5"
                                                 >
                                                     <FaTrash className="text-red-400 cursor-pointer" />
@@ -255,6 +262,15 @@ const PlanTable = () => {
                                         </button>
                                     </td>
 
+                                        {/* confirm modal */}
+                                        {
+                                            isConfirmModal && <ConfirmModal
+                                                isOpen={isConfirmModal}
+                                                onConfirm={handleBlockAndUnblock}
+                                                onClose={() => setIsConfirmModal(false)}
+                                                message={isBlocked ? "Do You want block this plan" : "Do You want unblock this plan"}
+                                            />
+                                        }
 
 
                                 </tr>
