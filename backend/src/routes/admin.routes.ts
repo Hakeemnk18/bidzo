@@ -63,6 +63,10 @@ router.get('/plan/management',
     (req, res)=> planManagementController.getPlans(req,res)
 )
 
+router.patch('/plan',
+    (req, res)=> planManagementController.blockAndUnblockPlan(req,res)
+)
+
 
 
 

@@ -1,6 +1,9 @@
+import { HttpStatusCode } from "../constants/httpStatusCode";
+import { ResponseMessages } from "../constants/responseMessages";
 import { ICreatePlanDto, IGetAllPlanDTO } from "../dtos/plan.dto";
 import { IPlanRepo } from "../repositories/interfaces/plan.repo.interface";
 import { Plan } from "../types/plan.type";
+import { CustomError } from "../utils/customError";
 import { IPlanService } from "./interfaces/plan.interface";
 import { injectable, inject } from "tsyringe";
 
@@ -44,18 +47,23 @@ export class PlanService implements IPlanService {
                 sort = {};
             }
         }
-
         if (Object.keys(filters).length !== 0) {
             for (let key in filters) {
                 query[key] = filters[key]
             }
         }
-        
-
         const [resData, total] = await Promise.all([
             this.planRepo.findAllPlans({ query, sort, limit, page }),
             this.planRepo.countDocument(query)
         ])
         return { resData, total }
+    }
+
+    async blockAndUnblockPlan(id: string): Promise<void> {
+        const plan = await this.planRepo.findById(id)
+        const updateResult = await this.planRepo.updatePlan(id, { isDeleted: !plan?.isDeleted})
+        if(updateResult.matchedCount === 0){
+            throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
+        }
     }
 }

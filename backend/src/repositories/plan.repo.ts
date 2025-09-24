@@ -1,3 +1,4 @@
+import { UpdateResult } from "mongoose";
 import { ICreatePlanDto, IFetchAllDoc } from "../dtos/plan.dto";
 import PlanModel from "../models/plan.model";
 import { Plan } from "../types/plan.type";
@@ -19,6 +20,14 @@ export class PlanRepository implements IPlanRepo {
 
     async countDocument(query: Record<string, any>): Promise<number> {
         return await PlanModel.countDocuments(query)
+    }
+
+    async updatePlan(id: string,query: Record<string, any>): Promise<UpdateResult>{
+        return await PlanModel.updateOne({_id: id},query)
+    }
+
+    async findById(id: string): Promise<Plan | null> {
+        return await PlanModel.findById(id)
     }
     
 }

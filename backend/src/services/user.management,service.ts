@@ -81,10 +81,10 @@ export class UserMangementService implements IUserManagementService {
         }
         let updateData
         if (field === 'isBlocked') {
-            console.log("inside is blocked")
+            
             updateData = await this.userRepo.findByidAndUpdate(id, { isBlocked: !user.isBlocked })
         } else if (field === 'isVerified') {
-            console.log("inside is verified")
+            
             updateData = await this.userRepo.findByidAndUpdate(id, { isVerified: "approved" })
             const sendMail: ISendEMAIL = {
                 email: user.email,
