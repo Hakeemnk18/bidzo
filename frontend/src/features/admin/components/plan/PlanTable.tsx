@@ -10,6 +10,7 @@ import ConfirmModal from "../../../shared/components/modal/ConfirmationModal";
 import instance from "../../../../api/axios";
 import type { IFeaturesOptions, IPlanData, IResGetPlanData } from "../../../../types/plan,types";
 import FeatureModal from "../modal/planFeatureModal";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -32,7 +33,7 @@ const PlanTable = () => {
     const [showSort, setShowSort] = useState(false);
     const [sort, setSort] = useState('')
     const [currentFeatures, setCurrentFeatures] = useState<IFeaturesOptions[] | []>([])
-
+    const navigate = useNavigate()
     const sortOptions = [
         { value: '', label: 'All' },
         { value: 'A-Z', label: 'A-Z' },
@@ -84,9 +85,9 @@ const PlanTable = () => {
             if (error.response && error.response.data?.message) {
                 toast.error(error.response.data.message);
             } else {
-                toast.error("Failed to fetch user data");
+                toast.error("Failed to fetch plan data");
             }
-            console.log("error in admin user table ", error)
+            console.log("error in admin plan table ", error)
         }
 
     }
@@ -138,7 +139,9 @@ const PlanTable = () => {
     }, [currentPage, search, sort, filters])
 
 
-
+    const handleEdit = (planId: string) => {
+        navigate(`/admin/editPlan?id=${planId}`)
+    }
 
 
     return (
@@ -256,7 +259,7 @@ const PlanTable = () => {
 
                                         }
                                         <button
-
+                                            onClick={()=> handleEdit(item.id)}
                                         >
                                             <FaEdit className="text-blue-400 cursor-pointer text-lg" />
                                         </button>

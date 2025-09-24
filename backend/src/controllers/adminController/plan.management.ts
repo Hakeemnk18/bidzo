@@ -5,9 +5,10 @@ import { IPlanService } from "../../services/interfaces/plan.interface";
 import { HttpStatusCode } from "../../constants/httpStatusCode";
 import { success } from "zod";
 import { handleError } from "../../utils/customError";
-import { ICreatePlanDto } from "../../dtos/plan.dto";
+import { ICreatePlanDto, IResGetPlan } from "../../dtos/plan.dto";
 import { PlanMapper } from "../../mappers/plan.mapper";
 import { buildFilters } from "../../utils/buildFilters";
+import { ResponseMessages } from "../../constants/responseMessages";
 
 
 @injectable()
@@ -67,10 +68,48 @@ export class PlanMangementController implements IPlanController {
             await this.planService.blockAndUnblockPlan(planId)
             res.status(HttpStatusCode.OK).json({
                 success: true,
-                message: "updated successfuly"
+                message: ResponseMessages.SUCCESS
             })
         } catch (err) {
-            console.log("error in get remove plan contoller ", err)
+            console.log("error in  remove plan contoller ", err)
+            handleError(res, err)
+        }
+    }
+
+    async getPlan(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params
+            const plan = await this.planService.getPlan(id)
+            const data: IResGetPlan = PlanMapper.toGetPlanResDTO(plan)
+            res.status(HttpStatusCode.OK).json({
+                success: true,
+                message: ResponseMessages.SUCCESS,
+                data 
+            })
+        } catch (err) {
+            console.log("error in get one plan contoller ", err)
+            handleError(res, err)
+        }
+
+    }
+
+    async editPlan(req: Request, res: Response): Promise<void> {
+        try {
+            console.log("inside plan edit controller")
+
+            const planData = PlanMapper.toCreatePlanDTO(req.body)
+            const { planId } = req.body
+            
+
+            await this.planService.editPlan(planId,planData)
+
+            res.status(HttpStatusCode.OK).json({
+                success: true,
+                message: ResponseMessages.UPDATED
+
+            })
+        } catch (err) {
+            console.log("error in plane create contoller ", err)
             handleError(res, err)
         }
     }
