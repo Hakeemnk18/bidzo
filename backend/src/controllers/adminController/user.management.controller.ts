@@ -100,7 +100,7 @@ export class UserMangementController implements IUserManagement {
 
     async blockAndUnblock(req: Request, res: Response): Promise<void> {
         try {
-            console.log("inside block and unblock")
+            
             const { userId } = req.body
             
             await this.userMangementService.blockAndUnBlock(userId, "isBlocked")
@@ -118,7 +118,7 @@ export class UserMangementController implements IUserManagement {
 
     async approveSeller(req: Request, res: Response): Promise<void> {
          try {
-            console.log("inside block and unblock")
+            
 
             const { id } = req.params
             await this.userMangementService.blockAndUnBlock(id, "isVerified")
@@ -136,7 +136,7 @@ export class UserMangementController implements IUserManagement {
 
     async rejectSeller(req: Request, res: Response): Promise<void> {
         try {
-            console.log("inside reject seller")
+            
 
             const { id } = req.params
             const { reason } = req.body

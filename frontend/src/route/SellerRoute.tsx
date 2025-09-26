@@ -60,14 +60,14 @@ const sellerRoute = [
             
         ),
     },
-    {
-        path:'/seller/notification',
-        element:(
-            <NotificationPage/>
+    // {
+    //     path:'/seller/notification',
+    //     element:(
+    //         <NotificationPage/>
            
             
-        ),
-    }
+    //     ),
+    // }
 
 ]
 

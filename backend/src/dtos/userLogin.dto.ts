@@ -31,6 +31,7 @@ export interface UserLoginDTO {
 export interface UserLoginResponseDTO {
   name: string;
   role: "user" | "admin" | "seller";
+  id: string
   token: string;
 }
 
