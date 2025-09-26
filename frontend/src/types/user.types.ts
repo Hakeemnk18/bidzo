@@ -2,6 +2,7 @@ export interface LoginResponse {
   name: string;
   role: 'admin' | 'user' | 'seller';
   token: string;
+  id: string
 }
 
 export interface GoogleLoginResponse {
@@ -11,6 +12,7 @@ export interface GoogleLoginResponse {
     name: string;
     role: 'admin' | 'user' | 'seller';
     token: string;
+    id: string
   };
   error?: string;
 }

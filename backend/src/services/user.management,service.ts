@@ -17,6 +17,7 @@ import { ICreateNotficationDTO } from "../dtos/notification.dto";
 import { io } from "../app";
 
 
+
 @injectable()
 export class UserMangementService implements IUserManagementService {
 
@@ -111,7 +112,7 @@ export class UserMangementService implements IUserManagementService {
 
     async getUserProfile(id: string): Promise<IResProfile> {
 
-        console.log("inside service get user profile")
+        
         const user = await this.userRepo.findById(id)
 
         if (!user) {
@@ -129,7 +130,7 @@ export class UserMangementService implements IUserManagementService {
     }
 
     async sellerreject(id: string, reason: string): Promise<void> {
-        console.log("inside reject seller service")
+       
         const user = await this.userRepo.findById(id)
         if (!user) {
             throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
@@ -184,12 +185,16 @@ export class UserMangementService implements IUserManagementService {
 
     async userUpdate(userData: UpdateUserDTO): Promise<void> {
         validateUserUpdate(userData)
+        console.log("inside user update service")
         const { id, name, phone } = userData
         const updateData = await this.userRepo.findByidAndUpdate(id, { name, phone })
         if (updateData!.matchedCount === 0) {
             throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
 
         }
+        const not = { message: "Your seller account has been rejected"}
+        
+        io.to(id).emit("notification", not);
     }
 
     async passwordMatch(password: string, _id: string): Promise<boolean> {

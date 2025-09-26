@@ -35,7 +35,7 @@ export class AuthService implements IAuthService {
   private async fetchGoogleProfile(token: string): Promise<GoogleProfile> {
 
     try {
-      console.log("inside fech google")
+      
       const res = await fetch(process.env.GOOGLE_PROFILE_URL!, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -54,7 +54,7 @@ export class AuthService implements IAuthService {
   }
 
   async userLogin(userData: UserLoginDTO): Promise<UserLoginResponseDTO> {
-    console.log("inside user login service")
+    
     const { email, role, password } = userData
 
     const user = await this.userRepo.findByEmailAndRole(email, role)
@@ -81,6 +81,7 @@ export class AuthService implements IAuthService {
     const responseUser: UserLoginResponseDTO = {
       name: user.name,
       role: user.role,
+      id: user.id!,
       token: jwtToken
     }
     return responseUser
@@ -91,7 +92,7 @@ export class AuthService implements IAuthService {
   async googleLogin({ token }: GoogleLoginDTO): Promise<UserLoginResponseDTO> {
 
     try {
-      console.log("inside service google login")
+      
 
       const { email, name, sub } = await this.fetchGoogleProfile(token);
 
@@ -115,6 +116,7 @@ export class AuthService implements IAuthService {
       const responseUser: UserLoginResponseDTO = {
         name: user.name,
         role: user.role,
+        id: user.id!,
         token: jwtToken,
       };
 
@@ -136,7 +138,8 @@ export class AuthService implements IAuthService {
         const responseUser: UserLoginResponseDTO = {
           name: "",
           role: "seller",
-          token: ""
+          token: "",
+          id: ""
         }
         return responseUser
       }
@@ -147,6 +150,7 @@ export class AuthService implements IAuthService {
       const responseUser: UserLoginResponseDTO = {
         name: user.name,
         role: user.role,
+        id: user.id!,
         token: jwtToken
       }
       return responseUser
@@ -158,7 +162,7 @@ export class AuthService implements IAuthService {
 
   async sendOTPtoEmail(email: string): Promise<void> {
 
-    console.log("iniside otp auth service ")
+    
     const user = await this.userRepo.findByEmail(email)
     if (user) {
       throw new CustomError(ResponseMessages.EMAIL_EXIST, HttpStatusCode.CONFLICT)

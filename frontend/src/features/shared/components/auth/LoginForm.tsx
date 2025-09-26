@@ -8,6 +8,7 @@ import GoogleLogin from "./GoogleLogin";
 import axios from "axios";
 import { useRouterRole } from "../../../../hooks/useRouterRole";
 import ResetPasswordModal from "../modal/ResetPasswordModal";
+import { connectSocket } from "../../../../store/useSocket";
 
 
 const LoginForm = () => {
@@ -50,6 +51,8 @@ const LoginForm = () => {
                     localStorage.setItem("authToken", userData.token);
                     localStorage.setItem("userName", userData.name);
                     localStorage.setItem("userRole", userData.role);
+                    localStorage.setItem('userId',userData.id)
+                    connectSocket(userData.id)
                     dispatch(login({
                         name: userData.name,
                         role: userData.role

@@ -25,9 +25,11 @@ export const io = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
-  
+  console.log("socket connect")
   socket.on("join", (userId) => {
+    console.log("join with ",userId)
     socket.join(userId);
+    console.log(socket.rooms)
   });
 });
 

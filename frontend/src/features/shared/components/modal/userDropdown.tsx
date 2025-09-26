@@ -30,7 +30,7 @@ const UserDropdown = ({ onClose }: UserDropdownProps) => {
     }
 
     const handleNotification = () => {
-        navigate('/seller/notification')
+        navigate('/user/notification')
         onClose()
     }
 

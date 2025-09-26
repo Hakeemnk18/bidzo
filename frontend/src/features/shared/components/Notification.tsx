@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { FaBell, FaTimes } from 'react-icons/fa';
 import { useSocket } from '../../../hooks/useSocket';
+import { SocketContext } from '../../../store/useSocket';
+
 
 interface Notification {
     id?: number;
@@ -9,19 +11,18 @@ interface Notification {
 }
 
 const mockNotifications: Notification[] = [
-    { message: 'Your plan has been upgraded to Pro.',},
-    { message: 'You have a new message from a user.',},
-    { message: 'A new auction has been created.', },
-    { message: 'Your payment was successful.'},
+    { message: 'Your plan has been upgraded to Pro.'}
 ];
 
 const Notification = () => {
 
-    const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+    
+    const notifications = useContext(SocketContext)
 
-    useSocket('68d4e414360ae6e82a03c78a',(newNotfication)=>{
-        setNotifications((prev)=> [newNotfication,...prev])
-    })
+    // const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+    // useSocket('123',(newNotfication)=>{
+    //     setNotifications((prev)=> [newNotfication,...prev])
+    // })
 
     // const markAsRead = (id: number) => {
     //     setNotifications(prevNotifications =>
