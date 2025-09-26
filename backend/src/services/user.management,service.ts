@@ -11,13 +11,19 @@ import { injectable, inject } from "tsyringe";
 import { UpdateUserDTO } from "../dtos/editUser.dto";
 import { validateUserUpdate } from "../utils/userValidation";
 import { comparePassword, hashPassword } from "../utils/hash";
+import { INotificationRepo } from "../repositories/interfaces/notification.repo.interface";
+import { INotificationService } from "./interfaces/notification.interfaces";
+import { ICreateNotficationDTO } from "../dtos/notification.dto";
+import { io } from "../app";
 
 
 @injectable()
 export class UserMangementService implements IUserManagementService {
 
     constructor(
-        @inject('IUserRepository') private readonly userRepo: IUserRepository) { }
+        @inject('IUserRepository') private readonly userRepo: IUserRepository,
+        @inject('INotificationService') private readonly notificationService: INotificationService
+    ) { }
 
     async getSeller(getUser: GetUsersDTO): Promise<{ resData: ResGetUser[]; total: number }> {
 
@@ -81,10 +87,10 @@ export class UserMangementService implements IUserManagementService {
         }
         let updateData
         if (field === 'isBlocked') {
-            
+
             updateData = await this.userRepo.findByidAndUpdate(id, { isBlocked: !user.isBlocked })
         } else if (field === 'isVerified') {
-            
+
             updateData = await this.userRepo.findByidAndUpdate(id, { isVerified: "approved" })
             const sendMail: ISendEMAIL = {
                 email: user.email,
@@ -107,7 +113,7 @@ export class UserMangementService implements IUserManagementService {
 
         console.log("inside service get user profile")
         const user = await this.userRepo.findById(id)
-       
+
         if (!user) {
             throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
@@ -144,6 +150,16 @@ export class UserMangementService implements IUserManagementService {
         }
         await sendEmail(sendMail)
 
+        const notification: ICreateNotficationDTO = {
+            userId: user.id!,
+            message: "Your seller account has been rejected",
+            type: "important",
+            isRead: false
+        }
+        const not = { message: "Your seller account has been rejected" }
+        await this.notificationService.create(notification)
+        io.to(user.id!).emit("notification", not);
+
     }
 
     async sellerReapply(id: string, documentUrl: string): Promise<void> {
@@ -153,8 +169,8 @@ export class UserMangementService implements IUserManagementService {
             throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
 
-        if(user.submitCount === 3){
-            throw new CustomError(ResponseMessages.SUBMITION_LIMIT,HttpStatusCode.TOO_MANY_REQUEST)
+        if (user.submitCount === 3) {
+            throw new CustomError(ResponseMessages.SUBMITION_LIMIT, HttpStatusCode.TOO_MANY_REQUEST)
         }
         const count = user.submitCount! + 1
 
@@ -168,7 +184,7 @@ export class UserMangementService implements IUserManagementService {
 
     async userUpdate(userData: UpdateUserDTO): Promise<void> {
         validateUserUpdate(userData)
-        const { id, name, phone} = userData
+        const { id, name, phone } = userData
         const updateData = await this.userRepo.findByidAndUpdate(id, { name, phone })
         if (updateData!.matchedCount === 0) {
             throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
@@ -178,10 +194,10 @@ export class UserMangementService implements IUserManagementService {
 
     async passwordMatch(password: string, _id: string): Promise<boolean> {
 
-        
-        const user = await this.userRepo.findOne({_id})
+
+        const user = await this.userRepo.findOne({ _id })
         if (!user) return false;
-        
+
         const isMatch = await comparePassword(password, user?.password!)
         return isMatch
     }
@@ -191,7 +207,7 @@ export class UserMangementService implements IUserManagementService {
         const hashPsd = await hashPassword(password)
         const user = await this.userRepo.resetPassword(id, hashPsd)
 
-        if(!user){
+        if (!user) {
             throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
     }

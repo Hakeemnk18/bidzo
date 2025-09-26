@@ -121,7 +121,6 @@ export class UserMangementController implements IUserManagement {
             console.log("inside block and unblock")
 
             const { id } = req.params
-            console.log(id)
             await this.userMangementService.blockAndUnBlock(id, "isVerified")
 
             res.status(HttpStatusCode.OK).json({

@@ -50,7 +50,7 @@ const Navbar = () => {
         firstUrl: "/admin/dashboard",
         secondUrl: '/admin/sellerManagement',
         thirdUrl: '/admin/userManagement',
-        fourthUrl: "",
+        fourthUrl: '/admin/planManagement',
         fifthUrl: ""
       };
     default:
@@ -60,7 +60,9 @@ const Navbar = () => {
         third: "",
         firstUrl: "#",
         secondUrl: "#",
-        thirdUrl: "#"
+        thirdUrl: "#",
+        fourthUrl: "",
+        fifthUrl: ""
       };
   }
 }, [role]);
@@ -87,10 +89,10 @@ const Navbar = () => {
           </Link>
           { role === 'admin' && 
           <>
-            <Link to={navItems.secondUrl} className="text-white hover:text-gray-300 transition duration-300">
+            <Link to={navItems.fourthUrl} className="text-white hover:text-gray-300 transition duration-300">
             { navItems.fourth }
           </Link>
-          <Link to={navItems.thirdUrl} className="text-white hover:text-gray-300 transition duration-300">
+          <Link to={navItems.fifthUrl} className="text-white hover:text-gray-300 transition duration-300">
             { navItems.fifth }
           </Link>
           </>

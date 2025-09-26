@@ -60,21 +60,30 @@ const adminRoute = [
     {
         path: '/admin/planManagement',
         element:( 
+            <ProtectedRoute>
                 <PlanTable />
+            </ProtectedRoute>
+                
 
         )
     },
     {
         path: '/admin/addPlan',
         element:( 
-                <PlanCreatePage id={null}/>
+            <ProtectedRoute>
+                <PlanCreatePage />
+            </ProtectedRoute>
+                
 
         )
     },
     {
         path: '/admin/editPlan',
         element:( 
+            <ProtectedRoute>
                 <PlanEditPage />
+            </ProtectedRoute>
+                
 
         )
     },

@@ -29,6 +29,11 @@ const UserDropdown = ({ onClose }: UserDropdownProps) => {
         onClose()
     }
 
+    const handleNotification = () => {
+        navigate('/seller/notification')
+        onClose()
+    }
+
 
     return (
 
@@ -36,6 +41,7 @@ const UserDropdown = ({ onClose }: UserDropdownProps) => {
             <ul className="py-1 text-gray-700">
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleProfile}>My Profile</li>
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Dashboard</li>
+                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleNotification}>Notification</li>
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>Logout</li>
             </ul>
         </div>

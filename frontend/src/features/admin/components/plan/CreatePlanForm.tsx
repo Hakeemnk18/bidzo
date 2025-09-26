@@ -4,7 +4,7 @@ import instance from "../../../../api/axios";
 import type { ApiResponse } from "../../../../types/user.types";
 import { toast } from "react-toastify";
 import { showErrorToast } from "../../../../utils/showErrorToast";
-import type {  IPlanFormData, IPlanFormProp,  } from "../../../../types/plan,types";
+import type {  IPlanFormData,  } from "../../../../types/plan,types";
 
 
 
@@ -16,7 +16,7 @@ interface FeatureRow {
 
 
 
-const CreatePlanForm = ({ id }: IPlanFormProp) => {
+const CreatePlanForm = () => {
 
     const [rows, setRows] = useState<FeatureRow[]>([{ feature: "", type: "", value: "" }]);
 
@@ -47,16 +47,6 @@ const CreatePlanForm = ({ id }: IPlanFormProp) => {
             { value: "auctionDiscount", label: "Auction Discount", allowedTypes: ["flat", "percentage"] },
         ],
     };
-
-
-
-    useEffect(() => {
-        if (id) {
-
-        }
-    }, [])
-
-
 
     const addRow = () => setRows([...rows, { feature: "", type: "", value: "" }]);
     const removeRow = (i: number) => setRows(rows.filter((_, idx) => idx !== i));

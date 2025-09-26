@@ -58,22 +58,32 @@ router.patch('/seller/management/:id/reject',
 
 //plan
 router.post('/plan',
+    authenticate,
+    authorizeRoles('admin'),
     (req, res)=> planManagementController.createPlan(req,res)
 )
 
 router.get('/plan/management',
+    authenticate,
+    authorizeRoles('admin'),
     (req, res)=> planManagementController.getPlans(req,res)
 )
 
 router.patch('/plan',
+    authenticate,
+    authorizeRoles('admin'),
     (req, res)=> planManagementController.blockAndUnblockPlan(req,res)
 )
 
 router.get('/plan/:id',
+    authenticate,
+    authorizeRoles('admin'),
     (req,res)=> planManagementController.getPlan(req,res)
 )
 
 router.put('/plan',
+    authenticate,
+    authorizeRoles('admin'),
     (req,res)=> planManagementController.editPlan(req,res)
 )
 

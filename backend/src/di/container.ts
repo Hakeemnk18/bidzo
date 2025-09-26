@@ -18,6 +18,10 @@ import { IPlanRepo } from '../repositories/interfaces/plan.repo.interface';
 import { PlanRepository } from '../repositories/plan.repo';
 import { IPlanService } from '../services/interfaces/plan.interface';
 import { PlanService } from '../services/plan.service';
+import { INotificationRepo } from '../repositories/interfaces/notification.repo.interface';
+import { NotificationRepositories } from '../repositories/notification.repo';
+import { INotificationService } from '../services/interfaces/notification.interfaces';
+import { NotificationService } from '../services/notification.service';
 
 container.register<IOTPRepository>('IOTPRepository', {useClass: OTPRepository})
 container.register<IOTPService>('IOTPService', { useClass: OTPService})
@@ -32,6 +36,9 @@ container.register<IUserManagementService>('IUserManagementService', { useClass:
 
 container.register<IPlanRepo>('IPlanRepo', { useClass: PlanRepository})
 container.register<IPlanService>('IPlanService', { useClass: PlanService})
+
+container.register<INotificationRepo>('INotificationRepo', { useClass: NotificationRepositories})
+container.register<INotificationService>('INotificationService', { useClass: NotificationService})
 
 
 
