@@ -10,6 +10,7 @@ const SignupPage = lazy(()=> import('../features/user/pages/SignUpPage'))
 const SellerDashBoardPage = lazy(()=> import('../features/seller/page/SellerdashboardPage'))
 const ReapplyComponent = lazy(()=> import('../features/seller/components/Reapply'))
 const ProfilePage = lazy(()=> import('../features/shared/pages/ProfilePage'))
+const NotificationPage = lazy(()=> import('../features/shared/components/Notification'))
 
 
 const sellerRoute = [
@@ -55,6 +56,14 @@ const sellerRoute = [
                     <ProfilePage />
                 </Suspense>
             </ProtectedRoute>
+           
+            
+        ),
+    },
+    {
+        path:'/seller/notification',
+        element:(
+            <NotificationPage/>
            
             
         ),

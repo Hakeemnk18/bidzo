@@ -9,6 +9,7 @@ const Home = lazy(()=> import ("../features/user/pages/Home"))
 const UserLogin = lazy(()=> import('../features/user/pages/Login'))
 const SignupPage = lazy(()=> import('../features/user/pages/SignUpPage'))
 const ProfilePage = lazy(()=> import('../features/shared/pages/ProfilePage'))
+const NotificationPage = lazy(()=> import('../features/shared/components/Notification'))
 
 
 
@@ -61,7 +62,15 @@ const userRoutes = [
            
             
         ),
-    }
+    },
+    // {
+    //     path:'/user/notification',
+    //     element:(
+    //         <NotificationPage/>
+           
+            
+    //     ),
+    // }
     
 ]
 
