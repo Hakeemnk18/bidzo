@@ -4,7 +4,7 @@ import instance from "../../../../api/axios";
 import type { ApiResponse } from "../../../../types/user.types";
 import { toast } from "react-toastify";
 import { showErrorToast } from "../../../../utils/showErrorToast";
-import type {  IPlanFormData,  } from "../../../../types/plan,types";
+import type {  IPlanData, IPlanFormData, IResGetPlanName,  } from "../../../../types/plan,types";
 
 
 
@@ -19,6 +19,8 @@ interface FeatureRow {
 const CreatePlanForm = () => {
 
     const [rows, setRows] = useState<FeatureRow[]>([{ feature: "", type: "", value: "" }]);
+    const [plans, setPlans] = useState<IPlanData[]>([])
+    const [allowedName, setAllowedName] = useState<string[]>(["Silver","Gold"])
 
     const [formData, setFormData] = useState<IPlanFormData>({
         planName: "",
@@ -34,8 +36,28 @@ const CreatePlanForm = () => {
         target?: string
         features?: string;
     }>({});
-
     const navigate = useNavigate();
+    
+    const fetchPlans = async()=>{
+        try {
+            const res = await instance.get<IResGetPlanName>('/admin/plan')
+            if(res.data.success){
+                setPlans(res.data.data)
+                
+                
+            }
+        } catch (error) {
+            console.log("error in fetch plan name", error)
+            showErrorToast(error)
+        }
+    }
+    useEffect(()=>{
+        fetchPlans()
+    },[])
+    useEffect(()=>{
+        const curNames: string[] = plans.map((item)=> item.planName)
+        setAllowedName((prev)=> prev.filter((item)=> !curNames.includes(item)))
+    },[plans])
 
     const featureConfig = {
         user: [
@@ -47,6 +69,8 @@ const CreatePlanForm = () => {
             { value: "auctionDiscount", label: "Auction Discount", allowedTypes: ["flat", "percentage"] },
         ],
     };
+
+    
 
     const addRow = () => setRows([...rows, { feature: "", type: "", value: "" }]);
     const removeRow = (i: number) => setRows(rows.filter((_, idx) => idx !== i));
@@ -146,15 +170,23 @@ const CreatePlanForm = () => {
 
                         {/* Plan Name */}
                         <div className="w-full mb-4">
-                            <input
-                                type="text"
-                                name="planName"
-                                value={formData.planName}
-                                onChange={handleChange}
-                                placeholder="Plan Name"
-                                className={`w-full px-4 py-2 border ${errors.planName ? "border-red-500" : "border-gray-300"
+                            <select 
+                            name="planName"
+                            value={formData.planName}
+                            onChange={handleChange}
+                            className={`w-full px-4 py-2 border ${errors.planName ? "border-red-500" : "border-gray-300"
                                     } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                            />
+                            >
+                                {
+                                    allowedName.map((name,i)=>{
+                                        return (
+                                            <option key={i} value={name}>{name}</option>
+                                        )
+                                    })
+                                }
+
+                            </select>
+                            
                             {errors.planName && <p className="text-red-500 text-xs mt-1">{errors.planName}</p>}
                         </div>
 

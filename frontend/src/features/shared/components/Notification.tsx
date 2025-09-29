@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { FaBell, FaTimes } from 'react-icons/fa';
+import { useState,  useEffect } from 'react';
+import { FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useStoreSelector } from '../../../hooks/useStore';
 import instance from '../../../api/axios';

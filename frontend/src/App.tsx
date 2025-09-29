@@ -28,7 +28,6 @@ function App() {
       
       const name = localStorage.getItem("userName");
       const role = localStorage.getItem("userRole");
-      const userId = localStorage.getItem("userId");
       dispatch(login({ name, role }));
 
     }else{

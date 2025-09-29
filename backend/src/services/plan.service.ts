@@ -82,4 +82,8 @@ export class PlanService implements IPlanService {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
     }
+
+    async getAllPlanName(): Promise<Plan[]> {
+        return await this.planRepo.findAllPlanName()
+    }
 }

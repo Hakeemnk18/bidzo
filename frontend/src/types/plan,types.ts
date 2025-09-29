@@ -44,6 +44,12 @@ export interface IResGetPlanData {
     totalPages: number
 }
 
+export interface IResGetPlanName {
+    success: boolean
+    data: IPlanData[],
+    message: string
+}
+
 export interface IResPlanData {
   success: boolean,
   message: string
