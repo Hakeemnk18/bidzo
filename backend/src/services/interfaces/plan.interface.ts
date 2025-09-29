@@ -9,4 +9,5 @@ export interface IPlanService {
     blockAndUnblockPlan(id: string): Promise<void>
     getPlan(id:string): Promise<Plan>
     editPlan(id: string, data: ICreatePlanDto): Promise<void>
+    getAllPlanName(): Promise<Plan[]>
 }

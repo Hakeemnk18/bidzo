@@ -6,4 +6,5 @@ export interface IPlanController {
     blockAndUnblockPlan(req: Request, res:Response): Promise<void>
     getPlan(req: Request, res: Response): Promise<void>
     editPlan(req: Request, res: Response): Promise<void>
+    planName(req: Request, res: Response): Promise<void>
 }

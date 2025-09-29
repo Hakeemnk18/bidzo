@@ -29,5 +29,9 @@ export class PlanRepository implements IPlanRepo {
     async findById(id: string): Promise<Plan | null> {
         return await PlanModel.findById(id)
     }
+
+    async findAllPlanName(): Promise<Plan[]> {
+        return await PlanModel.find({})
+    }
     
 }

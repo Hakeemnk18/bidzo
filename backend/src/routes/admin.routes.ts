@@ -87,6 +87,10 @@ router.put('/plan',
     (req,res)=> planManagementController.editPlan(req,res)
 )
 
+router.get('/plan',
+    (req,res)=> planManagementController.planName(req,res)
+)
+
 
 
 

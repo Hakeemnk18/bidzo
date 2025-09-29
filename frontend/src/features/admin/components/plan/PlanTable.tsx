@@ -298,6 +298,9 @@ const PlanTable = () => {
             </div>
             <div className="flex justify-end pt-4 max-w-5xl mx-auto ">
                 <button
+                    onClick={()=>{
+                        navigate('/admin/addPlan')
+                    }}
                     className="bg-green-500 px-4 py-2 rounded-md font-bold text-gray-800"
                 >Add Plan</button>
             </div>

@@ -140,8 +140,7 @@ export class UserMangementController implements IUserManagement {
 
             const { id } = req.params
             const { reason } = req.body
-            console.log("id ",id)
-            console.log("reason ",reason)
+            
             await this.userMangementService.sellerreject(id,reason)
 
             res.status(HttpStatusCode.OK).json({

@@ -39,7 +39,8 @@ export class PlanMangementController implements IPlanController {
             const filters = buildFilters(['isDeleted'], req.query)
             const page = parseInt(req.query.page as string) || 1;
             const search = req.query.search as string || ''
-            const limit = 2;
+            let limit = parseInt(req.query.limit as string, 10);
+            if (isNaN(limit) || limit <= 0) limit = 2;
             const sortValue = req.query.sort as string || ''
 
             const result = await this.planService.getAllPlan({
@@ -84,7 +85,7 @@ export class PlanMangementController implements IPlanController {
             res.status(HttpStatusCode.OK).json({
                 success: true,
                 message: ResponseMessages.SUCCESS,
-                data 
+                data
             })
         } catch (err) {
             console.log("error in get one plan contoller ", err)
@@ -95,13 +96,13 @@ export class PlanMangementController implements IPlanController {
 
     async editPlan(req: Request, res: Response): Promise<void> {
         try {
-            console.log("inside plan edit controller")
+            
 
             const planData = PlanMapper.toCreatePlanDTO(req.body)
             const { planId } = req.body
-            
 
-            await this.planService.editPlan(planId,planData)
+
+            await this.planService.editPlan(planId, planData)
 
             res.status(HttpStatusCode.OK).json({
                 success: true,
@@ -110,6 +111,22 @@ export class PlanMangementController implements IPlanController {
             })
         } catch (err) {
             console.log("error in plane create contoller ", err)
+            handleError(res, err)
+        }
+    }
+
+    async planName(req: Request, res: Response): Promise<void> {
+        try {
+            
+            const plans = await this.planService.getAllPlanName()
+            const resPlan = PlanMapper.toPlanResponseDTO(plans)
+            res.status(HttpStatusCode.OK).json({
+                success: true,
+                message: ResponseMessages.UPDATED,
+                data: resPlan
+            })
+        } catch (err) {
+            console.log("error in get plan name ", err)
             handleError(res, err)
         }
     }
