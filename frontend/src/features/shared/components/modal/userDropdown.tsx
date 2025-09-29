@@ -5,6 +5,7 @@ import { logout } from "../../slices/authSlice";
 import { toast } from "react-toastify";
 import { useRouterRole } from "../../../../hooks/useRouterRole";
 
+
 interface UserDropdownProps {
     onClose: ()=> void ;
 }
@@ -18,6 +19,7 @@ const UserDropdown = ({ onClose }: UserDropdownProps) => {
 
     const handleLogout = () => {
         dispatch(logout())
+        
         clearToken()
         toast.success("Logged out successfully");
         onClose()
