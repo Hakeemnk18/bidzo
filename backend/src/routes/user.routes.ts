@@ -4,6 +4,7 @@ import { UserManagement } from '../controllers/userController/user.management.co
 import { AuthenticatedRequest } from '../interfaces/AuthenticatedRequest';
 import { authenticate } from '../middileware/authmiddileware';
 import { container } from '../di/container';
+import { UserNotificationController } from '../controllers/userController/user.notification.controller';
 
 
 
@@ -13,6 +14,7 @@ const router = Router();
 
 const authController = container.resolve(AuthController)
 const userController = container.resolve(UserManagement)
+const notificationController = container.resolve(UserNotificationController)
 
 
 
@@ -42,6 +44,15 @@ router.post('/check-password',
 router.patch('/password',
   authenticate,
   (req, res)=> userController.changePassword(req as AuthenticatedRequest, res)
+)
+
+router.get('/notification',
+  authenticate,
+  (req, res)=> notificationController.getAll(req as AuthenticatedRequest, res)
+)
+
+router.patch('/notification/:id',
+  (req,res)=> notificationController.markAsRead(req,res)
 )
 
 export default router;

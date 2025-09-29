@@ -6,3 +6,9 @@ export interface ICreateNotficationDTO {
     message: string,
     isRead: boolean,
 }
+
+export interface IResNotification {
+    id: string,
+    message: string,
+    isRead: boolean
+}

@@ -3,7 +3,7 @@ import PublicRoute from "../features/user/components/PublicRoute"
 import LoadingSpinner from "../features/shared/components/LoadingSpinner"
 import ResetPassword from "../features/shared/components/ResetPassword"
 import ProtectedRoute from "../features/user/components/ProtectedRoute"
-import { SocketProvider } from "../store/useSocket"
+
 
 
 const Home = lazy(()=> import ("../features/user/pages/Home"))
@@ -68,8 +68,12 @@ const userRoutes = [
     {
         path:'/user/notification',
         element:(
-         
-            <NotificationPage/>
+         <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+                <NotificationPage/>
+            </Suspense>
+         </ProtectedRoute>
+            
          
             
            

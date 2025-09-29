@@ -13,11 +13,12 @@ import { useLocation } from 'react-router-dom';
 
 
 
+
 function App() {
 
   const dispatch = useStoreDispatch()
   const location = useLocation()
-  const HIDDEN_PATHS = ['/login', '/user/signup', '/admin/login', '/seller/login','/seller/signup'];
+  const HIDDEN_PATHS = ['/user/login', '/user/signup', '/admin/login', '/seller/login','/seller/signup'];
 
   useEffect(() => {
     
@@ -27,6 +28,7 @@ function App() {
       
       const name = localStorage.getItem("userName");
       const role = localStorage.getItem("userRole");
+      const userId = localStorage.getItem("userId");
       dispatch(login({ name, role }));
 
     }else{

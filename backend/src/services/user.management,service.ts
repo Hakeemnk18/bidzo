@@ -159,7 +159,7 @@ export class UserMangementService implements IUserManagementService {
         }
         const not = { message: "Your seller account has been rejected" }
         await this.notificationService.create(notification)
-        io.to(user.id!).emit("notification", not);
+        //io.to(user.id!).emit("notification", not);
 
     }
 
@@ -193,8 +193,13 @@ export class UserMangementService implements IUserManagementService {
 
         }
         const not = { message: "Your seller account has been rejected"}
-        
-        io.to(id).emit("notification", not);
+        await this.notificationService.create({
+            userId: id,
+            message: "Your profile updated",
+            type: 'important',
+            isRead: false,
+        })
+        //io.to(id).emit("notification", not);
     }
 
     async passwordMatch(password: string, _id: string): Promise<boolean> {

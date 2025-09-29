@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import TableSort from "../../shared/components/table/TableSort";
 import TableSearch from "../../shared/components/table/TableSearch";
 import TableFilter from "../../shared/components/table/TableFilter";
-import type { IuserData, IResGetUserData, ApiResponse, GoogleLoginResponse } from "../../../types/user.types";
+import type { IuserData, IResGetUserData, ApiResponse } from "../../../types/user.types";
 import ConfirmModal from "../../shared/components/modal/ConfirmationModal";
 import instance from "../../../api/axios";
 import SellerDocumentModal from "./modal/SellerDocument";
