@@ -58,8 +58,8 @@ router.patch('/seller/management/:id/reject',
 
 //plan
 router.post('/plan',
-    authenticate,
-    authorizeRoles('admin'),
+    // authenticate,
+    // authorizeRoles('admin'),
     (req, res)=> planManagementController.createPlan(req,res)
 )
 

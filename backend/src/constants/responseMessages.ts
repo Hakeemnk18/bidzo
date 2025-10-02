@@ -10,6 +10,7 @@ export const ResponseMessages = {
   NOT_FOUND: 'Resource not found',
   CONFLICT: 'Conflict occurred',
   SERVER_ERROR: 'Internal server error',
+  VALIDATION_FAILED: 'Validation failed',
 
   LOGIN_SUCCESS: 'Login successful',
   LOGOUT_SUCCESS: 'Logout successful',
@@ -28,7 +29,13 @@ export const ResponseMessages = {
   SUBMITION_LIMIT: 'Submission limit reached. Please try again later',
 
   INVALID_OTP: 'Invalid OTP',
-  OTP_EXPIRED: 'OTP has expired'
+  OTP_EXPIRED: 'OTP has expired',
 
-  
+  PLAN_NAME_REQUIRED: "Plan name is required",
+  PRICE_REQUIRED: "Plan price is required",
+  INVALID_DURATION: "Invalid plan duration",
+  PLAN_INVALID_MONTHLY_AMOUNT: "Invalid monthly amount",
+  PLAN_INVALID_YEARLY_AMOUNT: "Invalid yearly amount",
+  PLAN_INVALID_FEATURES: "Invalid features",
+  PLAN_EXIST: "This plan already exist"
 };

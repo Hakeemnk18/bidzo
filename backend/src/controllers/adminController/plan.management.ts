@@ -9,6 +9,7 @@ import { ICreatePlanDto, IResGetPlan } from "../../dtos/plan.dto";
 import { PlanMapper } from "../../mappers/plan.mapper";
 import { buildFilters } from "../../utils/buildFilters";
 import { ResponseMessages } from "../../constants/responseMessages";
+import { createPlanSchema } from "../../utils/validations/planValidations";
 
 
 @injectable()
@@ -19,11 +20,10 @@ export class PlanMangementController implements IPlanController {
     async createPlan(req: Request, res: Response): Promise<void> {
         try {
             console.log("inside plan create controller")
-
-            const planData = PlanMapper.toCreatePlanDTO(req.body)
-
-            await this.planService.creat(planData)
-
+            const validatedData = createPlanSchema.parse(req.body);
+            const planData = PlanMapper.toCreatePlanDTO(validatedData)
+            // console.log(planData)
+            await this.planService.create(planData)
             res.status(HttpStatusCode.OK).json({
                 success: true
             })

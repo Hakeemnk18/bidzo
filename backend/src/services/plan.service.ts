@@ -4,6 +4,7 @@ import { ICreatePlanDto, IGetAllPlanDTO } from "../dtos/plan.dto";
 import { IPlanRepo } from "../repositories/interfaces/plan.repo.interface";
 import { Plan } from "../types/plan.type";
 import { CustomError } from "../utils/customError";
+import { createPlanValidation } from "../utils/validations/planValidations";
 import { IPlanService } from "./interfaces/plan.interface";
 import { injectable, inject } from "tsyringe";
 
@@ -16,7 +17,9 @@ export class PlanService implements IPlanService {
         @inject('IPlanRepo') private readonly planRepo: IPlanRepo
     ) { }
 
-    async creat(data: ICreatePlanDto): Promise<void> {
+    async create(data: ICreatePlanDto): Promise<void> {
+        const plans = await this.planRepo.findAllPlanName()
+        createPlanValidation(data, plans)
         await this.planRepo.createPlan(data)
     }
 
