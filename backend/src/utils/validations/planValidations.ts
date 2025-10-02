@@ -35,16 +35,23 @@ class CreatePLanValidation {
             return
         }
         if (planName === 'Gold') {
-            isValid = tragetPlan.some((item) => {
-                return item.planName === "Silver" && Number(item.monthlyAmount) < amount
-            })
+            const silverPlans: Plan[] = tragetPlan.filter((item) => item.planName === 'Silver')
+            if (silverPlans.length) {
+                isValid = silverPlans.some((item) => {
+                    return Number(item.monthlyAmount) < amount
+                })
+            }
 
         } else if (planName === 'Silver') {
-            isValid = tragetPlan.some((item) => {
-                return item.planName === "Gold" && Number(item.monthlyAmount) > amount
-            })
+            const goldPlans: Plan[] = tragetPlan.filter((item) => item.planName === 'Gold')
+            if (goldPlans.length) {
+                isValid = goldPlans.some((item) => {
+                    return Number(item.monthlyAmount) > amount
+                })
+            }
 
         }
+
 
 
         if (!isValid) {
@@ -66,19 +73,23 @@ class CreatePLanValidation {
         let isValid: boolean = true
         const tragetPlan: Plan[] = plans.filter((item) => item.target === target)
         if (tragetPlan.length === 0) {
-            return 
+            return
         }
         if (planName === 'Gold') {
-            isValid = tragetPlan.some((item) => {
-                return item.planName === "Silver" && Number(item.yearlyAmount) < amount
-            })
+            const silverPlans: Plan[] = tragetPlan.filter((item) => item.planName === 'Silver')
+            if (silverPlans.length) {
+                isValid = silverPlans.some((item) => {
+                    return Number(item.yearlyAmount) < amount
+                })
+            }
 
         } else if (planName === 'Silver') {
-            
-            isValid = tragetPlan.some((item) => {
-                return item.planName === "Gold" && Number(item.yearlyAmount) > amount
-            })
-            console.log("is valid ", isValid)
+            const goldPlans: Plan[] = tragetPlan.filter((item) => item.planName === 'Gold')
+            if (goldPlans.length) {
+                isValid = goldPlans.some((item) => {
+                    return Number(item.yearlyAmount) > amount
+                })
+            }
 
         }
 
@@ -87,7 +98,7 @@ class CreatePLanValidation {
         }
     }
 
-    static validateFeature = (plans: Plan[], featureRow: IFeature[], target: string, planName: string)=> {
+    static validateFeature = (plans: Plan[], featureRow: IFeature[], target: string, planName: string) => {
         let res: boolean[] = []
         let allValid: boolean = true
         const targetPlan = plans.filter((item) => item.target === target);
@@ -96,14 +107,14 @@ class CreatePLanValidation {
             const comparedFeatures = targetPlan.filter((item) => item.planName === 'Gold').flatMap((item) => item.features)
             if (comparedFeatures.length && featureRow.length > comparedFeatures.length) {
                 console.log("insid if")
-                throw new CustomError(ResponseMessages.PLAN_INVALID_FEATURES,HttpStatusCode.BAD_REQUEST)
+                throw new CustomError(ResponseMessages.PLAN_INVALID_FEATURES, HttpStatusCode.BAD_REQUEST)
             }
         }
 
         if (planName === 'Gold') {
             const comparedFeatures = targetPlan.filter((item) => item.planName === 'Silver').flatMap((item) => item.features)
             if (comparedFeatures.length && featureRow.length < comparedFeatures.length) {
-                throw new CustomError(ResponseMessages.PLAN_INVALID_FEATURES,HttpStatusCode.BAD_REQUEST)
+                throw new CustomError(ResponseMessages.PLAN_INVALID_FEATURES, HttpStatusCode.BAD_REQUEST)
             }
         }
 
@@ -125,10 +136,10 @@ class CreatePLanValidation {
             }
             res.push(isValid)
         }
-        
+
         allValid = res.every(Boolean)
-        if(!allValid){
-            throw new CustomError(ResponseMessages.PLAN_INVALID_FEATURES,HttpStatusCode.BAD_REQUEST)
+        if (!allValid) {
+            throw new CustomError(ResponseMessages.PLAN_INVALID_FEATURES, HttpStatusCode.BAD_REQUEST)
         }
     }
 }
@@ -138,7 +149,14 @@ export const createPlanValidation = (data: ICreatePlanDto, plans: Plan[]) => {
     CreatePLanValidation.isExis(plans, target, planName)
     CreatePLanValidation.validYearlyAmount(plans, yearlyAmount, target, planName)
     CreatePLanValidation.validMonthlyAmount(plans, monthlyAmount, target, planName)
-    CreatePLanValidation.validateFeature(plans,features,target,planName)
+    CreatePLanValidation.validateFeature(plans, features, target, planName)
+}
+
+export const editPlanValidation = (data: ICreatePlanDto, plans: Plan[]) => {
+    const { target, monthlyAmount, yearlyAmount, planName, features } = data
+    CreatePLanValidation.validYearlyAmount(plans, yearlyAmount, target, planName)
+    CreatePLanValidation.validMonthlyAmount(plans, monthlyAmount, target, planName)
+    CreatePLanValidation.validateFeature(plans, features, target, planName)
 }
 
 

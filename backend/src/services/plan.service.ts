@@ -4,7 +4,7 @@ import { ICreatePlanDto, IGetAllPlanDTO } from "../dtos/plan.dto";
 import { IPlanRepo } from "../repositories/interfaces/plan.repo.interface";
 import { Plan } from "../types/plan.type";
 import { CustomError } from "../utils/customError";
-import { createPlanValidation } from "../utils/validations/planValidations";
+import { createPlanValidation, editPlanValidation } from "../utils/validations/planValidations";
 import { IPlanService } from "./interfaces/plan.interface";
 import { injectable, inject } from "tsyringe";
 
@@ -80,6 +80,8 @@ export class PlanService implements IPlanService {
     }
 
     async editPlan(id: string, data: ICreatePlanDto): Promise<void> {
+        const plans = await this.planRepo.findAllPlanName()
+        editPlanValidation(data, plans)
         const updateResult = await this.planRepo.updatePlan(id, data)
         if(updateResult.matchedCount === 0){
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
