@@ -7,6 +7,7 @@ import { IFeature } from "../dtos/plan.dto";
 
 const featureSchema = new Schema<IFeature>(
   {
+    id: { type: String, required: true },
     feature: { type: String, required: true },
     type: { type: String, required: true },
     value: { type: Number, required: true },
@@ -34,10 +35,12 @@ const planSchema = new Schema<IPlan>(
         yearlyAmount: {
             type: Number,
             required: true,
+            min: 1
         },
         monthlyAmount: {
             type: Number,
             required: true,
+            min: 1
         },
         target: {
             type: String,
