@@ -5,9 +5,10 @@ interface ConfirmModalProps {
   onClose: () => void;
   onConfirm: () => void;
   message: string;
+  cnfBtnMessage: string
 }
 
-const ConfirmModal = ({ isOpen, onClose, onConfirm, message } : ConfirmModalProps) => {
+const ConfirmModal = ({ isOpen, onClose, onConfirm, message, cnfBtnMessage} : ConfirmModalProps) => {
 
   if (!isOpen) return null;
 
@@ -26,7 +27,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, message } : ConfirmModalProp
             onClick={onConfirm}
             className="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600"
           >
-            Confirm
+            { cnfBtnMessage }
           </button>
         </div>
       </div>

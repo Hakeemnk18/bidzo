@@ -6,7 +6,7 @@ import { toast } from "react-toastify"
 const SocketListener = () => {
 
     
-    console.log("socket listener called")
+    // console.log("socket listener called")
     socket.on("connect", () => console.log("socket connected inside socket lister"));
     socket.on("disconnect", () => console.log("socket disconnected"));
     useEffect(() => {

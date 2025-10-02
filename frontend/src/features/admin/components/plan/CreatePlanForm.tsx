@@ -4,23 +4,25 @@ import instance from "../../../../api/axios";
 import type { ApiResponse } from "../../../../types/user.types";
 import { toast } from "react-toastify";
 import { showErrorToast } from "../../../../utils/showErrorToast";
-import type {  IPlanData, IPlanFormData, IResGetPlanName,  } from "../../../../types/plan,types";
-
-
-
-interface FeatureRow {
-    feature: string;
-    type: string;
-    value: string;
-}
-
+import { v4 as uuidv4 } from "uuid";
+import { featureConfigSet } from "../../../../types/plan,types";
+import { validateFeature, validMonthlyAmount, validYearlyAmount } from "../../../../utils/planHelpers";
+import type {
+    IPlanData,
+    IPlanFormData,
+    IResGetPlanName,
+    FeatureRow,
+} from "../../../../types/plan,types";
+import ConfirmModal from "../../../shared/components/modal/ConfirmationModal";
 
 
 const CreatePlanForm = () => {
 
-    const [rows, setRows] = useState<FeatureRow[]>([{ feature: "", type: "", value: "" }]);
+    const [rows, setRows] = useState<FeatureRow[]>([{ id: uuidv4(), feature: "", type: "", value: "" }]);
     const [plans, setPlans] = useState<IPlanData[]>([])
-    const [allowedName, setAllowedName] = useState<string[]>(["Silver","Gold"])
+    const [isAlowedName, setIsAlowedName] = useState<boolean>(false)
+    const [allowedName, setAllowedName] = useState<string[]>([""])
+
 
     const [formData, setFormData] = useState<IPlanFormData>({
         planName: "",
@@ -36,59 +38,67 @@ const CreatePlanForm = () => {
         target?: string
         features?: string;
     }>({});
+
     const navigate = useNavigate();
-    
-    const fetchPlans = async()=>{
+    const defualtName: string[] = ["Gold", "Silver"]
+
+    const fetchPlans = async () => {
         try {
             const res = await instance.get<IResGetPlanName>('/admin/plan')
-            if(res.data.success){
+            if (res.data.success) {
                 setPlans(res.data.data)
-                
-                
             }
         } catch (error) {
             console.log("error in fetch plan name", error)
             showErrorToast(error)
         }
     }
-    useEffect(()=>{
+    //fetch plan names
+    useEffect(() => {
         fetchPlans()
-    },[])
+    }, [])
+
+    const getAvailableFeatures = (rowId: string) => {
+        if (!formData.target) return [];
+        const selected = new Set(rows.filter(r => r.id !== rowId).map(r => r.feature).filter(Boolean));
+        return featureConfigSet[formData.target].filter(f => !selected.has(f.value));
+    };
+
+    //set plan name
+    useEffect(() => {
+        if (formData.target) {
+            const curNames: string[] = plans.reduce<string[]>((acc, cur) => {
+                if (cur.target === formData.target) {
+                    acc.push(cur.planName)
+                }
+                return acc
+            }, [])
+            setAllowedName(() => defualtName.filter((item) => !curNames.includes(item)))
+            
+        } else {
+            setAllowedName([""])
+        }
+
+    }, [plans, formData.target])
+
     useEffect(()=>{
-        const curNames: string[] = plans.map((item)=> item.planName)
-        setAllowedName((prev)=> prev.filter((item)=> !curNames.includes(item)))
-    },[plans])
+        if(allowedName.length === 0){
+            setIsAlowedName(true)
+        }else{
+            setIsAlowedName(false)
+        }
+    },[allowedName])
 
-    const featureConfig = {
-        user: [
-            { value: "autoBid", label: "Auto Bid", allowedTypes: ["count"] },
-            { value: "bidDiscount", label: "Bid Discount", allowedTypes: ["flat", "percentage"] },
-        ],
-        seller: [
-            { value: "autoliveAuction", label: "Auto Live Auction", allowedTypes: ["count"] },
-            { value: "auctionDiscount", label: "Auction Discount", allowedTypes: ["flat", "percentage"] },
-        ],
+    const addRow = () => {
+        if (!formData.target) return;
+        if (rows.length < featureConfigSet[formData.target].length) {
+            setRows(prev => [...prev, { id: uuidv4(), feature: "", type: "", value: "" }]);
+        }
     };
 
-    
-
-    const addRow = () => setRows([...rows, { feature: "", type: "", value: "" }]);
-    const removeRow = (i: number) => setRows(rows.filter((_, idx) => idx !== i));
-
-    const FeatureHandleChange = (i: number, key: keyof FeatureRow, value: string) => {
-        setRows(prev => {
-            const copy = [...prev];
-            copy[i][key] = value;
-
-            if (key === "feature") {
-                copy[i].type = "";
-                copy[i].value = "";
-            }
-
-            return copy;
-        });
+    const removeRow = (rowId: string) => {
+        setRows(prev => prev.filter(r => r.id !== rowId));
     };
-
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -96,9 +106,9 @@ const CreatePlanForm = () => {
     };
 
     const handleTargetChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData({...formData, [e.target.name]: e.target.value})
+        setFormData({ ...formData, [e.target.name]: e.target.value })
         setErrors({ ...errors, [e.target.name]: "" });
-        setRows([{ feature: "", type: "", value: "" }])
+        setRows([{ id: uuidv4(), feature: "", type: "", value: "" }])
     }
 
     const validate = () => {
@@ -108,22 +118,51 @@ const CreatePlanForm = () => {
         return true;
     };
 
+    
+    const handleRowChange = (rowId: string, key: keyof FeatureRow, value: string) => {
+        setRows(prev =>
+            prev.map(r =>
+                r.id === rowId
+                    ? { ...r, [key]: value, ...(key === "feature" ? { type: "", value: "" } : {}) }
+                    : r
+            )
+        );
+    };
+    const handleGoBack = ()=>{
+        navigate('/admin/planManagement')
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const newErrors: typeof errors = {};
         const { planName, yearlyAmount, monthlyAmount, target } = formData;
 
         if (!planName.trim()) newErrors.planName = "Plan name is required";
+
+        if (!target.trim()) newErrors.target = "Choose target";
+
         if (!yearlyAmount || isNaN(Number(yearlyAmount || Number(yearlyAmount) < 1))) {
             newErrors.yearlyAmount = "Enter a valid yearly amount";
         }
+
+        if (!validYearlyAmount(plans, Number(yearlyAmount), target, planName)) {
+            newErrors.yearlyAmount = "Enter a valid yearly amount"
+        }
+
         if (!monthlyAmount || isNaN(Number(monthlyAmount)) || Number(monthlyAmount) < 1 || Number(monthlyAmount) > Number(yearlyAmount)) {
             newErrors.monthlyAmount = "Enter a valid monthly amount";
         }
-        if (!target.trim()) newErrors.target = "Choose target"
+
+        if (!validMonthlyAmount(plans,Number(monthlyAmount), target, planName)) {
+            newErrors.monthlyAmount = "Enter a valid monthly amount";
+        }
 
         if (!validate()) {
             newErrors.features = "Fill all feature fields"
+        }
+
+        if(!validateFeature(plans,rows,formData.target,planName)){
+            newErrors.features = "features not valid"
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -131,10 +170,10 @@ const CreatePlanForm = () => {
             return;
         } else {
             try {
-                const res = await instance.post<ApiResponse>('/admin/plan',{
+                const res = await instance.post<ApiResponse>('/admin/plan', {
                     ...formData,
                     features: rows
-                } )
+                })
                 if (res.data.success) {
 
                     toast("form submitted")
@@ -144,11 +183,7 @@ const CreatePlanForm = () => {
                 console.log("error in plan submit form ", error)
                 showErrorToast(error)
             }
-
-
         }
-
-
     };
 
     return (
@@ -168,17 +203,35 @@ const CreatePlanForm = () => {
                     <form className="p-4 w-full" onSubmit={handleSubmit}>
                         <h2 className="text-center text-lg font-bold mb-4">Create Plan</h2>
 
-                        {/* Plan Name */}
+                        {/* target */}
                         <div className="w-full mb-4">
-                            <select 
-                            name="planName"
-                            value={formData.planName}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-2 border ${errors.planName ? "border-red-500" : "border-gray-300"
+                            <select
+                                name="target"
+                                value={formData.target}
+                                onChange={handleTargetChange}
+                                className={`w-full px-4 py-2 border ${errors.target ? "border-red-500" : "border-gray-300"
                                     } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                             >
+                                <option value="">Select Plan Target</option>
+                                <option value="user">User</option>
+                                <option value="seller">Seller</option>
+                            </select>
+                            {errors.target && <p className="text-red-500 text-xs mt-1">{errors.target}</p>}
+                        </div>
+
+                        {/* Plan Name */}
+                        <div className="w-full mb-4">
+                            <select
+                                name="planName"
+                                value={formData.planName}
+                                onChange={handleChange}
+                                className={`w-full px-4 py-2 border ${errors.planName ? "border-red-500" : "border-gray-300"
+                                    } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                            >
+                                <option value="">Select plan name</option>
                                 {
-                                    allowedName.map((name,i)=>{
+
+                                    allowedName.map((name, i) => {
                                         return (
                                             <option key={i} value={name}>{name}</option>
                                         )
@@ -186,9 +239,11 @@ const CreatePlanForm = () => {
                                 }
 
                             </select>
-                            
+
                             {errors.planName && <p className="text-red-500 text-xs mt-1">{errors.planName}</p>}
                         </div>
+
+
 
                         {/* Yearly Amount */}
                         <div className="w-full mb-4">
@@ -218,85 +273,80 @@ const CreatePlanForm = () => {
                             {errors.monthlyAmount && <p className="text-red-500 text-xs mt-1">{errors.monthlyAmount}</p>}
                         </div>
 
-                        {/* target */}
-                        <div className="w-full mb-4">
-                            <select
-                                name="target"
-                                value={formData.target}
-                                onChange={handleTargetChange}
-                                className={`w-full px-4 py-2 border ${errors.target ? "border-red-500" : "border-gray-300"
-                                    } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                            >
-                                <option value="">Select Plan Target</option>
-                                <option value="user">User</option>
-                                <option value="seller">Seller</option>
-                            </select>
-                            {errors.target && <p className="text-red-500 text-xs mt-1">{errors.target}</p>}
-                        </div>
+
 
                         {/* Features */}
 
-                        {rows.map((row, i) => (
-                            <div key={i} >
-                                <div className="w-full ">
-                                    <div className="flex flex-wrap gap-2 items-center">
-                                        {/* Feature */}
-                                        <select
-                                            className="w-1/4 flex-1  px-4 py-2 border rounded-md "
-                                            value={row.feature}
-                                            onChange={e => FeatureHandleChange(i, "feature", e.target.value)} >
-                                            <option value="">Feature</option>
-                                            {formData.target &&
-                                                featureConfig[formData.target].map(opt => (
-                                                    <option key={opt.value} value={opt.value}>
-                                                        {opt.label}
+                        {rows.map((row, i) => {
+
+                            const availableFeatures = getAvailableFeatures(row.id);
+                            const selectedFeatureObj = formData.target
+                                ? featureConfigSet[formData.target].find(f => f.value === row.feature)
+                                : undefined;
+
+                            return (
+                                <div key={row.id} >
+                                    <div className="w-full ">
+                                        <div className="flex flex-wrap gap-2 items-center">
+                                            {/* Feature */}
+                                            <select
+                                                className="w-1/4 flex-1  px-4 py-2 border rounded-md"
+                                                value={row.feature}
+                                                onChange={e => handleRowChange(row.id, "feature", e.target.value)}
+                                            >
+                                                <option value="">Feature</option>
+                                                {availableFeatures.map(f => (
+                                                    <option key={f.value} value={f.value}>
+                                                        {f.label}
                                                     </option>
                                                 ))}
-                                        </select>
+                                            </select>
 
-                                        {/* Type */}
-                                        <select
-                                            className="flex-1 w-1/4 px-4 py-2 border rounded-md"
-                                            value={row.type} onChange={e => FeatureHandleChange(i, "type", e.target.value)}>
-                                            <option value="">Type</option>
-                                            {formData.target &&
-                                                featureConfig[formData.target]
-                                                    .find(f => f.value === row.feature)
-                                                    ?.allowedTypes.map(t => (
-                                                        <option key={t} value={t}>
-                                                            {t}
-                                                        </option>
-                                                    ))}
-                                        </select>
+                                            {/* Type */}
+                                            <select
+                                                className="flex-1 w-1/4 px-4 py-2 border rounded-md"
+                                                value={row.type}
+                                                onChange={e => handleRowChange(row.id, "type", e.target.value)}
+                                                disabled={!row.feature}
+                                            >
+                                                <option value="">Type</option>
+                                                {selectedFeatureObj?.allowedTypes.map(t => (
+                                                    <option key={t} value={t}>
+                                                        {t}
+                                                    </option>
+                                                ))}
+                                            </select>
 
-                                        {/* Value */}
-                                        <input
-                                            className="flex-1 w-1/4 px-4 py-2 border rounded-md"
-                                            type="text"
-                                            value={row.value}
-                                            onChange={e => FeatureHandleChange(i, "value", e.target.value)}
-                                            placeholder="Value"
-                                        />
+                                            {/* Value */}
+                                            <input
+                                                className="flex-1 w-1/4 px-4 py-2 border rounded-md"
+                                                type="text"
+                                                value={row.value}
+                                                onChange={e => handleRowChange(row.id, "value", e.target.value)}
+                                                placeholder="Value"
+                                                disabled={!row.feature}
+                                            />
 
-                                        {/* Remove */}
-                                        {rows.length > 1 && (
-                                            <button type="button" onClick={() => removeRow(i)}>
-                                                -
-                                            </button>
-                                        )}
+                                            {/* Remove */}
+                                            {rows.length > 1 && (
+                                                <button type="button" onClick={() => removeRow(row.id)}>
+                                                    -
+                                                </button>
+                                            )}
 
-                                        {/* Add */}
-                                        {i === rows.length - 1 && (
-                                            <button type="button" onClick={addRow}>
-                                                +
-                                            </button>
-                                        )}
+                                            {/* Add */}
+                                            {i === rows.length - 1 && (
+                                                <button type="button" onClick={addRow}>
+                                                    +
+                                                </button>
+                                            )}
+                                        </div>
+
                                     </div>
 
                                 </div>
-
-                            </div>
-                        ))}
+                            )
+                        })}
                         {errors.features && <p className="text-red-500 text-xs mt-1">{errors.features}</p>}
                         <button
                             type="submit"
@@ -305,6 +355,13 @@ const CreatePlanForm = () => {
                             Submit
                         </button>
                     </form>
+                    <ConfirmModal 
+                    isOpen={isAlowedName}
+                    onClose={()=> setIsAlowedName(false)}
+                    onConfirm={handleGoBack}
+                    message="This target already includes all plans"
+                    cnfBtnMessage="Go Back"
+                    />
                 </div>
             </div>
         </div>
