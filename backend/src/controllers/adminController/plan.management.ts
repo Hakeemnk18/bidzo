@@ -19,14 +19,14 @@ export class PlanMangementController implements IPlanController {
     ) { }
     async createPlan(req: Request, res: Response): Promise<void> {
         try {
-            console.log("inside plan create controller")
+            
             const validatedData = createPlanSchema.parse(req.body);
             const planData = PlanMapper.toCreatePlanDTO(validatedData)
-            // console.log(planData)
             await this.planService.create(planData)
             res.status(HttpStatusCode.OK).json({
                 success: true
             })
+
         } catch (err) {
             console.log("error in plane create contoller ", err)
             handleError(res, err)
@@ -96,12 +96,10 @@ export class PlanMangementController implements IPlanController {
 
     async editPlan(req: Request, res: Response): Promise<void> {
         try {
-            
-
-            const planData = PlanMapper.toCreatePlanDTO(req.body)
+            console.log(req.body)
+            const validatedData = createPlanSchema.parse(req.body);
+            const planData = PlanMapper.toCreatePlanDTO(validatedData)
             const { planId } = req.body
-
-
             await this.planService.editPlan(planId, planData)
 
             res.status(HttpStatusCode.OK).json({
@@ -110,7 +108,7 @@ export class PlanMangementController implements IPlanController {
 
             })
         } catch (err) {
-            console.log("error in plane create contoller ", err)
+            console.log("error in plane edit contoller ", err)
             handleError(res, err)
         }
     }

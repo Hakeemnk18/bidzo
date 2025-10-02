@@ -1,6 +1,5 @@
 import { useEffect } from "react"
 import { socket } from "../../../socket"
-import type { INotification } from "../slices/notificationSlice"
 import { toast } from "react-toastify"
 
 const SocketListener = () => {
@@ -11,7 +10,7 @@ const SocketListener = () => {
     socket.on("disconnect", () => console.log("socket disconnected"));
     useEffect(() => {
         
-        socket.on("notification", (data: INotification) => {
+        socket.on("notification", () => {
             console.log("inside on notification")
             toast("new Notification")
         });

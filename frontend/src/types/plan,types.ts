@@ -12,11 +12,7 @@ export interface IPlanFormProp {
     id: null | string
 }
 
-export interface IFeaturesOptions {
-    feature: string,
-    type: string,
-    value: string
-}
+
 
 export type FeatureType = "count" | "flat" | "percentage";
 
@@ -29,7 +25,7 @@ export interface IPlanData {
     monthlyAmount: string,
     target: TargetType,
     isDeleted: boolean,
-    features: IFeaturesOptions[]
+    features: FeatureRow[]
 }
 
 export interface IResGetPlanData {
@@ -72,7 +68,7 @@ export const featureConfigSet: Record<ITargetType, FeatureConfigItem[]> = {
     user: [
         { value: "autoBid", label: "Auto Bid", allowedTypes: ["count"] },
         { value: "bidDiscount", label: "Bid Discount", allowedTypes: ["flat", "percentage"] },
-        { value: "autoliveAuction", label: "Auto Live Auction", allowedTypes: ["count"] },
+        
     ],
     seller: [
         { value: "autoliveAuction", label: "Auto Live Auction", allowedTypes: ["count"] },

@@ -2,21 +2,26 @@ import type { IPlanData, FeatureRow } from "../types/plan,types"
 
 export const validMonthlyAmount = (plans: IPlanData[], amount: number, target: string, planName: string): boolean => {
 
+    console.log("valid")
     let isValid: boolean = true
     const tragetPlan: IPlanData[] = plans.filter((item) => item.target === target)
     if (tragetPlan.length === 0) {
         return isValid
     }
     if (planName === 'Gold') {
-        isValid = tragetPlan.some((item) => {
-            return item.planName === "Silver" && Number(item.monthlyAmount) < amount
-        })
-
+        const silverPlans: IPlanData[] = tragetPlan.filter((item)=> item.planName === 'Silver')
+        if(silverPlans.length){
+            isValid = silverPlans.some((item)=>{
+                return Number(item.monthlyAmount) < amount
+            })
+        }
     } else if (planName === 'Silver') {
-        isValid = tragetPlan.some((item) => {
-            return item.planName === "Gold" && Number(item.monthlyAmount) > amount
-        })
-
+        const goldPlans: IPlanData[] = tragetPlan.filter((item)=> item.planName === 'Gold')
+        if(goldPlans.length){
+            isValid = goldPlans.some((item)=>{
+                return Number(item.monthlyAmount) > amount
+            })
+        }
     }
 
     return isValid
@@ -31,15 +36,19 @@ export const validYearlyAmount = (plans: IPlanData[], amount: number, target: st
         return isValid
     }
     if (planName === 'Gold') {
-        isValid = tragetPlan.some((item) => {
-            return item.planName === "Silver" && Number(item.yearlyAmount) < amount
-        })
-
+        const silverPlans: IPlanData[] = tragetPlan.filter((item)=> item.planName === 'Silver')
+        if(silverPlans.length){
+            isValid = silverPlans.some((item)=>{
+                return Number(item.yearlyAmount) < amount
+            })
+        }
     } else if (planName === 'Silver') {
-        isValid = tragetPlan.some((item) => {
-            return item.planName === "Gold" && Number(item.yearlyAmount) > amount
-        })
-
+        const goldPlans: IPlanData[] = tragetPlan.filter((item)=> item.planName === 'Gold')
+        if(goldPlans.length){
+            isValid = goldPlans.some((item)=>{
+                return Number(item.yearlyAmount) > amount
+            })
+        }
     }
 
     return isValid
@@ -48,7 +57,7 @@ export const validYearlyAmount = (plans: IPlanData[], amount: number, target: st
 
 export const validateFeature = (plans: IPlanData[], featureRow: FeatureRow[], target: string, planName: string): boolean => {
     let res: boolean[] = []
-    console.log("inside validate feature ")
+    
 
     const targetPlan = plans.filter((item) => item.target === target);
 
