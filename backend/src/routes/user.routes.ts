@@ -5,6 +5,7 @@ import { AuthenticatedRequest } from '../interfaces/AuthenticatedRequest';
 import { authenticate } from '../middileware/authmiddileware';
 import { container } from '../di/container';
 import { UserNotificationController } from '../controllers/userController/user.notification.controller';
+import { UserSubscriptionController } from '../controllers/userController/user.subscription.controller';
 
 
 
@@ -15,6 +16,7 @@ const router = Router();
 const authController = container.resolve(AuthController)
 const userController = container.resolve(UserManagement)
 const notificationController = container.resolve(UserNotificationController)
+const subscriptionController = container.resolve(UserSubscriptionController)
 
 
 
@@ -53,6 +55,10 @@ router.get('/notification',
 
 router.patch('/notification/:id',
   (req,res)=> notificationController.markAsRead(req,res)
+)
+
+router.get('/plans',
+  (req,res)=> subscriptionController.getPlans(req,res)
 )
 
 export default router;

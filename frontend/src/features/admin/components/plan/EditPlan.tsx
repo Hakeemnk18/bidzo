@@ -41,7 +41,6 @@ const CreatePlanForm = () => {
     }>({});
 
     const navigate = useNavigate();
-    const defualtName: string[] = ["Gold", "Silver"]
 
     const fetchPlans = async () => {
         try {

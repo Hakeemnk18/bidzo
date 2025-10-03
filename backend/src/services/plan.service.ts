@@ -18,7 +18,8 @@ export class PlanService implements IPlanService {
     ) { }
 
     async create(data: ICreatePlanDto): Promise<void> {
-        const plans = await this.planRepo.findAllPlanName()
+        const query: Record<string, any> = {}
+        const plans = await this.planRepo.findAllPlanName(query)
         createPlanValidation(data, plans)
         await this.planRepo.createPlan(data)
     }
@@ -80,7 +81,8 @@ export class PlanService implements IPlanService {
     }
 
     async editPlan(id: string, data: ICreatePlanDto): Promise<void> {
-        const plans = await this.planRepo.findAllPlanName()
+        const query: Record<string, any> = {}
+        const plans = await this.planRepo.findAllPlanName(query)
         editPlanValidation(data, plans)
         const updateResult = await this.planRepo.updatePlan(id, data)
         if(updateResult.matchedCount === 0){
@@ -89,6 +91,12 @@ export class PlanService implements IPlanService {
     }
 
     async getAllPlanName(): Promise<Plan[]> {
-        return await this.planRepo.findAllPlanName()
+        const query: Record<string, any> = {}
+        return await this.planRepo.findAllPlanName(query)
+    }
+
+    async findPlans(role: string): Promise<Plan[]> {
+        const query: Record<string, any> = { target: role}
+        return await this.planRepo.findAllPlanName(query)
     }
 }

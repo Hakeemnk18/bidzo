@@ -11,6 +11,7 @@ const UserLogin = lazy(()=> import('../features/user/pages/Login'))
 const SignupPage = lazy(()=> import('../features/user/pages/SignUpPage'))
 const ProfilePage = lazy(()=> import('../features/shared/pages/ProfilePage'))
 const NotificationPage = lazy(()=> import('../features/shared/components/Notification'))
+const PlansPage = lazy(()=> import('../features/shared/components/plans/Plans'))
 
 
 
@@ -73,11 +74,16 @@ const userRoutes = [
                 <NotificationPage/>
             </Suspense>
          </ProtectedRoute>
-            
+        ),
+    },
+    {
+        path:'/user/plans',
+        element:(
          
-            
-           
-            
+            <Suspense fallback={<LoadingSpinner />}>
+                <PlansPage/>
+            </Suspense>
+         
         ),
     }
     
