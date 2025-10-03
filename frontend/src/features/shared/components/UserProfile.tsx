@@ -5,6 +5,7 @@ import type { IResUserProfileData, IUserProfileData } from '../../../types/user.
 import { showErrorToast } from '../../../utils/showErrorToast';
 import ProfileEdit from './modal/UserProfileEditModal';
 import ChangePassword from './modal/ChangePsd';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -16,6 +17,8 @@ const Profile = () => {
   const [isProfileEdit, setIsProfileedit] = useState(false)
   const [isUpdated, setIsupdated] = useState(true)
   const [isChangePsd, setIsChangePsd] = useState(false)
+  const role = localStorage.getItem('userRole')
+  const navigate = useNavigate()
 
   const fetchData = async () => {
     try {
@@ -45,7 +48,9 @@ const Profile = () => {
             </svg>
           </div>
           <h2 className="text-2xl font-semibold mt-4">{userData?.name}</h2>
-          <button className="mt-4 px-6 py-2 bg-yellow-400 text-black font-medium rounded-full  hover:bg-yellow-300 transition-all duration-200">
+          <button
+          onClick={()=> navigate(`/${role}/plans`)}
+           className="mt-4 px-6 py-2 bg-yellow-400 text-black font-medium rounded-full  hover:bg-yellow-300 transition-all duration-200">
             upgrade
           </button>
         </div>

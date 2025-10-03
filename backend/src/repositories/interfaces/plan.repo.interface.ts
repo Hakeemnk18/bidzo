@@ -9,5 +9,5 @@ export interface IPlanRepo {
     countDocument(query: Record<string, any>): Promise<number>
     updatePlan(id: string, query: Record<string,any>): Promise<UpdateResult>
     findById(id: string): Promise<Plan | null>
-    findAllPlanName(): Promise<Plan[]>
+    findAllPlanName(query: Record<string, any>): Promise<Plan[]>
 }

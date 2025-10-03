@@ -30,8 +30,8 @@ export class PlanRepository implements IPlanRepo {
         return await PlanModel.findById(id)
     }
 
-    async findAllPlanName(): Promise<Plan[]> {
-        return await PlanModel.find({})
+    async findAllPlanName(query: Record<string, any>): Promise<Plan[]> {
+        return await PlanModel.find(query).sort({yearlyAmount: 1})
     }
     
 }
