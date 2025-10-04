@@ -11,6 +11,7 @@ const SellerDashBoardPage = lazy(()=> import('../features/seller/page/Sellerdash
 const ReapplyComponent = lazy(()=> import('../features/seller/components/Reapply'))
 const ProfilePage = lazy(()=> import('../features/shared/pages/ProfilePage'))
 const NotificationPage = lazy(()=> import('../features/shared/components/Notification'))
+const PlansPage = lazy(()=> import('../features/shared/components/plans/Plans'))
 
 
 const sellerRoute = [
@@ -60,14 +61,18 @@ const sellerRoute = [
             
         ),
     },
-    // {
-    //     path:'/seller/notification',
-    //     element:(
-    //         <NotificationPage/>
-           
-            
-    //     ),
-    // }
+    {
+        path:'/seller/plans',
+        element:(
+         <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+                <PlansPage/>
+            </Suspense>
+         </ProtectedRoute>
+        ),
+    }
+    
+    
 
 ]
 
