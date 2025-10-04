@@ -58,7 +58,12 @@ router.patch('/notification/:id',
 )
 
 router.get('/plans',
-  (req,res)=> subscriptionController.getPlans(req,res)
+  authenticate,
+  (req,res)=> subscriptionController.getPlans(req as AuthenticatedRequest,res)
+)
+
+router.post('/creat-order',
+  (req,res)=> subscriptionController.createRazorpayOrder(req,res)
 )
 
 export default router;

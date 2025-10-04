@@ -22,6 +22,8 @@ import { INotificationRepo } from '../repositories/interfaces/notification.repo.
 import { NotificationRepositories } from '../repositories/notification.repo';
 import { INotificationService } from '../services/interfaces/notification.interfaces';
 import { NotificationService } from '../services/notification.service';
+import { SubscriptionService } from '../services/subscription.service';
+import { ISubscriptionService } from '../services/interfaces/subscription.interface';
 
 container.register<IOTPRepository>('IOTPRepository', {useClass: OTPRepository})
 container.register<IOTPService>('IOTPService', { useClass: OTPService})
@@ -39,6 +41,8 @@ container.register<IPlanService>('IPlanService', { useClass: PlanService})
 
 container.register<INotificationRepo>('INotificationRepo', { useClass: NotificationRepositories})
 container.register<INotificationService>('INotificationService', { useClass: NotificationService})
+
+container.register<ISubscriptionService>('ISubscriptionService',{ useClass: SubscriptionService})
 
 
 

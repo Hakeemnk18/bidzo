@@ -79,11 +79,11 @@ const userRoutes = [
     {
         path:'/user/plans',
         element:(
-         
+         <ProtectedRoute>
             <Suspense fallback={<LoadingSpinner />}>
                 <PlansPage/>
             </Suspense>
-         
+         </ProtectedRoute>
         ),
     }
     
