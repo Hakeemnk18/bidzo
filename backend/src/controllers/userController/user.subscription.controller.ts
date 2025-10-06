@@ -11,6 +11,8 @@ import { HttpStatusCode } from "../../constants/httpStatusCode";
 import { ResponseMessages } from "../../constants/responseMessages";
 import { CustomError } from "../../utils/customError";
 import { ISubscriptionService } from "../../services/interfaces/subscription.interface";
+import { IVerifyPaymentDTO } from "../../dtos/subscription.dto";
+import { SubscriptionMappers } from "../../mappers/subscription.mapper";
 
 
 @injectable()
@@ -40,18 +42,41 @@ export class UserSubscriptionController implements IUserSubscriptionController {
         }
     }
 
-    async createRazorpayOrder(req: Request, res: Response): Promise<void> {
+    async createRazorpayOrder(req: AuthenticatedRequest, res: Response): Promise<void> {
         try {
-            const { planId, billing} = req.body
-            const order = await this.subscriptionService.createRazorpayOrder(planId,billing)
+            const { user } = req
+            if (!user) {
+                throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
+            }
+            const { planId, billing } = req.body
+            const order = await this.subscriptionService.createRazorpayOrder(planId, billing, user.id)
             res.status(HttpStatusCode.OK).json({
                 success: true,
                 message: ResponseMessages.SUCCESS,
                 data: order
             })
         } catch (error) {
-            handleError(res,error)
-            console.log("error in razorpay order create ",error)
+            handleError(res, error)
+            console.log("error in razorpay order create ", error)
+        }
+    }
+
+    async verifyPayment(req: AuthenticatedRequest, res: Response): Promise<void> {
+
+        try {
+            const { user } = req
+            if (!user) {
+                throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
+            }
+            const data: IVerifyPaymentDTO = SubscriptionMappers.toVerifyPaymentDTO(req.body)
+            await this.subscriptionService.verifyPayment(data, user.id)
+            res.status(HttpStatusCode.OK).json({
+                success: true,
+                message: ResponseMessages.SUCCESS
+            })
+        } catch (error) {
+            handleError(res, error)
+            console.log("error in verify subscription payment ", error)
         }
     }
 }

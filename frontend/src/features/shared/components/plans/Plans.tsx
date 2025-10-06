@@ -4,6 +4,8 @@ import { showErrorToast } from "../../../../utils/showErrorToast";
 import instance from "../../../../api/axios";
 import type { IResRazorpayCreateOrder, IRazorpayOrder } from "../../../../types/razorpay.type";
 import { openRazorpayCheckout } from "../../../../utils/razorpayHelper";
+import type { ApiResponse } from "../../../../types/user.types";
+import { toast } from "react-toastify";
 const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
 
@@ -45,11 +47,9 @@ const PlansPage = () => {
             const res = await instance.post<IResRazorpayCreateOrder>("/user/creat-order", {
                 planId,
                 billing: isYearly ? 'yearly' : 'monthly'
-
             })
 
             if (res.data.success) {
-                console.log("succes order create")
                 const order: IRazorpayOrder = res.data.data
                 openRazorpayCheckout({
                     key: keyId,
@@ -60,12 +60,22 @@ const PlansPage = () => {
                     order_id: order.id,
                     notes: { planId },
                     handler: async (response) => {
-                        await instance.post('/payments/verify', {
-                            ...response,
-                            planId,
-                            billing: isYearly ? 'yearly' : 'monthly',
-                        });
-                        
+                        try {
+                            const res = await instance.post<ApiResponse>('/user/verify-payment', {
+                                ...response,
+                                planId,
+                                billing: isYearly ? 'yearly' : 'monthly',
+                            });
+                            if(res.data.success){
+                                console.log("payment succes")
+                                toast.success("payment successfull")
+                            }
+                        } catch (error) {
+                            showErrorToast(error)
+                            console.log("error inside verify subscription payment")
+                        }
+
+
                     },
                     prefill: {
                         email: "user@example.com",
@@ -151,7 +161,7 @@ const PlansPage = () => {
                                     {/* Using inline SVG component */}
                                     <CheckCircleIcon className="text-green-400" />
                                     {feature.feature}
-                                    {feature.type === 'count' && ` ${feature.value}`}
+                                    {feature.type === 'count' && ` ${feature.value * (isYearly ? 12 : 1)}`}
                                     {feature.type === 'flat' && ` flat ${feature.value}`}
                                     {feature.type === 'percentage' && ` ${feature.value}%`}
                                 </li>

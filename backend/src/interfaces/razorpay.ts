@@ -22,3 +22,32 @@ export interface IRazorpayOrderOptions {
     [key: string]: any; 
   };
 }
+
+export interface IRazorpayPayment {
+  id: string;
+  entity: string;
+  amount: number;
+  currency: string;
+  status: 'created' | 'authorized' | 'captured' | 'refunded' | 'failed';
+  order_id?: string;
+  invoice_id?: string;
+  international: boolean;
+  method: string;
+  amount_refunded: number;
+  refund_status: string | null;
+  captured: boolean;
+  description?: string;
+  card_id?: string;
+  bank?: string;
+  wallet?: string;
+  vpa?: string;
+  email: string;
+  contact: string;
+  notes?: Record<string, any>;
+  fee?: number;
+  tax?: number;
+  error_code?: string;
+  error_description?: string;
+  created_at: number;
+}
+
