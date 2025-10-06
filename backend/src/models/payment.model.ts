@@ -22,7 +22,7 @@ const paymentSchema: Schema<IPayment> = new Schema({
   method: { type: String, required: true },
   amount: { type: Number, required: true },
   orderId: { type: String, required: true },
-  transactionId: { type: String, required: true },
+  transactionId: { type: String },
   purpose: {
     type: String,
     enum: ["SUBSCRIPTION", "BID", "AUCTION"],
@@ -31,6 +31,6 @@ const paymentSchema: Schema<IPayment> = new Schema({
 }, { timestamps: true });
 
 
-const Payment: Model<IPayment> = mongoose.model<IPayment>("Payment", paymentSchema);
+const PaymentModel: Model<IPayment> = mongoose.model<IPayment>("Payment", paymentSchema);
 
-export default Payment;
+export default PaymentModel;

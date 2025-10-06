@@ -24,6 +24,12 @@ import { INotificationService } from '../services/interfaces/notification.interf
 import { NotificationService } from '../services/notification.service';
 import { SubscriptionService } from '../services/subscription.service';
 import { ISubscriptionService } from '../services/interfaces/subscription.interface';
+import { IPaymentRepo } from '../repositories/interfaces/payment.repo.interface';
+import { PaymentRepo } from '../repositories/payment.repo';
+import { IPaymentService } from '../services/interfaces/payment.interface';
+import { PaymentService } from '../services/payment.service';
+import { SubscriptionRepo } from '../repositories/subscription.repo';
+import { ISubscriptionRepo } from '../repositories/interfaces/subscription.repo.interface';
 
 container.register<IOTPRepository>('IOTPRepository', {useClass: OTPRepository})
 container.register<IOTPService>('IOTPService', { useClass: OTPService})
@@ -42,7 +48,11 @@ container.register<IPlanService>('IPlanService', { useClass: PlanService})
 container.register<INotificationRepo>('INotificationRepo', { useClass: NotificationRepositories})
 container.register<INotificationService>('INotificationService', { useClass: NotificationService})
 
+container.register<ISubscriptionRepo>('ISubscriptionRepo', { useClass: SubscriptionRepo})
 container.register<ISubscriptionService>('ISubscriptionService',{ useClass: SubscriptionService})
+
+container.register<IPaymentRepo>('IPaymentRepo',{ useClass: PaymentRepo})
+container.register<IPaymentService>('IPaymentService', { useClass: PaymentService})
 
 
 

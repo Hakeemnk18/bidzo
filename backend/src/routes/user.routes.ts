@@ -63,7 +63,13 @@ router.get('/plans',
 )
 
 router.post('/creat-order',
-  (req,res)=> subscriptionController.createRazorpayOrder(req,res)
+  authenticate,
+  (req,res)=> subscriptionController.createRazorpayOrder(req as AuthenticatedRequest,res)
+)
+
+router.post('/verify-payment',
+  authenticate,
+  (req,res)=> subscriptionController.verifyPayment(req as AuthenticatedRequest,res)
 )
 
 export default router;
