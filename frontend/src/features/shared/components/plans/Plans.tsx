@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
-import type { IPlanData, IResGetPlanName } from "../../../../types/plan,types";
+import { use, useEffect, useState } from "react";
+import type { IPlanData, IResGetPlanName, IResPlanData } from "../../../../types/plan,types";
 import { showErrorToast } from "../../../../utils/showErrorToast";
 import instance from "../../../../api/axios";
 import type { IResRazorpayCreateOrder, IRazorpayOrder } from "../../../../types/razorpay.type";
 import { openRazorpayCheckout } from "../../../../utils/razorpayHelper";
 import type { ApiResponse } from "../../../../types/user.types";
 import { toast } from "react-toastify";
+import type { IResCurreentSubscription } from "../../../../types/subscription.type";
+import AlertModal from "../modal/Alert";
 const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
 
@@ -24,6 +26,8 @@ const PlansPage = () => {
 
     const [plans, setPlans] = useState<IPlanData[]>([])
     const [isYearly, setIsYearly] = useState(true);
+    const [currentPlan, setCurrentPlan] = useState<string | null>(null)
+    const [isAlertModal, setIsAlertModal] = useState(false)
 
     const fetchData = async () => {
         try {
@@ -32,15 +36,41 @@ const PlansPage = () => {
 
                 setPlans(res.data.data)
             }
+
         } catch (error) {
             showErrorToast(error)
             console.log("error in fetch plans ", error)
         }
     }
 
+
+
+    const fetchCurrentPlan = async () => {
+        try {
+            const res = await instance.get<IResCurreentSubscription>('/user/current-plans')
+            if (res.data.success) {
+                
+                setCurrentPlan(res.data?.data?.id || null)
+            }
+
+
+        } catch (error) {
+            showErrorToast(error)
+            console.log("error in fetch current plan ", error)
+        }
+
+    }
+
+                                                                                       
+
     useEffect(() => {
         fetchData()
     }, [])
+
+    useEffect(() => {
+        fetchCurrentPlan()
+        
+    },[])
 
     const handleUpgrade = async (planId: string) => {
         try {
@@ -66,7 +96,7 @@ const PlansPage = () => {
                                 planId,
                                 billing: isYearly ? 'yearly' : 'monthly',
                             });
-                            if(res.data.success){
+                            if (res.data.success) {
                                 console.log("payment succes")
                                 toast.success("payment successfull")
                             }
@@ -131,9 +161,15 @@ const PlansPage = () => {
                 {plans.map((plan) => ( // Use 'any' type to match the structure of the data object
                     <div
                         key={plan.id}
-                        className={`w-80 rounded-2xl shadow-lg p-6 bg-white/5 text-white border transition transform hover:scale-105 ${plan.monthlyAmount ? "border-yellow-400" : "border-gray-600"
+                        className={`relative w-80 rounded-2xl shadow-lg p-6 bg-white/5 text-white border transition transform hover:scale-105 ${plan.monthlyAmount ? "border-yellow-400" : "border-gray-600"
                             }`}
                     >
+                        {currentPlan === plan.id && 
+                        <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                            Current Plan
+                        </span>
+                        }
+                        
                         {plan.monthlyAmount
                             && (
                                 <p className="text-sm text-yellow-400 font-semibold mb-2">Most Popular</p>
@@ -169,7 +205,10 @@ const PlansPage = () => {
                         </ul>
 
                         <button
-                            onClick={() => handleUpgrade(plan.id)}
+                            onClick={
+                                plan.id === currentPlan ? () => { setIsAlertModal(true)}  :
+                                () => handleUpgrade(plan.id)}
+                            
                             className={`w-full py-2 rounded-xl font-semibold transition ${plan.monthlyAmount
                                 ? "bg-yellow-400 text-black hover:bg-yellow-500"
                                 : "bg-indigo-600 hover:bg-indigo-700"
@@ -177,9 +216,15 @@ const PlansPage = () => {
                         >
                             {`Upgrade to ${plan.planName}`}
                         </button>
+                        
                     </div>
                 ))}
             </div>
+            {isAlertModal && <AlertModal 
+                onClose={() => setIsAlertModal(false)}
+                isOpen={isAlertModal}
+                message="You are already on this plan."
+            />}
         </div>
     );
 };

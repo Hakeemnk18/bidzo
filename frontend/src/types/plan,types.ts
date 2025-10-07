@@ -11,12 +11,7 @@ export interface IPlanFormData {
 export interface IPlanFormProp {
     id: null | string
 }
-
-
-
 export type FeatureType = "count" | "flat" | "percentage";
-
-
 
 export interface IPlanData {
     id: string

@@ -295,6 +295,7 @@ const AuctionTable = ({ role }: AuctionTableProps) => {
                                         {/* confirm modal */}
                                         {
                                             isConfirmModal && <ConfirmModal
+                                                cnfBtnMessage="Confirm"
                                                 isOpen={isConfirmModal}
                                                 onConfirm={handleBlockAndUnblock}
                                                 onClose={() => setIsConfirmModal(false)}

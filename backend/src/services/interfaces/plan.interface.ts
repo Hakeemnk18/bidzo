@@ -11,4 +11,5 @@ export interface IPlanService {
     editPlan(id: string, data: ICreatePlanDto): Promise<void>
     getAllPlanName(): Promise<Plan[]>
     findPlans(role: string): Promise<Plan[]>
+    findOne(query: Record<string, any>): Promise<Plan | null>
 }

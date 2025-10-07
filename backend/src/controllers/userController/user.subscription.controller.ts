@@ -13,6 +13,8 @@ import { CustomError } from "../../utils/customError";
 import { ISubscriptionService } from "../../services/interfaces/subscription.interface";
 import { IVerifyPaymentDTO } from "../../dtos/subscription.dto";
 import { SubscriptionMappers } from "../../mappers/subscription.mapper";
+import { id } from "zod/v4/locales/index.cjs";
+import { createSubscriptionSchema, verifyPaymentSchema } from "../../utils/validations/subscription";
 
 
 @injectable()
@@ -48,7 +50,8 @@ export class UserSubscriptionController implements IUserSubscriptionController {
             if (!user) {
                 throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
             }
-            const { planId, billing } = req.body
+            
+            const { planId, billing } = createSubscriptionSchema.parse(req.body)
             const order = await this.subscriptionService.createRazorpayOrder(planId, billing, user.id)
             res.status(HttpStatusCode.OK).json({
                 success: true,
@@ -68,7 +71,8 @@ export class UserSubscriptionController implements IUserSubscriptionController {
             if (!user) {
                 throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
             }
-            const data: IVerifyPaymentDTO = SubscriptionMappers.toVerifyPaymentDTO(req.body)
+            const validatedData = verifyPaymentSchema.parse(req.body)
+            const data: IVerifyPaymentDTO = SubscriptionMappers.toVerifyPaymentDTO(validatedData)
             await this.subscriptionService.verifyPayment(data, user.id)
             res.status(HttpStatusCode.OK).json({
                 success: true,
@@ -77,6 +81,26 @@ export class UserSubscriptionController implements IUserSubscriptionController {
         } catch (error) {
             handleError(res, error)
             console.log("error in verify subscription payment ", error)
+        }
+    }
+
+    async getCurrentPlan(req: AuthenticatedRequest, res: Response): Promise<void> {
+        try {
+            const { user } = req
+            if(!user){
+                throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
+            }
+            const currentPlan = await this.subscriptionService.getCurrentPlan(user.id)
+            res.status(HttpStatusCode.OK).json({
+                success: true,
+                message: ResponseMessages.SUCCESS,
+                data:{
+                    id: currentPlan?.planId || null,
+                }
+            })
+        } catch (error) {
+            handleError(res, error)
+            console.log("error in get current plan ", error)
         }
     }
 }

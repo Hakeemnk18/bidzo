@@ -8,6 +8,7 @@ export interface ISubscription extends Document {
   startAt: Date;
   endAt: Date;
   qouta: IQouta[];
+  billing: 'monthly' | 'yearly';
   paymentId: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -31,6 +32,7 @@ const subscriptionSchema: Schema<ISubscription> = new Schema(
     startAt: { type: Date, required: true },
     endAt: { type: Date, required: true },
     qouta: { type: [qoutaSchema], required: true },
+    billing: { type: String, enum: ['monthly', 'yearly'], required: true },
     paymentId: { type: Schema.Types.ObjectId, ref: "Payment", required: true },
   },
   { timestamps: true }
