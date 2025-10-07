@@ -91,12 +91,15 @@ export class UserSubscriptionController implements IUserSubscriptionController {
                 throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
             }
             const currentPlan = await this.subscriptionService.getCurrentPlan(user.id)
+            let resData 
+            if(currentPlan){
+                resData = SubscriptionMappers.toResCurrentPlan(currentPlan)
+            }
+            
             res.status(HttpStatusCode.OK).json({
                 success: true,
                 message: ResponseMessages.SUCCESS,
-                data:{
-                    id: currentPlan?.planId || null,
-                }
+                data:resData
             })
         } catch (error) {
             handleError(res, error)

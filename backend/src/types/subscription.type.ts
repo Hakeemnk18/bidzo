@@ -1,4 +1,5 @@
-import { Plan } from "./plan.type";
+import { IQouta } from "../interfaces/subscription";
+
 
 export type Subscription = {
   _id?: string;
@@ -6,7 +7,8 @@ export type Subscription = {
   planId: string;
   startAt: Date;
   endAt: Date;
-  qouta: string;
+  qouta: IQouta[];
+  isExpired: boolean;
   billing: 'monthly' | 'yearly';
   paymentId: string;
   createdAt?: Date;
