@@ -14,6 +14,7 @@ import { generatedSignature, verifySignature } from "../utils/hash";
 import { IPaymentService } from "./interfaces/payment.interface";
 import { da } from "zod/v4/locales/index.cjs";
 import { IQouta } from "../interfaces/subscription";
+import { Subscription } from "../types/subscription.type";
 
 @injectable()
 export class SubscriptionService implements ISubscriptionService {
@@ -26,6 +27,22 @@ export class SubscriptionService implements ISubscriptionService {
         const plan = await this.planService.getPlan(planId)
         if (!plan) {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
+        }
+        const currentSubscription = await this.getCurrentPlan(userId)
+        if (currentSubscription && currentSubscription.planId.toString() === planId) {
+            throw new CustomError(ResponseMessages.CURRENT_PLAN, HttpStatusCode.BAD_REQUEST)
+        }
+        if(currentSubscription){
+            const currentPlan = await this.planService.getPlan(currentSubscription.planId)  
+            if(currentPlan.planName === "Gold" && plan.planName === "Silver"){
+                throw new CustomError(ResponseMessages.DOWN_GRADE_PLAN, HttpStatusCode.BAD_REQUEST)
+            }else if(currentPlan.target !== plan.target){
+                throw new CustomError(ResponseMessages.PLAN_TARGET_MISMATCH, HttpStatusCode.BAD_REQUEST)
+            }else if(plan.planName === "Gold" && billing === 'monthly' && currentSubscription.billing === 'yearly'){
+                throw new CustomError(ResponseMessages.DOWN_GRADE_PLAN, HttpStatusCode.BAD_REQUEST)
+            }else if(plan.planName === "Silver" && billing === 'monthly' && currentSubscription.billing === 'yearly'){
+                throw new CustomError(ResponseMessages.DOWN_GRADE_PLAN, HttpStatusCode.BAD_REQUEST)
+            }
         }
         const amountRupees = billing === 'yearly' ? plan.yearlyAmount : plan.monthlyAmount;
 
@@ -76,23 +93,29 @@ export class SubscriptionService implements ISubscriptionService {
         if (!paln) {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
-        
-        const qouta: IQouta[] = paln.features.map((item)=>{
-            if(item.type === "count" && data.billing === 'yearly'){
-                item.value = item.value * 12    
-            }
 
-            return {...item, used: 0}
+        const qouta: IQouta[] = paln.features.map((item) => {
+            if (item.type === "count" && data.billing === 'yearly') {
+                item.value = item.value * 12
+            }
+            return { ...item, used: 0 }
         })
+        
         await this.create({
             planId: data.planId,
             userId,
             paymentId: payment._id!,
             qouta,
+            billing: data.billing,
             startAt: end,
-            endAt: start,
+            endAt: end,
         })
 
+    }
+
+    async getCurrentPlan(id: string): Promise<Subscription | null> {
+
+        return this.subscriptionRepo.findOne({ userId: id, endAt: { $gt: new Date() } })
     }
 
 }

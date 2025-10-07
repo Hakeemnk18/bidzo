@@ -64,7 +64,9 @@ export class PlanService implements IPlanService {
     }
 
     async blockAndUnblockPlan(id: string): Promise<void> {
-        const plan = await this.planRepo.findById(id)
+        const plan = await this.planRepo.findOne({_id: id})
+
+
         const updateResult = await this.planRepo.updatePlan(id, { isDeleted: !plan?.isDeleted})
         if(updateResult.matchedCount === 0){
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
@@ -72,7 +74,7 @@ export class PlanService implements IPlanService {
     }
 
     async getPlan(id: string): Promise<Plan> {
-        const plan = await this.planRepo.findById(id)
+        const plan = await this.planRepo.findOne({_id: id})
 
         if(!plan){
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
@@ -96,7 +98,11 @@ export class PlanService implements IPlanService {
     }
 
     async findPlans(role: string): Promise<Plan[]> {
-        const query: Record<string, any> = { target: role}
+        const query: Record<string, any> = { target: role, isDeleted: false }
         return await this.planRepo.findAllPlanName(query)
+    }
+
+    async findOne(query: Record<string, any>): Promise<Plan | null> {
+        return this.planRepo.findOne(query)
     }
 }

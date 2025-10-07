@@ -26,8 +26,8 @@ export class PlanRepository implements IPlanRepo {
         return await PlanModel.updateOne({_id: id},query)
     }
 
-    async findById(id: string): Promise<Plan | null> {
-        return await PlanModel.findById(id)
+    async findOne(query: Record<string, any>): Promise<Plan | null> {
+        return await PlanModel.findOne(query)
     }
 
     async findAllPlanName(query: Record<string, any>): Promise<Plan[]> {

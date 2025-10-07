@@ -8,7 +8,7 @@ import TableFilter from "../../../shared/components/table/TableFilter";
 import type { ApiResponse } from "../../../../types/user.types";
 import ConfirmModal from "../../../shared/components/modal/ConfirmationModal";
 import instance from "../../../../api/axios";
-import type { IFeaturesOptions, IPlanData, IResGetPlanData } from "../../../../types/plan,types";
+import type { FeatureRow, IPlanData, IResGetPlanData } from "../../../../types/plan,types";
 import FeatureModal from "../modal/planFeatureModal";
 import { useNavigate } from "react-router-dom";
 
@@ -32,7 +32,7 @@ const PlanTable = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [showSort, setShowSort] = useState(false);
     const [sort, setSort] = useState('')
-    const [currentFeatures, setCurrentFeatures] = useState<IFeaturesOptions[] | []>([])
+    const [currentFeatures, setCurrentFeatures] = useState<FeatureRow[] | []>([])
     const navigate = useNavigate()
     const sortOptions = [
         { value: '', label: 'All' },
@@ -120,7 +120,7 @@ const PlanTable = () => {
         }
     }
 
-    const handleShowFeature = (features: IFeaturesOptions[]) => {
+    const handleShowFeature = (features: FeatureRow[]) => {
         setIsFeatureModal(true)
         setCurrentFeatures(features)
     }
@@ -268,6 +268,7 @@ const PlanTable = () => {
                                         {/* confirm modal */}
                                         {
                                             isConfirmModal && <ConfirmModal
+                                                cnfBtnMessage="confirm"
                                                 isOpen={isConfirmModal}
                                                 onConfirm={handleBlockAndUnblock}
                                                 onClose={() => setIsConfirmModal(false)}

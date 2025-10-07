@@ -4,6 +4,7 @@ export interface ICreateSubscriptionDTO {
   userId: string;       
   planId: string;       
   startAt: Date;
+  billing: 'monthly' | 'yearly';
   endAt: Date;
   qouta: IQouta[];
   paymentId: string;    
@@ -14,5 +15,5 @@ export interface IVerifyPaymentDTO {
   razorpay_payment_id: string;
   razorpay_signature: string;
   planId: string;
-  billing: string
+  billing: 'monthly' | 'yearly';
 }

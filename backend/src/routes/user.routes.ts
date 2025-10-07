@@ -72,6 +72,11 @@ router.post('/verify-payment',
   (req,res)=> subscriptionController.verifyPayment(req as AuthenticatedRequest,res)
 )
 
+router.get('/current-plans',
+  authenticate,
+  (req,res)=> subscriptionController.getCurrentPlan(req as AuthenticatedRequest,res)
+)
+
 export default router;
 
 

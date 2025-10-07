@@ -37,5 +37,8 @@ export const ResponseMessages = {
   PLAN_INVALID_MONTHLY_AMOUNT: "Invalid monthly amount",
   PLAN_INVALID_YEARLY_AMOUNT: "Invalid yearly amount",
   PLAN_INVALID_FEATURES: "Invalid features",
-  PLAN_EXIST: "This plan already exist"
+  PLAN_EXIST: "This plan already exist",
+  CURRENT_PLAN: "You are already on this plan",
+  DOWN_GRADE_PLAN: "You cannot downgrade your plan",
+  PLAN_TARGET_MISMATCH: "Plan target mismatch",
 };
