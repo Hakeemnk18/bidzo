@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 import { IQouta } from "../interfaces/subscription";
+import { boolean } from "zod";
 
 
 export interface ISubscription extends Document {
@@ -10,6 +11,7 @@ export interface ISubscription extends Document {
   qouta: IQouta[];
   billing: 'monthly' | 'yearly';
   paymentId: mongoose.Types.ObjectId;
+  isExpired: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -32,6 +34,7 @@ const subscriptionSchema: Schema<ISubscription> = new Schema(
     startAt: { type: Date, required: true },
     endAt: { type: Date, required: true },
     qouta: { type: [qoutaSchema], required: true },
+    isExpired:{ type: Boolean, default: false},
     billing: { type: String, enum: ['monthly', 'yearly'], required: true },
     paymentId: { type: Schema.Types.ObjectId, ref: "Payment", required: true },
   },

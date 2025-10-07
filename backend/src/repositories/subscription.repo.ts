@@ -12,4 +12,7 @@ export class SubscriptionRepo implements ISubscriptionRepo {
     async findOne(query: Record<string, any>): Promise<Subscription | null> {
         return await SubscriptionModel.findOne(query)
     }
+    async updateExpire(id: string): Promise<void> {
+        await SubscriptionModel.findOneAndUpdate({_id: id},{isExpired: true})
+    }
 }

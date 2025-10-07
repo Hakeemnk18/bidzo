@@ -7,4 +7,5 @@ export interface ISubscriptionService {
     create(subscription: ICreateSubscriptionDTO): Promise<void>
     verifyPayment(data: IVerifyPaymentDTO, userId: string): Promise<void>
     getCurrentPlan(id: string): Promise<Subscription | null>
+    updateExpire(id: string): Promise<void>
 }

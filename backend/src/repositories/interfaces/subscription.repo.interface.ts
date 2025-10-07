@@ -4,4 +4,5 @@ import { Subscription } from "../../types/subscription.type";
 export interface ISubscriptionRepo {
     create(subscription: ICreateSubscriptionDTO): Promise<void>
     findOne(query: Record<string, any>): Promise<Subscription | null>
+    updateExpire(id: string): Promise<void>
 }
