@@ -80,15 +80,7 @@ const CurrentPlanModal: React.FC<CurrentPlanModalProps> = ({ isOpen, onClose, on
 
                 {/* Action Buttons */}
                 <div className="flex justify-between gap-3 pt-4 border-t border-[#5A5A90]">
-                    {/* Cancel Button (Red/Danger - Left) */}
-                    <button
-                        onClick={onCancelPlan}
-                        className="w-full px-4 py-2 rounded-md text-sm font-semibold bg-red-600 text-white hover:bg-red-700 transition duration-150"
-                    >
-                        Cancel Plan
-                    </button>
-
-                    {/* Renew Button (Gold/Primary - Right, matching your Upgrade button color) */}
+        
                     <button
                         disabled={calculateDaysLeft(planData.endAt) < 5 ? false : true}
                         onClick={onRenew}
