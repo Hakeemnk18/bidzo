@@ -1,8 +1,9 @@
 import { injectable } from "tsyringe";
-import { ICreateSubscriptionDTO } from "../dtos/subscription.dto";
+import { ICreateSubscriptionDTO, PopulatedSubscription } from "../dtos/subscription.dto";
 import { SubscriptionModel } from "../models/subscription.model";
 import { ISubscriptionRepo } from "./interfaces/subscription.repo.interface";
 import { Subscription } from "../types/subscription.type";
+import { PopulatedPlanId } from "../dtos/subscription.dto";
 
 @injectable()
 export class SubscriptionRepo implements ISubscriptionRepo {
@@ -13,6 +14,12 @@ export class SubscriptionRepo implements ISubscriptionRepo {
         return await SubscriptionModel.findOne(query)
     }
     async updateExpire(id: string): Promise<void> {
-        await SubscriptionModel.findOneAndUpdate({_id: id},{isExpired: true})
+        await SubscriptionModel.findOneAndUpdate({ _id: id }, { isExpired: true })
+    }
+
+    async currentSubscription(query: Record<string, any>): Promise<PopulatedSubscription | null> {
+        const fieldsToSelect = '_id planName monthlyAmount yearlyAmount';
+        const result = await SubscriptionModel.findOne(query).populate<{ planId: PopulatedPlanId }>('planId', fieldsToSelect);
+        return result as PopulatedSubscription | null;
     }
 }

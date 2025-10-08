@@ -1,4 +1,4 @@
-import { IResCurrentPlan, IVerifyPaymentDTO } from "../dtos/subscription.dto";
+import { IResCurrentPlan, IVerifyPaymentDTO, PopulatedSubscription } from "../dtos/subscription.dto";
 import { Subscription } from "../types/subscription.type";
 
 
@@ -12,7 +12,7 @@ export class SubscriptionMappers {
             billing: data.billing
         }
     }
-    static toResCurrentPlan(data: Subscription): IResCurrentPlan {
+    static toResCurrentPlan(data: PopulatedSubscription): IResCurrentPlan {
         return {
             _id: data._id,
             userId: data.userId,

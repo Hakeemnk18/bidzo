@@ -8,6 +8,7 @@ import type { ApiResponse } from "../../../../types/user.types";
 import { toast } from "react-toastify";
 import type { IResCurrentSubscription, IResSubscription } from "../../../../types/subscription.type";
 import AlertModal from "../modal/Alert";
+import CurrentPlan from "../modal/CurrentPlan";
 const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
 
@@ -28,6 +29,7 @@ const PlansPage = () => {
     const [isYearly, setIsYearly] = useState(true);
     const [currentPlan, setCurrentPlan] = useState<IResSubscription | undefined>(undefined)
     const [isAlertModal, setIsAlertModal] = useState(false)
+    const [isCurrentPlanModal, setIsCurrentPlanModal] = useState(false)
 
     const fetchData = async () => {
         try {
@@ -165,10 +167,12 @@ const PlansPage = () => {
                             }`}
                     >
                         {
-                        ((currentPlan?.planId === plan.id && currentPlan?.billing === "yearly" && isYearly ) ||
-                        (currentPlan?.planId === plan.id && currentPlan?.billing === "monthly" && !isYearly ))
+                        ((currentPlan?.planId?._id === plan.id && currentPlan?.billing === "yearly" && isYearly ) ||
+                        (currentPlan?.planId?._id === plan.id && currentPlan?.billing === "monthly" && !isYearly ))
                         &&
-                            <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                            <span
+                            onClick={()=> setIsCurrentPlanModal(true)}
+                            className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full cursor-pointer">
                                 Current Plan
                             </span>
                         }
@@ -209,7 +213,7 @@ const PlansPage = () => {
 
                         <button
                             onClick={
-                                plan.id === currentPlan?.planId ? () => { setIsAlertModal(true) } :
+                                plan.id === currentPlan?.planId?._id ? () => { setIsAlertModal(true) } :
                                     () => handleUpgrade(plan.id)}
 
                             className={`w-full py-2 rounded-xl font-semibold transition ${plan.monthlyAmount
@@ -228,6 +232,15 @@ const PlansPage = () => {
                 isOpen={isAlertModal}
                 message="You are already on this plan."
             />}
+            {isCurrentPlanModal && 
+            <CurrentPlan 
+            planData={currentPlan!}
+            onClose={()=> setIsCurrentPlanModal(false)}
+            isOpen={isCurrentPlanModal}
+            onCancelPlan={()=>{}}
+            onRenew={()=>{}}
+            />
+            }
         </div>
     );
 };
