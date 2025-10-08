@@ -4,6 +4,7 @@ import { CustomError } from "../customError";
 import { HttpStatusCode } from "../../constants/httpStatusCode";
 import { ResponseMessages } from "../../constants/responseMessages";
 import { Subscription } from "../../types/subscription.type";
+import { response } from "express";
 
 export const createSubscriptionSchema = z.object({
     planId: z.string().min(1, "Plan ID is required"),
@@ -47,3 +48,14 @@ export const isValidPlan = (
         throw new CustomError(ResponseMessages.DOWN_GRADE_PLAN, HttpStatusCode.BAD_REQUEST)
     }
 }
+
+
+export const isValidRenewalPlan = (currentSubscription: Subscription) => {
+    const expiryDate = new Date(currentSubscription.endAt); 
+    const today = new Date();
+    const differenceInMs = expiryDate.getTime() - today.getTime();
+    const fiveDaysInMs = 5 * 24 * 60 * 60 * 1000;
+    if (differenceInMs < 0 || differenceInMs > fiveDaysInMs) {
+        throw new CustomError(ResponseMessages.PLAN_RENEWAL_TOO_EARLY, HttpStatusCode.BAD_REQUEST)
+    }
+};

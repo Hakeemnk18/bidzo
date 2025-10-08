@@ -1,15 +1,13 @@
-import { use, useEffect, useState } from "react";
-import type { IPlanData, IResGetPlanName, IResPlanData } from "../../../../types/plan,types";
+import {  useEffect, useState } from "react";
+import type { IPlanData, IResGetPlanName } from "../../../../types/plan,types";
 import { showErrorToast } from "../../../../utils/showErrorToast";
 import instance from "../../../../api/axios";
 import type { IResRazorpayCreateOrder, IRazorpayOrder } from "../../../../types/razorpay.type";
-import { openRazorpayCheckout } from "../../../../utils/razorpayHelper";
-import type { ApiResponse } from "../../../../types/user.types";
-import { toast } from "react-toastify";
+import {  openRazorpayCheckoutFunction } from "../../../../utils/razorpayHelper";
 import type { IResCurrentSubscription, IResSubscription } from "../../../../types/subscription.type";
 import AlertModal from "../modal/Alert";
 import CurrentPlan from "../modal/CurrentPlan";
-const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
+
 
 
 
@@ -64,7 +62,7 @@ const PlansPage = () => {
     }
 
 
-    console.log(currentPlan)
+    
     useEffect(() => {
         fetchData()
     }, [])
@@ -74,6 +72,21 @@ const PlansPage = () => {
 
     }, [])
 
+    const handleRenewal = async ()=>{
+        try {
+            const res = await instance.post<IResRazorpayCreateOrder>('/user/renewal/create-order')
+            if (res.data.success) {
+                const order: IRazorpayOrder = res.data.data
+                let URL = '/user/renewal/verify-payment'
+                openRazorpayCheckoutFunction(order,URL)
+            }
+        } catch (error) {
+            showErrorToast(error)
+            console.log("error in renewal handle")
+        }
+    }
+    
+    // handle new plan
     const handleUpgrade = async (planId: string) => {
         try {
             const res = await instance.post<IResRazorpayCreateOrder>("/user/creat-order", {
@@ -83,37 +96,8 @@ const PlansPage = () => {
 
             if (res.data.success) {
                 const order: IRazorpayOrder = res.data.data
-                openRazorpayCheckout({
-                    key: keyId,
-                    amount: order.amount,
-                    currency: order.currency,
-                    name: "Your App Name",
-                    description: "Subscription Plan",
-                    order_id: order.id,
-                    notes: { planId },
-                    handler: async (response) => {
-                        try {
-                            const res = await instance.post<ApiResponse>('/user/verify-payment', {
-                                ...response,
-                                planId,
-                                billing: isYearly ? 'yearly' : 'monthly',
-                            });
-                            if (res.data.success) {
-                                console.log("payment succes")
-                                toast.success("payment successfull")
-                            }
-                        } catch (error) {
-                            showErrorToast(error)
-                            console.log("error inside verify subscription payment")
-                        }
-
-
-                    },
-                    prefill: {
-                        email: "user@example.com",
-                        contact: "9999999999",
-                    },
-                });
+                let URL = '/user/verify-payment'
+                openRazorpayCheckoutFunction(order,URL)
             }
 
         } catch (error) {
@@ -238,7 +222,7 @@ const PlansPage = () => {
             onClose={()=> setIsCurrentPlanModal(false)}
             isOpen={isCurrentPlanModal}
             onCancelPlan={()=>{}}
-            onRenew={()=>{}}
+            onRenew={handleRenewal}
             />
             }
         </div>

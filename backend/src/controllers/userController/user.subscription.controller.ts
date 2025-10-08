@@ -67,6 +67,7 @@ export class UserSubscriptionController implements IUserSubscriptionController {
     async verifyPayment(req: AuthenticatedRequest, res: Response): Promise<void> {
 
         try {
+            console.log("verify payment")
             const { user } = req
             if (!user) {
                 throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
@@ -86,14 +87,17 @@ export class UserSubscriptionController implements IUserSubscriptionController {
 
     async getCurrentPlan(req: AuthenticatedRequest, res: Response): Promise<void> {
         try {
+            
             const { user } = req
             if(!user){
                 throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
             }
             const currentPlan = await this.subscriptionService.getCurrentPlan(user.id)
+        
             let resData 
             if(currentPlan){
                 resData = SubscriptionMappers.toResCurrentPlan(currentPlan)
+                
             }
 
             
@@ -105,6 +109,44 @@ export class UserSubscriptionController implements IUserSubscriptionController {
         } catch (error) {
             handleError(res, error)
             console.log("error in get current plan ", error)
+        }
+    }
+
+    async renewSubscription(req: AuthenticatedRequest, res: Response): Promise<void> {
+        try {
+            const { user } = req
+            if (!user) {
+                throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
+            }
+            
+            const order = await this.subscriptionService.renewRazorpayOrder(user.id)
+            res.status(HttpStatusCode.OK).json({
+                success: true,
+                message: ResponseMessages.SUCCESS,
+                data: order
+            })
+        } catch (error) {
+            handleError(res, error)
+            console.log("error in razorpay order create for renewal", error)
+        }
+    }
+
+    async renewalVerifyPayment(req: AuthenticatedRequest, res: Response): Promise<void> {
+        try {
+            const { user } = req
+            if (!user) {
+                throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
+            }
+            const validatedData = verifyPaymentSchema.parse(req.body)
+            const data: IVerifyPaymentDTO = SubscriptionMappers.toVerifyPaymentDTO(validatedData)
+            await this.subscriptionService.renewVerifyPayment(data, user.id)
+            res.status(HttpStatusCode.OK).json({
+                success: true,
+                message: ResponseMessages.SUCCESS
+            })
+        } catch (error) {
+            handleError(res, error)
+            console.log("error in renew verify subscription payment ", error)
         }
     }
 }
