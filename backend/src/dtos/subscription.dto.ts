@@ -1,4 +1,5 @@
 import { IQouta } from "../interfaces/subscription";
+import { Subscription } from "../types/subscription.type";
 
 export interface ICreateSubscriptionDTO {
   userId: string;
@@ -21,10 +22,24 @@ export interface IVerifyPaymentDTO {
 export interface IResCurrentPlan {
   _id?: string;
   userId: string;
-  planId: string;
+  planId: ICurrentPlan;
   startAt: Date;
   endAt: Date;
   qouta: IQouta[];
   isExpired: boolean;
   billing: 'monthly' | 'yearly';
 }
+
+export interface ICurrentPlan {
+  _id: string;
+  planName: string; 
+  monthlyAmount: number;
+  yearlyAmount: number;
+};
+
+export type PopulatedPlanId = Pick<ICurrentPlan, '_id' | 'planName' | 'monthlyAmount' | 'yearlyAmount'>;
+
+
+export type PopulatedSubscription = Omit<Subscription, 'planId'> & {
+  planId: PopulatedPlanId; 
+};

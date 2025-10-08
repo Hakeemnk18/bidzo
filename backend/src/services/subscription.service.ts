@@ -2,7 +2,7 @@
 import payments from "razorpay/dist/types/payments";
 import { HttpStatusCode } from "../constants/httpStatusCode";
 import { ResponseMessages } from "../constants/responseMessages";
-import { ICreateSubscriptionDTO, IVerifyPaymentDTO } from "../dtos/subscription.dto";
+import { ICreateSubscriptionDTO, IVerifyPaymentDTO, PopulatedSubscription } from "../dtos/subscription.dto";
 import { IRazorpayOrder } from "../interfaces/razorpay";
 import { ISubscriptionRepo } from "../repositories/interfaces/subscription.repo.interface";
 import { CustomError } from "../utils/customError";
@@ -31,7 +31,7 @@ export class SubscriptionService implements ISubscriptionService {
         if (!plan) {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
-        const currentSubscription = await this.getCurrentPlan(userId)
+        const currentSubscription = await this.getCurrentOne(userId)
         if (currentSubscription && currentSubscription.planId.toString() === planId) {
             throw new CustomError(ResponseMessages.CURRENT_PLAN, HttpStatusCode.BAD_REQUEST)
         }
@@ -80,16 +80,16 @@ export class SubscriptionService implements ISubscriptionService {
         if (!plan) {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
-        const existingSubscription = await this.getCurrentPlan(userId);
+        const existingSubscription = await this.getCurrentOne(userId);
         let qouta: IQouta[] = plan.features.map((item) => {
-            
+
             if (item.type === "count" && data.billing === 'yearly') {
                 item.value = item.value * 12
             }
-            return { id: item.id, feature: item.feature, value: item.value, type:item.type, used: 0 }
-            
+            return { id: item.id, feature: item.feature, value: item.value, type: item.type, used: 0 }
+
         })
-        
+
         if (existingSubscription) {
             const currentPlan = await this.planService.getPlan(existingSubscription.planId)
             isValidPlan(currentPlan!, plan!, existingSubscription, data.billing)
@@ -97,12 +97,12 @@ export class SubscriptionService implements ISubscriptionService {
             const availableFeatures = existingSubscription.qouta.filter(item => item.type === 'count' && (item.value - item.used) > 0);
             if (availableFeatures.length > 0) {
                 let qoutaObj: Record<string, any> = {}
-                availableFeatures.forEach((items)=>{
-                    qoutaObj[items.feature] = { remainCount: items.value - items.used}
+                availableFeatures.forEach((items) => {
+                    qoutaObj[items.feature] = { remainCount: items.value - items.used }
                 })
-                qouta = qouta.map((item):IQouta=>{
-                    if(qoutaObj[item.feature] && item.type === 'count'){
-                        return { ...item, value: qoutaObj[item.feature].remainCount + item.value}
+                qouta = qouta.map((item): IQouta => {
+                    if (qoutaObj[item.feature] && item.type === 'count') {
+                        return { ...item, value: qoutaObj[item.feature].remainCount + item.value }
                     }
                     return item
                 })
@@ -129,9 +129,15 @@ export class SubscriptionService implements ISubscriptionService {
 
     }
 
-    async getCurrentPlan(id: string): Promise<Subscription | null> {
-        return this.subscriptionRepo.findOne({ userId: id, endAt: { $gt: new Date() }, isExpired: false })
+    async getCurrentPlan(id: string): Promise<PopulatedSubscription | null> {
+        return this.subscriptionRepo.currentSubscription({ userId: id, endAt: { $gt: new Date() }, isExpired: false })
     }
+
+    async getCurrentOne(id: string): Promise<Subscription | null> {
+        return this.subscriptionRepo.findOne({ userId: id, endAt: { $gt: new Date() }, isExpired: false })
+
+    }
+
 
     async updateExpire(id: string): Promise<void> {
         return this.subscriptionRepo.updateExpire(id)

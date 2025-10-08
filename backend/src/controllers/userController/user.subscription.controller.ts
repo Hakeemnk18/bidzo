@@ -95,6 +95,7 @@ export class UserSubscriptionController implements IUserSubscriptionController {
             if(currentPlan){
                 resData = SubscriptionMappers.toResCurrentPlan(currentPlan)
             }
+
             
             res.status(HttpStatusCode.OK).json({
                 success: true,
