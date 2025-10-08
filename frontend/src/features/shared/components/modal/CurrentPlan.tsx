@@ -1,5 +1,4 @@
 import React from 'react';
-import type { IResGetPlanData } from '../../../../types/plan,types';
 import type { IResSubscription } from '../../../../types/subscription.type';
 
 // Define the props interface
@@ -91,8 +90,11 @@ const CurrentPlanModal: React.FC<CurrentPlanModalProps> = ({ isOpen, onClose, on
 
                     {/* Renew Button (Gold/Primary - Right, matching your Upgrade button color) */}
                     <button
+                        disabled={calculateDaysLeft(planData.endAt) < 5 ? false : true}
                         onClick={onRenew}
-                        className="w-full px-4 py-2 rounded-md text-sm font-semibold bg-[#FDD835] text-gray-900 hover:bg-[#FCE38A] transition duration-150"
+                        className="w-full px-4 py-2 rounded-md text-sm font-semibold bg-[#FDD835] 
+                        text-gray-900 hover:bg-[#FCE38A] transition duration-150
+                        disabled:bg-gray-400 disabled:text-gray-700 disabled:cursor-not-allowed "
                     >
                         Renew Now
                     </button>

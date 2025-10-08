@@ -77,6 +77,16 @@ router.get('/current-plans',
   (req,res)=> subscriptionController.getCurrentPlan(req as AuthenticatedRequest,res)
 )
 
+router.post('/renewal/create-order',
+  authenticate,
+  (req,res)=> subscriptionController.renewSubscription(req as AuthenticatedRequest, res)
+)
+
+router.post('/renewal/verify-payment',
+  authenticate,
+  (req,res)=> subscriptionController.renewalVerifyPayment(req as AuthenticatedRequest,res)
+)
+
 export default router;
 
 
