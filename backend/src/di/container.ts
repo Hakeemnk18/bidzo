@@ -30,6 +30,10 @@ import { IPaymentService } from '../services/interfaces/payment.interface';
 import { PaymentService } from '../services/payment.service';
 import { SubscriptionRepo } from '../repositories/subscription.repo';
 import { ISubscriptionRepo } from '../repositories/interfaces/subscription.repo.interface';
+import { ICategoryRepo } from '../repositories/interfaces/category.repo.interface';
+import { CategoryRepo } from '../repositories/category.repo';
+import { ICategoryService } from '../services/interfaces/category.interface';
+import { CategoryService } from '../services/category.service';
 
 container.register<IOTPRepository>('IOTPRepository', {useClass: OTPRepository})
 container.register<IOTPService>('IOTPService', { useClass: OTPService})
@@ -53,6 +57,9 @@ container.register<ISubscriptionService>('ISubscriptionService',{ useClass: Subs
 
 container.register<IPaymentRepo>('IPaymentRepo',{ useClass: PaymentRepo})
 container.register<IPaymentService>('IPaymentService', { useClass: PaymentService})
+
+container.register<ICategoryRepo>('ICategoryRepo', { useClass: CategoryRepo})
+container.register<ICategoryService>('ICategoryService', { useClass: CategoryService})
 
 
 

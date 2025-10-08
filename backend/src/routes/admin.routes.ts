@@ -8,6 +8,7 @@ import { authorizeRoles } from "../middileware/role.middileware";
 import { isBlockedMiddleware } from "../middileware/isBlocked.middleware";
 import { container } from '../di/container'
 import { PlanMangementController } from "../controllers/adminController/plan.management";
+import { CategoryControllers } from "../controllers/adminController/category.controller";
 
 
 
@@ -16,6 +17,7 @@ const router = Router()
 const adminAuthController = container.resolve(AdminAuthController)
 const adminUserManagementController = container.resolve(UserMangementController)
 const planManagementController = container.resolve(PlanMangementController)
+const categoryController = container.resolve(CategoryControllers)
 
 
 router.post('/login',(req,res)=> adminAuthController.login(req,res))
@@ -58,8 +60,8 @@ router.patch('/seller/management/:id/reject',
 
 //plan
 router.post('/plan',
-    // authenticate,
-    // authorizeRoles('admin'),
+    authenticate,
+    authorizeRoles('admin'),
     (req, res)=> planManagementController.createPlan(req,res)
 )
 
@@ -82,13 +84,39 @@ router.get('/plan/:id',
 )
 
 router.put('/plan',
-    // authenticate,
-    // authorizeRoles('admin'),
+    authenticate,
+    authorizeRoles('admin'),
     (req,res)=> planManagementController.editPlan(req,res)
 )
 
 router.get('/plan',
+    authenticate,
+    authorizeRoles('admin'),
     (req,res)=> planManagementController.planName(req,res)
+)
+
+router.get('/category/management',
+    authenticate,
+    authorizeRoles('admin'),
+    (req,res)=> categoryController.getAllCategories(req,res)
+)
+
+router.post('/category',
+    authenticate,
+    authorizeRoles('admin'),
+    (req,res)=> categoryController.createCategory(req,res)
+)
+
+router.patch('/category/:id',
+    authenticate,
+    authorizeRoles('admin'),
+    (req,res)=> categoryController.blockAndUnblockCategory(req,res)
+)
+
+router.put('/category/:id',
+    authenticate,
+    authorizeRoles('admin'),
+    (req,res)=> categoryController.editCategory(req,res)
 )
 
 
