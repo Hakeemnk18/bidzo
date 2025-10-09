@@ -8,5 +8,6 @@ export interface ICategoryRepo {
     create(data: ICreateCategoryDTO): Promise<Category>;
     update(id: string, data: IUpdateCategoryDTO): Promise<Category | null>;
     delete(id: string): Promise<Category | null>;
+    isExist(categoryName: string): Promise<boolean>;
     countDocument(query: Record<string, any>): Promise<number>
 }

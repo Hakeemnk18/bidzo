@@ -4,6 +4,9 @@ import { ICategoryRepo } from "./interfaces/category.repo.interface";
 import { injectable } from "tsyringe";
 import { Category } from "../types/category.type";
 import { Document, UpdateQuery } from "mongoose";
+import { CustomError } from "../utils/customError";
+import { ResponseMessages } from "../constants/responseMessages";
+import { HttpStatusCode } from "../constants/httpStatusCode";
 
 @injectable()
 export class CategoryRepo implements ICategoryRepo {
@@ -16,7 +19,7 @@ export class CategoryRepo implements ICategoryRepo {
     }
     
     async getById(id: string): Promise<Category | null> {
-        return CategoryModel.findOne({ _id: id, isDeleted: false }).exec();
+        return CategoryModel.findOne({ _id: id}).exec();
     }
 
     async create(data: ICreateCategoryDTO): Promise<Category> {
@@ -26,13 +29,17 @@ export class CategoryRepo implements ICategoryRepo {
 
     async update(id: string, data: IUpdateCategoryDTO): Promise<Category | null> {
         const updatedCategory = await CategoryModel.findOneAndUpdate(
-            { _id: id, isDeleted: false }, 
+            { _id: id}, 
             { $set: data },
             { new: true } 
         ).exec();
         return updatedCategory;
     }
 
+    async isExist(categoryName: string): Promise<boolean> {
+        const category = await CategoryModel.findOne({ categoryName: categoryName}).exec();
+        return !!category; 
+    }   
  
     async delete(id: string): Promise<Category | null> {
         const deletedCategory = await CategoryModel.findOneAndUpdate(

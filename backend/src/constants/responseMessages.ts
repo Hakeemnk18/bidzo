@@ -43,5 +43,7 @@ export const ResponseMessages = {
   PLAN_TARGET_MISMATCH: "Plan target mismatch",
   PLAN_RENEWAL_TOO_EARLY:	"Renewal is only allowed within the last 5 days of your current subscription.",
   PLAN_RENEWAL_SUCCESS:	"Your plan has been successfully renewed.",
-  PLAN_RENEWAL_EXPIRED:	"This subscription is expired and cannot be renewed. Please start a new subscription."
+  PLAN_RENEWAL_EXPIRED:	"This subscription is expired and cannot be renewed. Please start a new subscription.",
+
+  CATEGORY_EXIST: "Category already exist"
 };
