@@ -21,11 +21,13 @@ const Navbar = () => {
         third: "Contact",
         fourth: "",
         fifth: "",
+        sixth: "",
         firstUrl: "#",
         secondUrl: "#",
         thirdUrl: "#",
         fourthUrl: "",
-        fifthUrl: ""
+        fifthUrl: "",
+        sixthUrl: ""
       };
     case "seller":
       return {
@@ -34,11 +36,13 @@ const Navbar = () => {
         third: "Contact",
         fourth: "",
         fifth: "",
+        sixth: "",
         firstUrl: "/seller/dashboard",
         secondUrl: "#",
         thirdUrl: "#",
         fourthUrl: "",
-        fifthUrl: ""
+        fifthUrl: "",
+        sixthUrl: ""
       };
     case "admin":
       return {
@@ -47,22 +51,28 @@ const Navbar = () => {
         third: "Users",
         fourth: "Plans",
         fifth: "Auctions",
+        sixth: "category",
         firstUrl: "/admin/dashboard",
         secondUrl: '/admin/sellerManagement',
         thirdUrl: '/admin/userManagement',
         fourthUrl: '/admin/planManagement',
-        fifthUrl: ""
+        fifthUrl: "",
+        sixthUrl: '/admin/categoryManagement'
       };
     default:
       return {
         first: "",
         second: "",
         third: "",
+        fourth: "",
+        fifth: "",
+        sixth: "",
         firstUrl: "#",
         secondUrl: "#",
         thirdUrl: "#",
         fourthUrl: "",
-        fifthUrl: ""
+        fifthUrl: "",
+        sixthUrl: ""
       };
   }
 }, [role]);
@@ -94,6 +104,9 @@ const Navbar = () => {
           </Link>
           <Link to={navItems.fifthUrl} className="text-white hover:text-gray-300 transition duration-300">
             { navItems.fifth }
+          </Link>
+          <Link to={navItems.sixthUrl} className="text-white hover:text-gray-300 transition duration-300">
+            { navItems.sixth }
           </Link>
           </>
             

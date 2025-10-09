@@ -1,4 +1,4 @@
-import { ICreateCategoryDTO, IUpdateCategoryDTO } from "../dtos/category.dto";
+import { ICategoryAllDoc, ICreateCategoryDTO, IUpdateCategoryDTO } from "../dtos/category.dto";
 import CategoryModel  from "../models/category.model";
 import { ICategoryRepo } from "./interfaces/category.repo.interface";
 import { injectable } from "tsyringe";
@@ -9,8 +9,10 @@ import { Document, UpdateQuery } from "mongoose";
 export class CategoryRepo implements ICategoryRepo {
 
 
-    async getAll(): Promise<Category[]> {
-        return CategoryModel.find({ isDeleted: false }).exec();
+    async getAll(data: ICategoryAllDoc): Promise<Category[]> {
+        const { query, page, limit, sort} = data
+        const skip = (page - 1)* limit
+        return CategoryModel.find(query).skip(skip).limit(limit).sort(sort).collation({ locale: 'en', strength: 1 }).exec();
     }
     
     async getById(id: string): Promise<Category | null> {
@@ -39,5 +41,8 @@ export class CategoryRepo implements ICategoryRepo {
             { new: true }
         ).exec();
         return deletedCategory;
+    }
+    async countDocument(query: Record<string, any>): Promise<number> {
+        return await CategoryModel.countDocuments(query)
     }
 }
