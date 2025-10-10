@@ -1,9 +1,10 @@
 import { UpdateResult } from "mongoose";
-import { ICreatePlanDto, IFetchAllDoc } from "../dtos/plan.dto";
+import { ICreatePlanDto} from "../dtos/plan.dto";
 import PlanModel from "../models/plan.model";
 import { Plan } from "../types/plan.type";
 import { IPlanRepo } from "./interfaces/plan.repo.interface";
 import { injectable } from "tsyringe";
+import { IGetAllDocDBDTO } from "../dtos/shared.dto";
 
 
 @injectable()
@@ -12,7 +13,7 @@ export class PlanRepository implements IPlanRepo {
         await PlanModel.create(data)
     }
 
-    async findAllPlans(data: IFetchAllDoc): Promise<Plan[]> {
+    async findAllPlans(data: IGetAllDocDBDTO ): Promise<Plan[]> {
         const { query, page, limit, sort} = data
         const skip = (page - 1)* limit
         return await PlanModel.find(query).skip(skip).limit(limit).sort(sort).collation({ locale: 'en', strength: 1 })

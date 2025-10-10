@@ -34,6 +34,10 @@ import { ICategoryRepo } from '../repositories/interfaces/category.repo.interfac
 import { CategoryRepo } from '../repositories/category.repo';
 import { ICategoryService } from '../services/interfaces/category.interface';
 import { CategoryService } from '../services/category.service';
+import { IProductRepo } from '../repositories/interfaces/product.repo.interface';
+import { ProductRepo } from '../repositories/product.repo';
+import { IProductService } from '../services/interfaces/product.interface';
+import { ProductService } from '../services/product.service';
 
 container.register<IOTPRepository>('IOTPRepository', {useClass: OTPRepository})
 container.register<IOTPService>('IOTPService', { useClass: OTPService})
@@ -60,6 +64,9 @@ container.register<IPaymentService>('IPaymentService', { useClass: PaymentServic
 
 container.register<ICategoryRepo>('ICategoryRepo', { useClass: CategoryRepo})
 container.register<ICategoryService>('ICategoryService', { useClass: CategoryService})
+
+container.register<IProductRepo>('IProductRepo', { useClass: ProductRepo });
+container.register<IProductService>('IProductService', { useClass: ProductService });
 
 
 

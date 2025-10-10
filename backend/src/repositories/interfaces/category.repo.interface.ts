@@ -1,9 +1,10 @@
-import { ICategoryAllDoc, ICreateCategoryDTO, IUpdateCategoryDTO } from "../../dtos/category.dto";
+import {  ICreateCategoryDTO, IUpdateCategoryDTO } from "../../dtos/category.dto";
 import { Category } from "../../types/category.type";
+import { IGetAllDocDBDTO } from "../../dtos/shared.dto";
 
 
 export interface ICategoryRepo {
-    getAll(data: ICategoryAllDoc): Promise<Category[]>;
+    getAll(data: IGetAllDocDBDTO): Promise<Category[]>;
     getById(id: string): Promise<Category | null>;
     create(data: ICreateCategoryDTO): Promise<Category>;
     update(id: string, data: IUpdateCategoryDTO): Promise<Category | null>;
