@@ -1,8 +1,6 @@
 import { ICategoryService } from "./interfaces/category.interface";
 import type {
-  ICategoryAllDoc,
   ICreateCategoryDTO,
-  IGetAllCategoryDTO,
 } from "../dtos/category.dto";
 import { ICategoryRepo } from "../repositories/interfaces/category.repo.interface";
 import { injectable, inject } from "tsyringe";
@@ -10,12 +8,13 @@ import { Category } from "../types/category.type";
 import { CustomError } from "../utils/customError";
 import { ResponseMessages } from "../constants/responseMessages";
 import { HttpStatusCode } from "../constants/httpStatusCode";
+import { IGetAllDocDBDTO, IReqGetAllDocDTO } from "../dtos/shared.dto";
 
 @injectable()
 export class CategoryService implements ICategoryService {
   constructor(@inject("ICategoryRepo") private categoryRepo: ICategoryRepo) {}
   async getAllCategories(
-    data: IGetAllCategoryDTO
+    data: IReqGetAllDocDTO
   ): Promise<{ resData: Category[]; total: number }> {
     const { page, search, limit, sortValue, filters } = data;
     let query: Record<string, any> = {};
@@ -37,7 +36,7 @@ export class CategoryService implements ICategoryService {
       }
     }
 
-    let allDoc: ICategoryAllDoc = {
+    let allDoc: IGetAllDocDBDTO = {
       page,
       limit,
       query,

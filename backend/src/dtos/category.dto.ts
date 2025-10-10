@@ -17,17 +17,3 @@ export interface ICategoryResponseDTO {
     isDeleted: boolean;
 }
 
-export interface IGetAllCategoryDTO {
-    search: string,
-    page: number,
-    limit: number,
-    sortValue: string,
-    filters: Record<string, any>
-}
-
-export interface ICategoryAllDoc {
-    query: Record<string, any>;
-    page: number;
-    limit: number;
-    sort: Record<string, any>;
-}

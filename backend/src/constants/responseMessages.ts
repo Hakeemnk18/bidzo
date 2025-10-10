@@ -45,5 +45,7 @@ export const ResponseMessages = {
   PLAN_RENEWAL_SUCCESS:	"Your plan has been successfully renewed.",
   PLAN_RENEWAL_EXPIRED:	"This subscription is expired and cannot be renewed. Please start a new subscription.",
 
-  CATEGORY_EXIST: "Category already exist"
+  CATEGORY_EXIST: "Category already exist",
+
+  PRODUCT_CREATED: "Product created successfully"
 };

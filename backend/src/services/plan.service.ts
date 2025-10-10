@@ -1,6 +1,7 @@
 import { HttpStatusCode } from "../constants/httpStatusCode";
 import { ResponseMessages } from "../constants/responseMessages";
-import { ICreatePlanDto, IGetAllPlanDTO } from "../dtos/plan.dto";
+import { ICreatePlanDto} from "../dtos/plan.dto";
+import { IReqGetAllDocDTO } from "../dtos/shared.dto";
 import { IPlanRepo } from "../repositories/interfaces/plan.repo.interface";
 import { Plan } from "../types/plan.type";
 import { CustomError } from "../utils/customError";
@@ -24,7 +25,7 @@ export class PlanService implements IPlanService {
         await this.planRepo.createPlan(data)
     }
 
-    async getAllPlan(data: IGetAllPlanDTO): Promise<{ resData: Plan[]; total: number; }> {
+    async getAllPlan(data: IReqGetAllDocDTO): Promise<{ resData: Plan[]; total: number; }> {
         //console.log("inside get palan srvc ",data)
         const { page, limit, search, sortValue, filters } = data
         const query: Record<string, any> = {}
