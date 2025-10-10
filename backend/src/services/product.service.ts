@@ -5,13 +5,14 @@ import { IProductService } from "./interfaces/product.interface";
 import { IProductRepo } from "../repositories/interfaces/product.repo.interface";
 import { IGetAllDocDBDTO } from "../dtos/shared.dto";
 import { inject, injectable } from "tsyringe";
+import { PopulatedProduct } from "../dtos/product.dto";
 
 @injectable()
 export class ProductService implements IProductService {
   constructor(@inject("IProductRepo") private productRepo: IProductRepo) {}
   async getAllProducts(
     data: IReqGetAllDocDTO
-  ): Promise<{ resData: Product[]; total: number }> {
+  ): Promise<{ resData: PopulatedProduct[]; total: number }> {
     const { page, search, limit, sortValue, filters } = data;
     let query: Record<string, any> = {};
     let sort: Record<string, any> = {};
@@ -49,7 +50,7 @@ export class ProductService implements IProductService {
   async getAllProdectsBySellerId(
     data: IReqGetAllDocDTO,
     sellerId: string
-  ): Promise<{ resData: Product[]; total: number }> {
+  ): Promise<{ resData: PopulatedProduct[]; total: number }> {
     const { page, search, limit, sortValue, filters } = data;
     let query: Record<string, any> = {
         sellerId: sellerId

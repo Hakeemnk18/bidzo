@@ -33,13 +33,13 @@ const Navbar = () => {
       return {
         first: "DashBoard",
         second: "Auction",
-        third: "Contact",
+        third: "Product",
         fourth: "",
         fifth: "",
         sixth: "",
         firstUrl: "/seller/dashboard",
         secondUrl: "#",
-        thirdUrl: "#",
+        thirdUrl: "/seller/product/management",
         fourthUrl: "",
         fifthUrl: "",
         sixthUrl: ""

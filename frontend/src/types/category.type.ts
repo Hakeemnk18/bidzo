@@ -13,3 +13,9 @@ export interface IResCategory{
     currentPage: number,
     totalPages: number
 }
+
+export interface IResCategoryNameDTO {
+    success: boolean;
+    message: string;
+    data: {_id:string, categoryName:string}[];
+}

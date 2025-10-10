@@ -1,4 +1,5 @@
 import { Product } from "../types/product.type";
+import { IResCategoryNameDTO } from "./category.dto";
 
 export interface IProductCreateDTO {
     name: string;   
@@ -20,4 +21,5 @@ export interface IResProductExtendedDTO extends IResProductDTO {
     sellerId: string
 }
 
-export type populatedProduct = Omit<Product,'category' & { category: string }>
+
+export type PopulatedProduct = Omit<Product,'category'> & { category: IResCategoryNameDTO }

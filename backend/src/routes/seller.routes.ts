@@ -31,4 +31,10 @@ router.post('/product',
     (req,res)=> productController.createProduct(req as AuthenticatedRequest,res)
 )
 
+router.get('/category/name',
+    authenticate,
+    authorizeRoles('seller'),
+    (req,res)=> productController.getCategoriesName(req,res)
+)
+
 export default router

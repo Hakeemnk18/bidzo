@@ -1,4 +1,8 @@
-import { ICreateCategoryDTO, IUpdateCategoryDTO } from "../dtos/category.dto";
+import {
+  ICreateCategoryDTO,
+  IResCategoryNameDTO,
+  IUpdateCategoryDTO,
+} from "../dtos/category.dto";
 import CategoryModel from "../models/category.model";
 import { ICategoryRepo } from "./interfaces/category.repo.interface";
 import { injectable } from "tsyringe";
@@ -57,5 +61,16 @@ export class CategoryRepo implements ICategoryRepo {
   }
   async countDocument(query: Record<string, any>): Promise<number> {
     return await CategoryModel.countDocuments(query);
+  }
+
+  async getNames(): Promise<IResCategoryNameDTO[]> {
+    const categories = await CategoryModel.find(
+      { isDeleted: false },
+      { _id: 1, categoryName: 1 }
+    )
+      .lean()
+      .exec();
+
+    return categories as unknown as IResCategoryNameDTO[];
   }
 }

@@ -1,20 +1,20 @@
-import { IResProductDTO } from "../dtos/product.dto";
+import { IResProductDTO, PopulatedProduct } from "../dtos/product.dto";
 import { Product } from "../types/product.type";
 
 export class ProductMapper {
 
-    static toResProductDTO(product: Product): IResProductDTO{
+    static toResProductDTO(product: PopulatedProduct): IResProductDTO{
         return {
             name: product.name,
             productImage: product.productImage,
             description: product.description,
             isDeleted: product.isDeleted,
-            category: product.category.toString(),
+            category: product.category.categoryName,
             id: product.id!
         }
     }
 
-    static toResProductAllDTO(products: Product[]): IResProductDTO[]{
+    static toResProductAllDTO(products: PopulatedProduct[]): IResProductDTO[]{
         return products.map(this.toResProductDTO)
     }
 }

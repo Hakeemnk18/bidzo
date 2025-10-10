@@ -1,3 +1,7 @@
+import { Types } from "mongoose";
+
+
+
 export interface ICreateCategoryDTO {
     categoryName: string;
     description: string;
@@ -16,4 +20,13 @@ export interface ICategoryResponseDTO {
     description: string;
     isDeleted: boolean;
 }
+
+
+
+export interface IResCategoryNameDTO {
+    _id: string;
+    categoryName: string;
+}
+
+
 

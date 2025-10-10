@@ -12,6 +12,8 @@ const ReapplyComponent = lazy(()=> import('../features/seller/components/Reapply
 const ProfilePage = lazy(()=> import('../features/shared/pages/ProfilePage'))
 const NotificationPage = lazy(()=> import('../features/shared/components/Notification'))
 const PlansPage = lazy(()=> import('../features/shared/components/plans/Plans'))
+const ProductManagementPage = lazy(()=> import('../features/seller/components/product/ProductTable'))
+const CreateProductPage = lazy(()=> import('../features/seller/components/product/CreateProduct'))
 
 
 const sellerRoute = [
@@ -70,7 +72,28 @@ const sellerRoute = [
             </Suspense>
          </ProtectedRoute>
         ),
-    }
+    },
+    {
+        path:'/seller/product/management',
+        element:(
+         <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+                <ProductManagementPage/>
+            </Suspense>
+         </ProtectedRoute>
+        ),
+    },
+    {
+        path:'/seller/create/product',
+        element:(
+         <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+                <CreateProductPage/>
+            </Suspense>
+         </ProtectedRoute>
+        ),
+    },
+    
     
     
 

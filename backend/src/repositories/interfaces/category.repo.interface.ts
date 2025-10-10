@@ -1,4 +1,4 @@
-import {  ICreateCategoryDTO, IUpdateCategoryDTO } from "../../dtos/category.dto";
+import {  ICreateCategoryDTO, IResCategoryNameDTO, IUpdateCategoryDTO } from "../../dtos/category.dto";
 import { Category } from "../../types/category.type";
 import { IGetAllDocDBDTO } from "../../dtos/shared.dto";
 
@@ -11,4 +11,5 @@ export interface ICategoryRepo {
     delete(id: string): Promise<Category | null>;
     isExist(categoryName: string): Promise<boolean>;
     countDocument(query: Record<string, any>): Promise<number>
+    getNames(): Promise<IResCategoryNameDTO[]>;
 }

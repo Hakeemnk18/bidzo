@@ -8,19 +8,18 @@ import TableFilter from "../../../shared/components/table/TableFilter";
 import type { ApiResponse } from "../../../../types/user.types";
 import ConfirmModal from "../../../shared/components/modal/ConfirmationModal";
 import instance from "../../../../api/axios";
-import type {
-  ICategoryDTO,
-  IResCategory,
-} from "../../../../types/category.type";
+import type { IProductDTO, IResProduct } from "../../../../types/product.type";
+import { useNavigate } from "react-router-dom";
+
 
 
 const CategoryTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [data, setData] = useState<ICategoryDTO[]>([]);
+  const [data, setData] = useState<IProductDTO[]>([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [isCreateModal, setIsCreateModal] = useState(false);
+  const navigate = useNavigate()
   const [search, setSearch] = useState("");
-  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [productId, setProductId] = useState<string | null>(null);
   const [isConfirmModal, setIsConfirmModal] = useState(false);
   const [isBlocked, setIsBlocked] = useState<boolean>(true);
   const [filters, setFilters] = useState<Record<string, any>>({
@@ -30,9 +29,6 @@ const CategoryTable = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [showSort, setShowSort] = useState(false);
   const [sort, setSort] = useState("");
-  const [categoryName, setCategoryName] = useState("");
-  const [description, setDescription] = useState("");
-  const [useCase, setUseCase] = useState<"create" | "edit">("create");
   const sortOptions = [
     { value: "", label: "All" },
     { value: "A-Z", label: "A-Z" },
@@ -51,10 +47,11 @@ const CategoryTable = () => {
     },
   ];
 
+
   const fetchData = async () => {
     try {
-      const res = await instance.get<IResCategory>(
-        `/admin/category/management`,
+      const res = await instance.get<IResProduct>(
+        `/seller/product/management`,
         {
           params: {
             page: currentPage,
@@ -78,18 +75,13 @@ const CategoryTable = () => {
     }
   };
 
-  const handleEditAndCreate = (categoryName: string, description: string, useCase: "create" | "edit") => {
-    setCategoryName(categoryName);
-    setDescription(description);
-    setIsCreateModal(true);
-    setUseCase(useCase);
-  };
+  
   const handleBlockAndUnblock = async () => {
     setIsConfirmModal(false);
 
     try {
       const res = await instance.patch<ApiResponse>(
-        `/admin/category/${categoryId}`
+        `/admin/category/${productId}`
       );
 
       if (res.data.success) {
@@ -116,13 +108,13 @@ const CategoryTable = () => {
     }, 300);
 
     return () => clearTimeout(delayDebounce);
-  }, [currentPage, search, sort, filters, isCreateModal]);
+  }, [currentPage, search, sort, filters]);
 
   return (
     <div className="pt-34 pb-20">
       <div className="bg-gradient-to-r from-[#0d1128] to-[#1d1e33] p-6 rounded-xl text-white w-full max-w-5xl mx-auto ">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Category</h2>
+          <h2 className="text-xl font-semibold">Product</h2>
           <div className="flex gap-3">
             <TableSearch search={search} setSearch={setSearch} />
 
@@ -160,7 +152,7 @@ const CategoryTable = () => {
             <tr className="text-left text-gray-400">
               <th className="py-3">Name</th>
               <th>Status</th>
-              <th>Description</th>
+              <th>Category</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -171,7 +163,7 @@ const CategoryTable = () => {
                   colSpan={4}
                   className="py-10 text-center text-gray-300 text-base"
                 >
-                  No Category found
+                  No Product found
                 </td>
               </tr>
             </tbody>
@@ -184,7 +176,7 @@ const CategoryTable = () => {
                     index === 3 ? "bg-[#3b3c79]" : "hover:bg-[#232447]"
                   }`}
                 >
-                  <td className="py-3">{item.categoryName}</td>
+                  <td className="py-3">{item.name}</td>
                   <td>
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -197,7 +189,7 @@ const CategoryTable = () => {
                     </span>
                   </td>
                   <td className="py-3 flex items-center gap-2">
-                    {item.description}
+                    {item.category}
                   </td>
 
                   <td className="">
@@ -205,7 +197,7 @@ const CategoryTable = () => {
                       <button
                         onClick={() => {
                           setIsConfirmModal(true);
-                          setCategoryId(item._id);
+                          setProductId(item.id);
                           setIsBlocked(false);
                         }}
                       >
@@ -215,7 +207,7 @@ const CategoryTable = () => {
                       <button
                         onClick={() => {
                           setIsConfirmModal(true);
-                          setCategoryId(item._id);
+                          setProductId(item.id);
                           setIsBlocked(true);
                         }}
                       >
@@ -223,8 +215,8 @@ const CategoryTable = () => {
                       </button>
                     )}
                     <button onClick={() => {
-                        setCategoryId(item._id);
-                        handleEditAndCreate(item.categoryName, item.description, "edit");
+                        setProductId(item.id);
+                        
                     }}>
                       <FaEdit className="text-blue-400 cursor-pointer text-lg" />
                     </button>
@@ -261,12 +253,10 @@ const CategoryTable = () => {
       </div>
       <div className="flex justify-end pt-4 max-w-5xl mx-auto ">
         <button
-          onClick={() => {
-            handleEditAndCreate("", "","create");
-          }}
+          onClick={() => { navigate('/seller/create/product')}}
           className="bg-green-500 px-4 py-2 rounded-md font-bold text-gray-800"
         >
-          Add Category
+          Add Product
         </button>
       </div>
       
