@@ -1,6 +1,7 @@
 import { ICategoryService } from "./interfaces/category.interface";
 import type {
   ICreateCategoryDTO,
+  IResCategoryNameDTO,
 } from "../dtos/category.dto";
 import { ICategoryRepo } from "../repositories/interfaces/category.repo.interface";
 import { injectable, inject } from "tsyringe";
@@ -93,5 +94,9 @@ export class CategoryService implements ICategoryService {
       }
     }
     return this.categoryRepo.update(id, data);
+  }
+
+  async getCategoriesName(): Promise<IResCategoryNameDTO[]> {
+    return await this.categoryRepo.getNames()
   }
 }
