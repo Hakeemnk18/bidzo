@@ -78,4 +78,67 @@ export class ProductController implements IProductController {
             console.log("error in get category name product controlller ",error)
         }
     }
+
+    async blockAndUnblock(req: AuthenticatedRequest, res: Response): Promise<void> {
+        try {
+            const { id } = req.params
+            const { user } = req
+            if(!user){
+                throw new CustomError(ResponseMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED)
+            }
+            
+            await this.productService.blockAndUnblock(id, user.id)
+            res.status(HttpStatusCode.OK).json({
+                success: true,
+                message: ResponseMessages.SUCCESS
+            })
+        } catch (error) {
+            handleError(res, error)
+            console.log("error in product unblock and block ",error)
+        }
+    }
+
+    async updatePorduct(req: AuthenticatedRequest, res: Response): Promise<void> {
+        try {
+            const { user } = req
+            if(!user){
+                throw new CustomError(ResponseMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED)
+            }
+            const { id } = req.params
+            const validatedData = createProdectSchema.parse(req.body);
+            await this.productService.updateProduct(id,{
+                ...validatedData,
+                sellerId: user.id
+            });
+            res.status(HttpStatusCode.OK).json({
+                message: ResponseMessages.PRODUCT_CREATED,
+                success: true
+            })
+
+        } catch (error) {
+            handleError(res, error)
+            console.log("error in edit product ",error)
+        }
+    }
+
+    async  getProduct(req: AuthenticatedRequest, res: Response): Promise<void> {
+        try {
+            const { user } = req
+            if(!user){
+                throw new CustomError(ResponseMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED)
+            }
+            const { id } = req.params
+            const product = await this.productService.findOneWithPopulated({_id: id, sellerId: user.id})
+            const resData = ProductMapper.toGetProductDTO(product)
+            res.status(HttpStatusCode.OK).json({
+                message: ResponseMessages.PRODUCT_CREATED,
+                success: true,
+                data: resData
+            })
+
+        } catch (error) {
+            handleError(res, error)
+            console.log("error in get one product product ",error)
+        }
+    }
 }

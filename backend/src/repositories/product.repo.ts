@@ -5,6 +5,7 @@ import { IProductRepo } from "./interfaces/product.repo.interface";
 import ProductModel from "../models/product.model";
 import { injectable } from "tsyringe";
 import { IResCategoryNameDTO } from "../dtos/category.dto";
+import { Query } from "mongoose";
 
 
 @injectable()
@@ -30,4 +31,16 @@ export class ProductRepo implements IProductRepo {
   async countDocuments(query: Record<string, any>): Promise<number> {
     return await ProductModel.countDocuments(query).exec();
   } 
+
+  async updateOne(id: string, query: Record<string, any>): Promise<void> {
+    await ProductModel.findOneAndUpdate({_id: id},{$set : query})
+  }
+  async findOne(quey: Record<string, any>): Promise<Product | null> {
+    return ProductModel.findOne(quey)
+  }
+
+  async findOneWithPopulated(query: Record<string, any>): Promise<PopulatedProduct | null> {
+    const fieldsToSelect = '_id categoryName';
+    return await ProductModel.findOne(query).populate<{ category: IResCategoryNameDTO}>('category', fieldsToSelect)
+  }
 }

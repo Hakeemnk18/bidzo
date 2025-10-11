@@ -14,6 +14,7 @@ const NotificationPage = lazy(()=> import('../features/shared/components/Notific
 const PlansPage = lazy(()=> import('../features/shared/components/plans/Plans'))
 const ProductManagementPage = lazy(()=> import('../features/seller/components/product/ProductTable'))
 const CreateProductPage = lazy(()=> import('../features/seller/components/product/CreateProduct'))
+const EditProductPage = lazy(()=>import('../features/seller/components/product/UpdateProduct'))
 
 
 const sellerRoute = [
@@ -93,7 +94,16 @@ const sellerRoute = [
          </ProtectedRoute>
         ),
     },
-    
+    {
+        path:'/seller/edit/product',
+        element:(
+         <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+                <EditProductPage/>
+            </Suspense>
+         </ProtectedRoute>
+        ),
+    },
     
     
 

@@ -6,4 +6,7 @@ export interface IProductRepo {
     getAllProducts(data: IGetAllDocDBDTO): Promise<PopulatedProduct[]>;
     createProduct(data: IProductCreateDTO): Promise<void>;
     countDocuments(query: Record<string, any>): Promise<number>;
+    updateOne(id: string, query: Record<string, any>): Promise<void>
+    findOne(quey: Record<string, any>):Promise<Product | null>
+    findOneWithPopulated(quer: Record<string,any>):Promise<PopulatedProduct | null >
 }

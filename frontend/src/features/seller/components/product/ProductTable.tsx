@@ -75,13 +75,21 @@ const CategoryTable = () => {
     }
   };
 
+  const handleEdit = async(id: string)=>{
+    try {
+      navigate(`/seller/edit/product?id=${id}`)
+    } catch (error) {
+      
+    }
+  }
+
   
   const handleBlockAndUnblock = async () => {
     setIsConfirmModal(false);
 
     try {
       const res = await instance.patch<ApiResponse>(
-        `/admin/category/${productId}`
+        `/seller/product/${productId}`
       );
 
       if (res.data.success) {
@@ -216,9 +224,10 @@ const CategoryTable = () => {
                     )}
                     <button onClick={() => {
                         setProductId(item.id);
-                        
+                        handleEdit(item.id)
                     }}>
-                      <FaEdit className="text-blue-400 cursor-pointer text-lg" />
+                      <FaEdit 
+                      className="text-blue-400 cursor-pointer text-lg" />
                     </button>
 
                     {/* confirm modal */}
@@ -230,8 +239,8 @@ const CategoryTable = () => {
                         onClose={() => setIsConfirmModal(false)}
                         message={
                           isBlocked
-                            ? "Do You want block this category"
-                            : "Do You want unblock this category"
+                            ? "Do You want block this product"
+                            : "Do You want unblock this product"
                         }
                       />
                     )}
