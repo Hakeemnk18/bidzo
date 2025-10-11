@@ -6,6 +6,7 @@ import { HttpStatusCode } from "../../constants/httpStatusCode";
 import { ResponseMessages } from "../../constants/responseMessages";
 import { Request, Response } from "express";
 import { ProductMapper } from "../../mappers/product.mappers";
+import { handleError } from "../../utils/customError";
 
 @injectable()
 export class ProductController implements IProductController {
@@ -15,7 +16,7 @@ export class ProductController implements IProductController {
   async getAllProduct(req: Request, res: Response): Promise<void> {
     try {
       const parseData = parseReq(req, ["isDeleted"]);
-      
+
       const { resData, total } = await this.productService.getAllProdects(
         parseData
       );
@@ -32,5 +33,17 @@ export class ProductController implements IProductController {
     } catch (error) {}
   }
 
-  async blockAndUnblock(req: Request, res: Response): Promise<void> {}
+  async blockAndUnblock(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      await this.productService.adminBlockAndUnblock(id);
+      res.status(HttpStatusCode.OK).json({
+        success: true,
+        message: ResponseMessages.SUCCESS,
+      });
+    } catch (error) {
+        handleError(res, error)
+        console.log("error in admin product block and unblock ",error)
+    }
+  }
 }

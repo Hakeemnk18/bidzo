@@ -107,4 +107,16 @@ export class ProductService implements IProductService {
 
     await this.productRepo.updateOne(id,query)
   }
+
+  async adminBlockAndUnblock(id: string): Promise<void> {
+    const product = await this.findOne({ _id: id});
+    if (!product) {
+      throw new CustomError(
+        ResponseMessages.NOT_FOUND,
+        HttpStatusCode.NOT_FOUND
+      );
+    }
+
+    await this.productRepo.updateOne(id, { isDeleted: !product.isDeleted });
+  }
 }
