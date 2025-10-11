@@ -21,6 +21,17 @@ export interface IResProduct{
     totalPages: number
 }
 
+export interface ICategoryField {
+    _id: string,
+    categoryName: string
+}
+
+export interface IResGetProduct {
+    success: true,
+    message: string,
+    data: Omit<IProductDTO, 'category'> & { category: ICategoryField }
+}
+
 export interface IProductFormData {
     name: string;   
     description: string;

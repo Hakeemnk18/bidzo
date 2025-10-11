@@ -1,34 +1,34 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import instance from "../../../../api/axios";
 import type { ApiResponse } from "../../../../types/user.types";
 import { toast } from "react-toastify";
 import { showErrorToast } from "../../../../utils/showErrorToast";
-import type { IProductFormData } from "../../../../types/product.type";
-import axios from "axios";
 import type {
-  IResCategoryNameDTO,
-} from "../../../../types/category.type";
-
+  IResGetProduct,
+  IProductFormData,
+} from "../../../../types/product.type";
+import axios from "axios";
+import type { IResCategoryNameDTO } from "../../../../types/category.type";
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
 const MAX_IMAGE_SIZE = Number(import.meta.env.VITE_MAX_IMAGE_SIZE);
-const ALLOWED_MIMES = import.meta.env.VITE_ALLOWED_MIMES.split(',');
-const UPLOAD_PRESET = import.meta.env.VITE_IMAGE_UPLOAD_PRESET
-
-
-
+const ALLOWED_MIMES = import.meta.env.VITE_ALLOWED_MIMES.split(",");
+const UPLOAD_PRESET = import.meta.env.VITE_IMAGE_UPLOAD_PRESET;
 
 interface IResCloudinaryURL {
-    secure_url: string
+  secure_url: string;
 }
 
-const CreateProductForm = () => {
+const EditProductForm = () => {
+  const [searchParams] = useSearchParams();
+  const productId = searchParams.get("id");
+
   const [formData, setFormData] = useState<IProductFormData>({
     name: "",
     description: "",
     category: "",
-    productImage: "",
+    productImage: "abc",
     document: null as File | null,
   });
 
@@ -42,6 +42,34 @@ const CreateProductForm = () => {
     { _id: string; categoryName: string }[]
   >([]);
   const navigate = useNavigate();
+
+  const fetchProduct = async () => {
+    try {
+      const res = await instance.get<IResGetProduct>(
+        `/seller/product/${productId}`
+      );
+      if (res.data.success) {
+        const { data } = res.data;
+        
+        setFormData({
+          name: data.name,
+          category: data.category._id,
+          productImage: data.productImage,
+          document: null as File | null,
+          description: data.description,
+        });
+      }
+    } catch (error) {
+      console.log("error in fetch product data", error);
+      showErrorToast(error);
+    }
+  };
+
+  useEffect(() => {
+    if (productId) {
+      fetchProduct();
+    }
+  }, [productId]);
 
   const fetchCategories = async () => {
     try {
@@ -81,8 +109,6 @@ const CreateProductForm = () => {
         return;
       }
       if (!ALLOWED_MIMES.includes(file.type)) {
-        
-        
         setErrors((prev) => ({
           ...prev,
           document: "Only JPEG, PNG, or WEBP images are allowed.",
@@ -116,36 +142,34 @@ const CreateProductForm = () => {
         "Description must be at least 20 characters long.";
     }
 
-    if (!document) {
-      newErrors.document = "Product image is required.";
-    }
-
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     } else {
-      const file = formData.document as File;
+      if (formData.document) {
+        console.log("inside cloudinary ")
+        const file = formData.document as File;
 
-      const formDataUpload = new FormData();
-      formDataUpload.append("file", file);
-      formDataUpload.append("upload_preset", UPLOAD_PRESET);
-      
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", file);
+        formDataUpload.append("upload_preset", UPLOAD_PRESET);
 
-      try {
-        const uploadRes = await axios.post<IResCloudinaryURL>(
-          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-          formDataUpload
-        );
-        const uploadedUrl = uploadRes.data.secure_url;
-        formData.productImage = uploadedUrl;
-        
-      } catch (error) {
-        toast.error("Failed to upload document to Cloudinary");
-        console.log("Cloudinary upload error", error);
-        return;
+        try {
+          const uploadRes = await axios.post<IResCloudinaryURL>(
+            `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+            formDataUpload
+          );
+          const uploadedUrl = uploadRes.data.secure_url;
+          formData.productImage = uploadedUrl;
+        } catch (error) {
+          toast.error("Failed to upload document to Cloudinary");
+          console.log("Cloudinary upload error", error);
+          return;
+        }
       }
+
       try {
-        const res = await instance.post<ApiResponse>("/seller/product", {
+        const res = await instance.put<ApiResponse>(`/seller/product/${productId}`, {
           ...formData,
         });
         if (res.data.success) {
@@ -174,9 +198,7 @@ const CreateProductForm = () => {
         {/* Right: Form */}
         <div className="md:w-1/2 p-8 w-full">
           <form className="p-4 w-full" onSubmit={handleSubmit}>
-            <h2 className="text-center text-lg font-bold mb-4">
-              Create Product
-            </h2>
+            <h2 className="text-center text-lg font-bold mb-4">Edit Product</h2>
 
             {/* target */}
             <div className="w-full mb-4">
@@ -226,7 +248,9 @@ const CreateProductForm = () => {
               >
                 <option value="">Select Plan category</option>
                 {categories.map((item) => (
-                  <option key={item._id} value={item._id}>{item.categoryName}</option>
+                  <option key={item._id} value={item._id}>
+                    {item.categoryName}
+                  </option>
                 ))}
               </select>
               {errors.category && (
@@ -234,8 +258,19 @@ const CreateProductForm = () => {
               )}
             </div>
 
-            {/* Monthly Amount */}
             <div className="w-full mb-4">
+              {formData.productImage && (
+                <div className="mb-4">
+                  <p className="text-sm font-medium text-gray-700 mb-1">
+                    Current Image
+                  </p>
+                  <img
+                    src={formData.productImage}
+                    alt="Current Product"
+                    className="w-32 h-32 object-cover rounded-md border border-gray-300"
+                  />
+                </div>
+              )}
               <input
                 type="file"
                 name="document"
@@ -263,4 +298,4 @@ const CreateProductForm = () => {
   );
 };
 
-export default CreateProductForm;
+export default EditProductForm;

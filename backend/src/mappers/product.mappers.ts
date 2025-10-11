@@ -1,4 +1,4 @@
-import { IResProductDTO, PopulatedProduct } from "../dtos/product.dto";
+import { IGetProductDTO, IResProductDTO, PopulatedProduct } from "../dtos/product.dto";
 import { Product } from "../types/product.type";
 
 export class ProductMapper {
@@ -10,6 +10,18 @@ export class ProductMapper {
             description: product.description,
             isDeleted: product.isDeleted,
             category: product.category.categoryName,
+            id: product.id!
+        }
+    }
+
+    static toGetProductDTO(product: PopulatedProduct): IGetProductDTO{
+
+        return {
+            name: product.name,
+            productImage: product.productImage,
+            description: product.description,
+            isDeleted: product.isDeleted,
+            category: product.category,
             id: product.id!
         }
     }

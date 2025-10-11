@@ -20,6 +20,6 @@ export interface IResProductDTO {
 export interface IResProductExtendedDTO extends IResProductDTO {
     sellerId: string
 }
-
+export type IGetProductDTO =  Omit<IResProductDTO,'category'> & { category: IResCategoryNameDTO }
 
 export type PopulatedProduct = Omit<Product,'category'> & { category: IResCategoryNameDTO }

@@ -37,4 +37,22 @@ router.get('/category/name',
     (req,res)=> productController.getCategoriesName(req,res)
 )
 
+router.patch('/product/:id',
+    authenticate,
+    authorizeRoles('seller'),
+    (req, res)=> productController.blockAndUnblock(req as AuthenticatedRequest,res)
+)
+
+router.put('/product/:id',
+    authenticate,
+    authorizeRoles('seller'),
+    (req,res)=> productController.updatePorduct(req as AuthenticatedRequest,res)
+)
+
+router.get('/product/:id',
+    authenticate,
+    authorizeRoles('seller'),
+    (req, res)=> productController.getProduct(req as AuthenticatedRequest, res)
+)
+
 export default router

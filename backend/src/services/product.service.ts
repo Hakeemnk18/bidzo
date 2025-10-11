@@ -6,6 +6,9 @@ import { IProductRepo } from "../repositories/interfaces/product.repo.interface"
 import { IGetAllDocDBDTO } from "../dtos/shared.dto";
 import { inject, injectable } from "tsyringe";
 import { PopulatedProduct } from "../dtos/product.dto";
+import { CustomError } from "../utils/customError";
+import { ResponseMessages } from "../constants/responseMessages";
+import { HttpStatusCode } from "../constants/httpStatusCode";
 
 @injectable()
 export class ProductService implements IProductService {
@@ -53,7 +56,7 @@ export class ProductService implements IProductService {
   ): Promise<{ resData: PopulatedProduct[]; total: number }> {
     const { page, search, limit, sortValue, filters } = data;
     let query: Record<string, any> = {
-        sellerId: sellerId
+      sellerId: sellerId,
     };
     let sort: Record<string, any> = {};
     if (search && search.trim() !== "") {
@@ -87,9 +90,54 @@ export class ProductService implements IProductService {
     return { resData, total };
   }
   async createProduct(data: IProductCreateDTO): Promise<void> {
-    return this.productRepo.createProduct(data);
+    return await this.productRepo.createProduct(data);
   }
   async countDocuments(query: Record<string, any>): Promise<number> {
-    return this.productRepo.countDocuments(query);
+    return await this.productRepo.countDocuments(query);
+  }
+
+  async findOne(query: Record<string, any>): Promise<Product> {
+    const product = await this.productRepo.findOne(query);
+    if (!product) {
+      throw new CustomError(
+        ResponseMessages.NOT_FOUND,
+        HttpStatusCode.NOT_FOUND
+      );
+    }
+    return product
+  }
+  async findOneWithPopulated(query: Record<string, any>): Promise<PopulatedProduct> {
+    const product = await this.productRepo.findOneWithPopulated(query)
+    if (!product) {
+      throw new CustomError(
+        ResponseMessages.NOT_FOUND,
+        HttpStatusCode.NOT_FOUND
+      );
+    }
+    return product
+  }
+  async blockAndUnblock(id: string, sellerId: string): Promise<void> {
+    const product = await this.findOne({ _id: id,sellerId  });
+    if (!product) {
+      throw new CustomError(
+        ResponseMessages.NOT_FOUND,
+        HttpStatusCode.NOT_FOUND
+      );
+    }
+
+    await this.productRepo.updateOne(id, { isDeleted: !product.isDeleted });
+  }
+
+  async updateProduct(id: string, data: IProductCreateDTO): Promise<void> {
+    const product = await this.findOne({ _id: id, sellerId: data.sellerId });
+    const query = {
+      name: data.name,
+      description: data.description,
+      category: data.category,
+      sellerId: data.sellerId,
+      productImage: data.productImage,
+    };
+
+    await this.productRepo.updateOne(id,query)
   }
 }
