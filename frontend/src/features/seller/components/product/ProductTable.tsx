@@ -90,7 +90,7 @@ const ProductTable = () => {
 
     try {
       const res = await instance.patch<ApiResponse>(
-        `/seller/product/${productId}`
+        `/${role}/product/${productId}`
       );
 
       if (res.data.success) {
@@ -223,13 +223,17 @@ const ProductTable = () => {
                         <FaTrash className="text-red-400 cursor-pointer mr-5" />
                       </button>
                     )}
-                    <button onClick={() => {
+                    { role === 'seller' && 
+                      <button onClick={() => {
                         setProductId(item.id);
                         handleEdit(item.id)
                     }}>
                       <FaEdit 
                       className="text-blue-400 cursor-pointer text-lg" />
                     </button>
+                    
+                    }
+                    
 
                     {/* confirm modal */}
                     {isConfirmModal && (
@@ -261,7 +265,9 @@ const ProductTable = () => {
           />
         </div>
       </div>
-      <div className="flex justify-end pt-4 max-w-5xl mx-auto ">
+      { role === 'seller'  && 
+      
+        <div className="flex justify-end pt-4 max-w-5xl mx-auto ">
         <button
           onClick={() => { navigate('/seller/create/product')}}
           className="bg-green-500 px-4 py-2 rounded-md font-bold text-gray-800"
@@ -269,6 +275,9 @@ const ProductTable = () => {
           Add Product
         </button>
       </div>
+      
+      }
+      
       
     </div>
   );

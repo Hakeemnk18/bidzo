@@ -20,7 +20,7 @@ const adminAuthController = container.resolve(AdminAuthController)
 const adminUserManagementController = container.resolve(UserMangementController)
 const planManagementController = container.resolve(PlanMangementController)
 const categoryController = container.resolve(CategoryControllers)
-const productControler = container.resolve(ProductController)
+const productController = container.resolve(ProductController)
 
 
 router.post('/login',(req,res)=> adminAuthController.login(req,res))
@@ -126,7 +126,13 @@ router.put('/category/:id',
 router.get('/product/management',
     authenticate,
     authorizeRoles('admin'),
-    (req, res)=> productControler.getAllProduct(req,res)
+    (req, res)=> productController.getAllProduct(req,res)
+)
+
+router.patch('/product/:id',
+    authenticate,
+    authorizeRoles('admin'),
+    (req, res)=> productController.blockAndUnblock(req,res)
 )
 
 

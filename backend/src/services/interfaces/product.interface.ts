@@ -10,4 +10,5 @@ export interface IProductService {
     blockAndUnblock(id: string, sellerId: string): Promise<void>
     updateProduct(id: string, data: IProductCreateDTO): Promise<void>
     findOneWithPopulated(query: Record<string, any>): Promise<PopulatedProduct>
+    adminBlockAndUnblock(id: string): Promise<void>
 }
