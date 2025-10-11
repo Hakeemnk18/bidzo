@@ -13,7 +13,8 @@ import { useNavigate } from "react-router-dom";
 
 
 
-const CategoryTable = () => {
+const ProductTable = () => {
+  const role = localStorage.getItem('userRole')
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState<IProductDTO[]>([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -51,7 +52,7 @@ const CategoryTable = () => {
   const fetchData = async () => {
     try {
       const res = await instance.get<IResProduct>(
-        `/seller/product/management`,
+        `/${role}/product/management`,
         {
           params: {
             page: currentPage,
@@ -273,4 +274,4 @@ const CategoryTable = () => {
   );
 };
 
-export default CategoryTable;
+export default ProductTable;

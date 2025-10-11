@@ -123,7 +123,7 @@ const EditProductForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: typeof errors = {};
-    const { name, category, description, document } = formData;
+    const { name, category, description } = formData;
 
     if (!name.trim()) newErrors.name = "Plan name is required";
 

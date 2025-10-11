@@ -27,7 +27,7 @@ export class ProductController implements IProductController {
                 throw new CustomError(ResponseMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED)
             }
             const parseData = parseReq(req, ['isDeleted']);
-            const { resData, total} = await this.productService.getAllProdectsBySellerId(parseData, user.id);
+            const { resData, total} = await this.productService.getAllProdects(parseData, user.id);
             const products = ProductMapper.toResProductAllDTO(resData)
             
             res.status(HttpStatusCode.OK).json({

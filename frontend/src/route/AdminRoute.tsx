@@ -12,6 +12,7 @@ const PlanTable = lazy(()=> import("../features/admin/components/plan/PlanTable"
 const PlanCreatePage = lazy(()=> import('../features/admin/components/plan/CreatePlanForm'))
 const PlanEditPage = lazy(()=> import('../features/admin/components/plan/EditPlan'))
 const CategoryPage = lazy(()=> import('../features/admin/components/category/CategoryTable'))
+const ProductManagementPage = lazy(()=> import('../features/seller/components/product/ProductTable'))
 
 
 
@@ -93,6 +94,14 @@ const adminRoute = [
         element:( 
             <ProtectedRoute>
                 <CategoryPage />
+            </ProtectedRoute>
+        )
+    },
+    {
+        path: '/admin/productManagement',
+        element:( 
+            <ProtectedRoute>
+                <ProductManagementPage />
             </ProtectedRoute>
         )
     },

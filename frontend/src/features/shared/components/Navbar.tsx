@@ -22,12 +22,14 @@ const Navbar = () => {
         fourth: "",
         fifth: "",
         sixth: "",
+        seventh:'',
         firstUrl: "#",
         secondUrl: "#",
         thirdUrl: "#",
         fourthUrl: "",
         fifthUrl: "",
-        sixthUrl: ""
+        sixthUrl: "",
+        seventhUrl: ''
       };
     case "seller":
       return {
@@ -37,12 +39,14 @@ const Navbar = () => {
         fourth: "",
         fifth: "",
         sixth: "",
+        seventh: '',
         firstUrl: "/seller/dashboard",
         secondUrl: "#",
         thirdUrl: "/seller/product/management",
         fourthUrl: "",
         fifthUrl: "",
-        sixthUrl: ""
+        sixthUrl: "",
+        seventhUrl: ''
       };
     case "admin":
       return {
@@ -52,12 +56,14 @@ const Navbar = () => {
         fourth: "Plans",
         fifth: "Auctions",
         sixth: "category",
+        seventh: "product",
         firstUrl: "/admin/dashboard",
         secondUrl: '/admin/sellerManagement',
         thirdUrl: '/admin/userManagement',
         fourthUrl: '/admin/planManagement',
         fifthUrl: "",
-        sixthUrl: '/admin/categoryManagement'
+        sixthUrl: '/admin/categoryManagement',
+        seventhUrl:'/admin/productManagement'
       };
     default:
       return {
@@ -67,12 +73,14 @@ const Navbar = () => {
         fourth: "",
         fifth: "",
         sixth: "",
+        seventh: "",
         firstUrl: "#",
         secondUrl: "#",
         thirdUrl: "#",
         fourthUrl: "",
         fifthUrl: "",
-        sixthUrl: ""
+        sixthUrl: "",
+        seventhUrl: ""
       };
   }
 }, [role]);
@@ -107,6 +115,9 @@ const Navbar = () => {
           </Link>
           <Link to={navItems.sixthUrl} className="text-white hover:text-gray-300 transition duration-300">
             { navItems.sixth }
+          </Link>
+          <Link to={navItems.seventhUrl} className="text-white hover:text-gray-300 transition duration-300">
+            { navItems.seventh }
           </Link>
           </>
             

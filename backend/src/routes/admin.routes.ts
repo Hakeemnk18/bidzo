@@ -9,6 +9,8 @@ import { isBlockedMiddleware } from "../middileware/isBlocked.middleware";
 import { container } from '../di/container'
 import { PlanMangementController } from "../controllers/adminController/plan.management";
 import { CategoryControllers } from "../controllers/adminController/category.controller";
+import { ProductController } from "../controllers/adminController/product.controller";
+
 
 
 
@@ -18,6 +20,7 @@ const adminAuthController = container.resolve(AdminAuthController)
 const adminUserManagementController = container.resolve(UserMangementController)
 const planManagementController = container.resolve(PlanMangementController)
 const categoryController = container.resolve(CategoryControllers)
+const productControler = container.resolve(ProductController)
 
 
 router.post('/login',(req,res)=> adminAuthController.login(req,res))
@@ -117,6 +120,13 @@ router.put('/category/:id',
     authenticate,
     authorizeRoles('admin'),
     (req,res)=> categoryController.editCategory(req,res)
+)
+
+//product
+router.get('/product/management',
+    authenticate,
+    authorizeRoles('admin'),
+    (req, res)=> productControler.getAllProduct(req,res)
 )
 
 
