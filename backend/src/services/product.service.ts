@@ -13,54 +13,21 @@ import { HttpStatusCode } from "../constants/httpStatusCode";
 @injectable()
 export class ProductService implements IProductService {
   constructor(@inject("IProductRepo") private productRepo: IProductRepo) {}
-  async getAllProducts(
-    data: IReqGetAllDocDTO
-  ): Promise<{ resData: PopulatedProduct[]; total: number }> {
-    const { page, search, limit, sortValue, filters } = data;
-    let query: Record<string, any> = {};
-    let sort: Record<string, any> = {};
-    if (search && search.trim() !== "") {
-      query.categoryName = { $regex: `^${search.trim()}`, $options: "i" };
-    }
 
-    if (sortValue && sortValue.trim() !== "") {
-      if (sortValue === "A-Z") {
-        sort = { name: 1 };
-      } else if (sortValue === "Z-A") {
-        sort = { name: -1 };
-      }
-    }
-    if (Object.keys(filters).length !== 0 && filters) {
-      for (let key in filters) {
-        query[key] = filters[key];
-      }
-    }
-
-    let allDoc: IGetAllDocDBDTO = {
-      page,
-      limit,
-      query,
-      sort,
-    };
-    const [resData, total] = await Promise.all([
-      this.productRepo.getAllProducts(allDoc),
-      this.productRepo.countDocuments(query),
-    ]);
-
-    return { resData, total };
-  }
-
-  async getAllProdectsBySellerId(
+  async getAllProdects(
     data: IReqGetAllDocDTO,
-    sellerId: string
+    sellerId?: string
   ): Promise<{ resData: PopulatedProduct[]; total: number }> {
     const { page, search, limit, sortValue, filters } = data;
-    let query: Record<string, any> = {
-      sellerId: sellerId,
+    let query: Record<string, any> = {}
+    if(sellerId){
+      query.sellerId = sellerId
     };
+  
+    
     let sort: Record<string, any> = {};
     if (search && search.trim() !== "") {
-      query.categoryName = { $regex: `^${search.trim()}`, $options: "i" };
+      query.name = { $regex: `^${search.trim()}`, $options: "i" };
     }
 
     if (sortValue && sortValue.trim() !== "") {
