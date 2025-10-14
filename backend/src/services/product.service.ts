@@ -14,7 +14,7 @@ import { HttpStatusCode } from "../constants/httpStatusCode";
 export class ProductService implements IProductService {
   constructor(@inject("IProductRepo") private productRepo: IProductRepo) {}
 
-  async getAllProdects(
+  async getAllProducts(
     data: IReqGetAllDocDTO,
     sellerId?: string
   ): Promise<{ resData: PopulatedProduct[]; total: number }> {
@@ -118,5 +118,9 @@ export class ProductService implements IProductService {
     }
 
     await this.productRepo.updateOne(id, { isDeleted: !product.isDeleted });
+  }
+
+  async allProducts(query: Record<string, any>): Promise<Product[]> {
+    return await this.productRepo.allProducts(query)
   }
 }

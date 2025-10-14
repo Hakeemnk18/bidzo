@@ -15,6 +15,8 @@ const PlansPage = lazy(()=> import('../features/shared/components/plans/Plans'))
 const ProductManagementPage = lazy(()=> import('../features/seller/components/product/ProductTable'))
 const CreateProductPage = lazy(()=> import('../features/seller/components/product/CreateProduct'))
 const EditProductPage = lazy(()=>import('../features/seller/components/product/UpdateProduct'))
+const AuctionPage = lazy(()=> import('../features/seller/components/auction/auctionTable'))
+const AuctionCreatePage = lazy(()=> import('../features/seller/components/auction/CreateAuction'))
 
 
 const sellerRoute = [
@@ -100,6 +102,26 @@ const sellerRoute = [
          <ProtectedRoute>
             <Suspense fallback={<LoadingSpinner />}>
                 <EditProductPage/>
+            </Suspense>
+         </ProtectedRoute>
+        ),
+    },
+    {
+        path:'/seller/auction/management',
+        element:(
+         <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+                <AuctionPage/>
+            </Suspense>
+         </ProtectedRoute>
+        ),
+    },
+    {
+        path:'/seller/create/auction',
+        element:(
+         <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+                <AuctionCreatePage/>
             </Suspense>
          </ProtectedRoute>
         ),

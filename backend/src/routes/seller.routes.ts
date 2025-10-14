@@ -5,10 +5,12 @@ import { authorizeRoles } from "../middileware/role.middileware";
 import { AuthenticatedRequest } from "../interfaces/AuthenticatedRequest";
 import { ProductController } from "../controllers/sellerController/product.controller";
 import { authenticate } from "../middileware/authmiddileware";
+import { AuctionController } from "../controllers/sellerController/auction.controller";
 
 
 const sellerAuthController = container.resolve(SellerAuthController)
 const productController = container.resolve(ProductController)
+const auctionController = container.resolve(AuctionController)
 
 const router = Router()
 
@@ -53,6 +55,18 @@ router.get('/product/:id',
     authenticate,
     authorizeRoles('seller'),
     (req, res)=> productController.getProduct(req as AuthenticatedRequest, res)
+)
+
+router.post('/auction',
+    authenticate,
+    authorizeRoles('seller'),
+    (req,res)=> auctionController.createAuction(req as AuthenticatedRequest, res)
+)
+
+router.get('/auction/allProducts',
+    authenticate,
+    authorizeRoles('seller'),
+    (req,res)=> auctionController.allProduct(req as AuthenticatedRequest, res)
 )
 
 export default router

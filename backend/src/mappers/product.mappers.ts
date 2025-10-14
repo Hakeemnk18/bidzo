@@ -29,4 +29,10 @@ export class ProductMapper {
     static toResProductAllDTO(products: PopulatedProduct[]): IResProductDTO[]{
         return products.map(this.toResProductDTO)
     }
+
+    static toResAllProductNames(product: Product[]): {id: string, productName: string}[]{
+        return product.map((item)=> {
+            return { id: item.id!, productName: item.name}
+        } )
+    }
 }
