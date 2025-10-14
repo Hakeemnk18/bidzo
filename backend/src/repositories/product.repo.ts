@@ -43,4 +43,8 @@ export class ProductRepo implements IProductRepo {
     const fieldsToSelect = '_id categoryName';
     return await ProductModel.findOne(query).populate<{ category: IResCategoryNameDTO}>('category', fieldsToSelect)
   }
+
+  async allProducts(query: Record<string, any>): Promise<Product[]> {
+    return await ProductModel.find(query)
+  }
 }

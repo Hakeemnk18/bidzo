@@ -38,6 +38,10 @@ import { IProductRepo } from '../repositories/interfaces/product.repo.interface'
 import { ProductRepo } from '../repositories/product.repo';
 import { IProductService } from '../services/interfaces/product.interface';
 import { ProductService } from '../services/product.service';
+import { IAuctionRepo } from '../repositories/interfaces/auction.repo';
+import { AuctionRepo } from '../repositories/auction.repo';
+import { IAuctionService } from '../services/interfaces/auction.intercafe';
+import { AuctionService } from '../services/auction.service';
 
 container.register<IOTPRepository>('IOTPRepository', {useClass: OTPRepository})
 container.register<IOTPService>('IOTPService', { useClass: OTPService})
@@ -67,6 +71,9 @@ container.register<ICategoryService>('ICategoryService', { useClass: CategorySer
 
 container.register<IProductRepo>('IProductRepo', { useClass: ProductRepo });
 container.register<IProductService>('IProductService', { useClass: ProductService });
+
+container.register<IAuctionRepo>('IAuctionRepo', { useClass: AuctionRepo})
+container.register<IAuctionService>('IAuctionService', { useClass: AuctionService})
 
 
 

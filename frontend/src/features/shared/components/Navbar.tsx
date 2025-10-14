@@ -41,7 +41,7 @@ const Navbar = () => {
         sixth: "",
         seventh: '',
         firstUrl: "/seller/dashboard",
-        secondUrl: "#",
+        secondUrl: "/seller/auction/management",
         thirdUrl: "/seller/product/management",
         fourthUrl: "",
         fifthUrl: "",
