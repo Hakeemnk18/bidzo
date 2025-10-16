@@ -4,41 +4,31 @@ import instance from "../../../../api/axios";
 import type { ApiResponse } from "../../../../types/user.types";
 import { toast } from "react-toastify";
 import { showErrorToast } from "../../../../utils/showErrorToast";
-import type { IProductFormData } from "../../../../types/product.type";
-import axios from "axios";
 import type {
-  IResCategoryNameDTO,
-} from "../../../../types/category.type";
-import type { IResProductNameDTO } from "../../../../types/auction.type";
-
-
-const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
-const MAX_IMAGE_SIZE = Number(import.meta.env.VITE_MAX_IMAGE_SIZE);
-const ALLOWED_MIMES = import.meta.env.VITE_ALLOWED_MIMES.split(',');
-const UPLOAD_PRESET = import.meta.env.VITE_IMAGE_UPLOAD_PRESET
-
-
-
-
-interface IResCloudinaryURL {
-    secure_url: string
-}
+  IAuctionFormData,
+  IResProductNameDTO,
+} from "../../../../types/auction.type";
 
 const CreateAuctionForm = () => {
-  const [formData, setFormData] = useState<IProductFormData>({
-    name: "",
-    description: "",
-    category: "",
-    productImage: "",
-    document: null as File | null,
+  // --- MODIFIED: State to match IAuctionFormData ---
+  const [formData, setFormData] = useState<IAuctionFormData>({
+    product: "",
+    basePrice: "",
+    reservePrice: "",
+    startAt: new Date(),
+    endAt: new Date(),
+    auctionType: "NORMAL",
   });
 
+  // --- MODIFIED: Errors state to match new fields ---
   const [errors, setErrors] = useState<{
-    name?: string;
-    description?: string;
-    category?: string;
-    document?: string;
+    product?: string;
+    basePrice?: string;
+    reservePrice?: string;
+    startAt?: string;
+    endAt?: string;
   }>({});
+
   const [products, setProducts] = useState<
     { id: string; productName: string }[]
   >([]);
@@ -53,12 +43,11 @@ const CreateAuctionForm = () => {
         setProducts(res.data.data);
       }
     } catch (error) {
-      console.log("error in fetch plan name", error);
+      console.log("error in fetch product name", error);
       showErrorToast(error);
     }
   };
 
-  //fetch category names
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -70,91 +59,51 @@ const CreateAuctionForm = () => {
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    setErrors((prev) => ({ ...prev, document: "" }));
-    if (file) {
-      if (file.size > MAX_IMAGE_SIZE) {
-        setErrors((prev) => ({
-          ...prev,
-          document: "Image size must be under 5MB.",
-        }));
-        return;
-      }
-      if (!ALLOWED_MIMES.includes(file.type)) {
-        
-        
-        setErrors((prev) => ({
-          ...prev,
-          document: "Only JPEG, PNG, or WEBP images are allowed.",
-        }));
-        return;
-      }
-      setFormData((prev) => ({ ...prev, document: file }));
-      setErrors((prev) => ({ ...prev, document: "" }));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const newErrors: typeof errors = {};
-    const { name, category, description, document } = formData;
+    const { product, basePrice, reservePrice, startAt, endAt } = formData;
+    console.log(formData)
 
-    if (!name.trim()) newErrors.name = "Plan name is required";
-
-    if (!name.trim()) {
-      newErrors.name = "Product name is required.";
+    if (!product.trim()) {
+      newErrors.product = "Product selection is required.";
     }
-
-    if (!category.trim()) {
-      newErrors.category = "Category selection is required.";
+    if (!basePrice.trim()) {
+      newErrors.basePrice = "Base price is required.";
+    } else if (isNaN(Number(basePrice)) || Number(basePrice) <= 0) {
+      newErrors.basePrice = "Base price must be a positive number.";
     }
-
-    if (!description.trim()) {
-      newErrors.description = "Product description is required.";
-    } else if (description.trim().length < 4) {
-      newErrors.description =
-        "Description must be at least 20 characters long.";
+    if (!reservePrice.trim()) {
+      newErrors.reservePrice = "Reserve price is required.";
+    } else if (isNaN(Number(reservePrice)) || Number(reservePrice) <= 0) {
+      newErrors.reservePrice = "Reserve price must be a positive number.";
     }
-
-    if (!document) {
-      newErrors.document = "Product image is required.";
+    if (!startAt || isNaN(new Date(startAt).getTime())) {
+      newErrors.startAt = "Start date is required.";
+    }
+    if (!endAt || isNaN(new Date(endAt).getTime())) {
+      newErrors.endAt = "Start date is required.";
+    }
+    if (new Date(endAt) <= new Date(startAt)) {
+      newErrors.endAt = "End date must be after the start date.";
     }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     } else {
-      const file = formData.document as File;
-
-      const formDataUpload = new FormData();
-      formDataUpload.append("file", file);
-      formDataUpload.append("upload_preset", UPLOAD_PRESET);
-      
-
       try {
-        const uploadRes = await axios.post<IResCloudinaryURL>(
-          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-          formDataUpload
-        );
-        const uploadedUrl = uploadRes.data.secure_url;
-        formData.productImage = uploadedUrl;
-        
-      } catch (error) {
-        toast.error("Failed to upload document to Cloudinary");
-        console.log("Cloudinary upload error", error);
-        return;
-      }
-      try {
-        const res = await instance.post<ApiResponse>("/seller/product", {
+        const res = await instance.post<ApiResponse>("/seller/auction", {
           ...formData,
         });
+        console.log("form submitted")
         if (res.data.success) {
-          toast("form submitted");
-          navigate("/seller/product/management");
+          toast("Auction created successfully!");
+          navigate("/seller/auction/management");
         }
       } catch (error: any) {
-        console.log("error in plan submit form ", error);
+        console.log("error in auction submit form ", error);
         showErrorToast(error);
       }
     }
@@ -163,94 +112,124 @@ const CreateAuctionForm = () => {
   return (
     <div className="min-h-screen flex justify-center items-center p-4">
       <div className="bg-white rounded-xl shadow-lg flex flex-col md:flex-row w-full max-w-4xl overflow-hidden">
-        {/* Left: Image */}
         <div className="md:w-1/2 bg-blue-100 p-4 flex justify-center items-center">
           <img
             src="/images/Gemini_Generated_Image_dt7yu2dt7yu2dt7y-removebg-preview.png"
-            alt="Plan"
+            alt="Auction"
             className="max-w-full"
           />
         </div>
 
-        {/* Right: Form */}
         <div className="md:w-1/2 p-8 w-full">
           <form className="p-4 w-full" onSubmit={handleSubmit}>
             <h2 className="text-center text-lg font-bold mb-4">
               Create Auction
             </h2>
 
-            {/* product */}
+            {/* --- MODIFIED: Form fields --- */}
+
+            {/* Product Select */}
             <div className="w-full mb-4">
               <select
-                name="category"
-                value={formData.category}
+                name="product"
+                value={formData.product}
                 onChange={handleChange}
                 className={`w-full px-4 py-2 border ${
-                  errors.category ? "border-red-500" : "border-gray-300"
+                  errors.product ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
               >
-                <option value="">Select Plan category</option>
+                <option value="">Select a Product</option>
                 {products.map((item) => (
-                  <option key={item.id} value={item.id}>{item.productName}</option>
+                  <option key={item.id} value={item.id}>
+                    {item.productName}
+                  </option>
                 ))}
               </select>
-              {errors.category && (
-                <p className="text-red-500 text-xs mt-1">{errors.category}</p>
+              {errors.product && (
+                <p className="text-red-500 text-xs mt-1">{errors.product}</p>
               )}
             </div>
 
+            {/* Base Price */}
             <div className="w-full mb-4">
               <input
-                type="text"
-                name="name"
-                value={formData.name}
+                type="number"
+                name="basePrice"
+                value={formData.basePrice}
                 onChange={handleChange}
-                placeholder="Product Name"
+                placeholder="Base Price (₹)"
                 className={`w-full px-4 py-2 border ${
-                  errors.name ? "border-red-500" : "border-gray-300"
+                  errors.basePrice ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
-              {errors.name && (
-                <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+              {errors.basePrice && (
+                <p className="text-red-500 text-xs mt-1">{errors.basePrice}</p>
               )}
             </div>
 
-            {/* Plan Name */}
+            {/* Reserve Price */}
             <div className="w-full mb-4">
               <input
-                type="text"
-                name="description"
-                value={formData.description}
+                type="number"
+                name="reservePrice"
+                value={formData.reservePrice}
                 onChange={handleChange}
-                placeholder="Description"
+                placeholder="Reserve Price (₹)"
                 className={`w-full px-4 py-2 border ${
-                  errors.description ? "border-red-500" : "border-gray-300"
+                  errors.reservePrice ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
-              {errors.description && (
+              {errors.reservePrice && (
                 <p className="text-red-500 text-xs mt-1">
-                  {errors.description}
+                  {errors.reservePrice}
                 </p>
               )}
             </div>
 
-            {/* Yearly Amount */}
-            
-
-            {/* Monthly Amount */}
+            {/* Start At */}
             <div className="w-full mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Start Date
+              </label>
               <input
-                type="file"
-                name="document"
-                onChange={handleFileChange}
-                placeholder="Monthly Amount"
+                type="datetime-local"
+                name="startAt"
+                onChange={handleChange}
                 className={`w-full px-4 py-2 border ${
-                  errors.document ? "border-red-500" : "border-gray-300"
+                  errors.startAt ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
-              {errors.document && (
-                <p className="text-red-500 text-xs mt-1">{errors.document}</p>
+            </div>
+
+            {/* End At */}
+            <div className="w-full mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                End Date
+              </label>
+              <input
+                type="datetime-local"
+                name="endAt"
+                onChange={handleChange}
+                className={`w-full px-4 py-2 border ${
+                  errors.endAt ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              />
+              {errors.endAt && (
+                <p className="text-red-500 text-xs mt-1">{errors.endAt}</p>
               )}
+            </div>
+
+            {/* Auction Type */}
+            <div className="w-full mb-4">
+              <select
+                name="auctionType"
+                value={formData.auctionType}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="NORMAL">Normal Auction</option>
+                <option value="LIVE">Live Auction</option>
+              </select>
             </div>
 
             <button

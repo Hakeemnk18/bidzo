@@ -9,7 +9,7 @@ export interface IParseResult {
   filters: Record<string, any>;
 }
 
-export function parseReq(req: Request, filtersArr: [string]): IParseResult {
+export function parseReq(req: Request, filtersArr: string[]): IParseResult {
   const filters = buildFilters(filtersArr, req.query);
   const page = parseInt(req.query.page as string) || 1;
   const search = (req.query.search as string) || "";

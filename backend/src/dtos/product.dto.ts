@@ -9,6 +9,12 @@ export interface IProductCreateDTO {
     sellerId: string;      
 }
 
+export interface IResProductNameDTO {
+    _id: string;
+    product: string;
+}
+
+
 export interface IResProductDTO {
     id: string;
     name: string;   
