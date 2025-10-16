@@ -69,4 +69,10 @@ router.get('/auction/allProducts',
     (req,res)=> auctionController.allProduct(req as AuthenticatedRequest, res)
 )
 
+router.get('/auction/management',
+    authenticate,
+    authorizeRoles('seller'),
+    (req,res)=> auctionController.allAuctions(req as AuthenticatedRequest,res)
+)
+
 export default router

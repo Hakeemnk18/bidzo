@@ -9,20 +9,21 @@ import type { ApiResponse } from "../../../../types/user.types";
 import ConfirmModal from "../../../shared/components/modal/ConfirmationModal";
 import instance from "../../../../api/axios";
 import type { IProductDTO, IResProduct } from "../../../../types/product.type";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import type { IAuctionData } from "../../../../types/auction.type";
-import mockAuctions from "../../../../types/auction.type";
-
-
+import type {
+  IAuctionData,
+  IResAuction,
+  IResGetAuction,
+  PopulatedAuction,
+} from "../../../../types/auction.type";
 
 const AuctionTable = () => {
-    
-  const role = localStorage.getItem('userRole')
+  const role = localStorage.getItem("userRole");
   const [currentPage, setCurrentPage] = useState(1);
-  const [data, setData] = useState<IAuctionData[]>(mockAuctions);
+  const [data, setData] = useState<PopulatedAuction[]>([]);
   const [totalPages, setTotalPages] = useState(0);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [productId, setProductId] = useState<string | null>(null);
   const [isConfirmModal, setIsConfirmModal] = useState(false);
@@ -36,40 +37,51 @@ const AuctionTable = () => {
   const [sort, setSort] = useState("");
   const sortOptions = [
     { value: "", label: "All" },
-    { value: "A-Z", label: "A-Z" },
-    { value: "Z-A", label: "Z-A" },
+    { value: "baseAsc", label: "Base Price Price: Low → High" },
+    { value: "baseDesc", label: "Base Price: High → Low" },
   ];
 
   const filterOptions = [
     {
       label: "Status",
-      field: "isDeleted",
+      field: "status",
       options: [
         { value: "", label: "All" },
-        { value: "true", label: "Blocked" },
-        { value: "false", label: "Unblock" },
+        { value: "scheduled", label: "Scheduled" },
+        { value: "running", label: "Running" },
+        { value: "ended", label: "Ended" },
+        { value: "cancelled", label: "Cancelled" },
+      ],
+    },
+    {
+      label: "Type",
+      field: "type",
+      options: [
+        { value: "", label: "All" },
+        { value: "auto", label: "Auto" },
+        { value: "manual", label: "Manual" },
       ],
     },
   ];
 
-
   const fetchData = async () => {
     try {
-    //   const res = await instance.get<IResProduct>(
-    //     `/${role}/product/management`,
-    //     {
-    //       params: {
-    //         page: currentPage,
-    //         search,
-    //         sort,
-    //         ...filters,
-    //       },
-    //     }
-    //   );
-    //   if (res.data.success) {
-    //     setData(res.data.data);
-    //     setTotalPages(res.data.totalPages);
-    //   }
+      const res = await instance.get<IResAuction>(
+        `/seller/auction/management`,
+        {
+          params: {
+            page: currentPage,
+            search,
+            sort,
+            ...filters,
+          },
+        }
+      );
+      if (res.data.success) {
+        console.log(res.data.data);
+        setData(res.data.data);
+        setTotalPages(res.data.totalPages);
+      }
     } catch (error: any) {
       if (error.response && error.response.data?.message) {
         toast.error(error.response.data.message);
@@ -80,15 +92,12 @@ const AuctionTable = () => {
     }
   };
 
-  const handleEdit = async(id: string)=>{
+  const handleEdit = async (id: string) => {
     try {
-      navigate(`/seller/edit/product?id=${id}`)
-    } catch (error) {
-      
-    }
-  }
+      navigate(`/seller/edit/product?id=${id}`);
+    } catch (error) {}
+  };
 
-  
   const handleBlockAndUnblock = async () => {
     setIsConfirmModal(false);
 
@@ -191,11 +200,14 @@ const AuctionTable = () => {
                     index === 3 ? "bg-[#3b3c79]" : "hover:bg-[#232447]"
                   }`}
                 >
-                  <td className="py-3">{item.product}</td>
+                  <td className="py-3">{item.product.name}</td>
                   <td className="py-3">{item.basePrice}</td>
                   <td className="py-3">{item.currentBid}</td>
                   <td className="py-3">{item.bids.length}</td>
-                  <td className="py-3"> {format(new Date(item.endAt), 'dd-MM-yy')}</td>
+                  <td className="py-3">
+                    {" "}
+                    {format(new Date(item.endAt), "dd-MM-yy")}
+                  </td>
                   {/* <td>
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -207,36 +219,22 @@ const AuctionTable = () => {
                       {item.status ? "Deleted" : "Active"}
                     </span>
                   </td> */}
-                  
 
                   <td className="">
                     {item.status ? (
-                      <button
-                        onClick={() => {
-                          
-                        }}
-                      >
+                      <button onClick={() => {}}>
                         <FaUnlock className="text-red-400 cursor-pointer mr-5" />
                       </button>
                     ) : (
-                      <button
-                        onClick={() => {
-                          
-                        }}
-                      >
+                      <button onClick={() => {}}>
                         <FaTrash className="text-red-400 cursor-pointer mr-5" />
                       </button>
                     )}
-                    { role === 'seller' && 
-                      <button onClick={() => {
-                        
-                    }}>
-                      <FaEdit 
-                      className="text-blue-400 cursor-pointer text-lg" />
-                    </button>
-                    
-                    }
-                    
+                    {role === "seller" && (
+                      <button onClick={() => {}}>
+                        <FaEdit className="text-blue-400 cursor-pointer text-lg" />
+                      </button>
+                    )}
 
                     {/* confirm modal */}
                     {isConfirmModal && (
@@ -268,20 +266,18 @@ const AuctionTable = () => {
           />
         </div>
       </div>
-      { role === 'seller'  && 
-      
+      {role === "seller" && (
         <div className="flex justify-end pt-4 max-w-5xl mx-auto ">
-        <button
-          onClick={() => { navigate('/seller/create/auction')}}
-          className="bg-green-500 px-4 py-2 rounded-md font-bold text-gray-800"
-        >
-          Add Product
-        </button>
-      </div>
-      
-      }
-      
-      
+          <button
+            onClick={() => {
+              navigate("/seller/create/auction");
+            }}
+            className="bg-green-500 px-4 py-2 rounded-md font-bold text-gray-800"
+          >
+            Add Auction
+          </button>
+        </div>
+      )}
     </div>
   );
 };

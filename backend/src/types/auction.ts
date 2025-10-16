@@ -1,8 +1,10 @@
 import { IBid } from "../interfaces/auction";
+import { Types } from "mongoose";
 
 export type Auction = {
-  product: string;
-  userId: string; 
+  id?:string,
+  product: Types.ObjectId;
+  userId: Types.ObjectId; 
   auctionType: "NORMAL" | "LIVE";
   startAt: Date;
   endAt: Date;
@@ -14,5 +16,7 @@ export type Auction = {
   status: "scheduled" | "running" | "ended" | "cancelled";
   isSold: boolean;
   type: "auto" | "manual";
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 

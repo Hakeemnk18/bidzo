@@ -12,4 +12,6 @@ export interface IProductService {
     findOneWithPopulated(query: Record<string, any>): Promise<PopulatedProduct>
     adminBlockAndUnblock(id: string): Promise<void>
     allProducts(query: Record<string, any>): Promise<Product[]>
+    markAsUsed(id: string): Promise<void>
+    
 }

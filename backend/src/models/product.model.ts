@@ -7,7 +7,8 @@ export interface IProduct extends Document {
     sellerId: mongoose.Types.ObjectId;   
     productImage: string;    
     isDeleted: boolean;   
-
+    isSelled: boolean;
+    isUsed: boolean
 }
 
 const productSchema = new Schema<IProduct>(
@@ -17,7 +18,9 @@ const productSchema = new Schema<IProduct>(
     category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
     sellerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     productImage: { type: String, required: true },
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false },
+    isSelled:{ type: Boolean, default: false },
+    isUsed: { type: Boolean, default: false }
   },
   {
     timestamps: true,

@@ -9,6 +9,7 @@ import { PopulatedProduct } from "../dtos/product.dto";
 import { CustomError } from "../utils/customError";
 import { ResponseMessages } from "../constants/responseMessages";
 import { HttpStatusCode } from "../constants/httpStatusCode";
+import ProductModel from "../models/product.model";
 
 @injectable()
 export class ProductService implements IProductService {
@@ -67,7 +68,7 @@ export class ProductService implements IProductService {
     const product = await this.productRepo.findOne(query);
     if (!product) {
       throw new CustomError(
-        ResponseMessages.NOT_FOUND,
+        ResponseMessages.PRODUCT_NOT_FOUND,
         HttpStatusCode.NOT_FOUND
       );
     }
@@ -122,5 +123,14 @@ export class ProductService implements IProductService {
 
   async allProducts(query: Record<string, any>): Promise<Product[]> {
     return await this.productRepo.allProducts(query)
+  }
+
+  async markAsUsed(id: string): Promise<void> {
+    const product = await this.productRepo.findOne({_id: id})
+    if(!product){
+      throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
+    }
+
+    await this.productRepo.updateOne(id, { isUsed: true})
   }
 }
