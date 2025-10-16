@@ -24,4 +24,20 @@ export class AuctionRepo implements IAuctionRepo {
   async countDoucements(query: Record<string, any>): Promise<number> {
     return await AuctionModel.countDocuments(query)
   }
+
+  async startDueAuctions(date: Date): Promise<number> {
+    const result = await AuctionModel.updateMany(
+      { status: 'scheduled', startAt: { $lte: date } },
+      { $set: { status: 'running' } }
+    );
+    return result.modifiedCount;
+  }
+
+  async endDueAuctions(date: Date): Promise<number> {
+    const result = await AuctionModel.updateMany(
+      { status: 'running', endAt: { $lte: date } },
+      { $set: { status: 'ended' } }
+    );
+    return result.modifiedCount;
+  }
 }

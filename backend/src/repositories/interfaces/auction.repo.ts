@@ -7,4 +7,6 @@ export interface IAuctionRepo {
     create(data: ICreateAuctionDTO): Promise<void>
     getAll(pipline: any[]): Promise<PopulatedAuction[]>
     countDoucements(query: Record<string, any>): Promise<number>
+    startDueAuctions(date: Date): Promise<number>
+    endDueAuctions(date: Date): Promise<number>
 }

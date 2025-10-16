@@ -3,6 +3,7 @@ dotenv.config();
 import 'reflect-metadata';
 import express from 'express'
 import { connectdb } from './config/db'
+import './schedular';
 import userRoutes from "./routes/user.routes";
 import sellerRoutes from './routes/seller.routes'
 import { Server } from 'socket.io';

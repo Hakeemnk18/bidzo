@@ -106,4 +106,15 @@ export class AuctionService implements IAuctionService {
 
     return { resData, total };
   }
+
+  async processAuctionEnds(): Promise<void> {
+    const now = new Date()
+    const endedCount = await this.auctionrepo.endDueAuctions(now)
+  }
+
+  async processAuctionStarts(): Promise<void> {
+    const now = new Date()
+    const startedCount = await this.auctionrepo.startDueAuctions(now);
+    
+  }
 }
