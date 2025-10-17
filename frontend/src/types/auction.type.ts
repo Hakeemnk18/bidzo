@@ -1,4 +1,5 @@
 export interface IAuctionData {
+  _id: string,
   product: string;
   userId: string; 
   auctionType: "NORMAL" | "LIVE";
