@@ -8,6 +8,7 @@ import { CustomError } from "../utils/customError";
 import { ResponseMessages } from "../constants/responseMessages";
 import { HttpStatusCode } from "../constants/httpStatusCode";
 import { IGetAllDocDBDTO, IReqGetAllDocDTO } from "../dtos/shared.dto";
+import { Auction } from "../types/auction";
 
 @injectable()
 export class AuctionService implements IAuctionService {
@@ -116,5 +117,54 @@ export class AuctionService implements IAuctionService {
     const now = new Date()
     const startedCount = await this.auctionrepo.startDueAuctions(now);
     
+  }
+  async isEligibleForModification(query: Record<string, any>): Promise<boolean> {
+    const auction = await this.auctionrepo.findOne(query)
+    return auction ? true : false
+  }
+
+
+
+  async cancelAuction(id: string, userId: string): Promise<void> {
+    const isValid = await this.isEligibleForModification({
+      _id: id,
+      userId,
+      status: "scheduled",
+      isSold: false,
+      startAt: {$gt: new Date()}
+    })
+
+    if(!isValid){
+      throw new CustomError(ResponseMessages.AUCTION_NOT_FOUND,HttpStatusCode.NOT_FOUND)
+    }
+
+    await this.auctionrepo.findByIdAndUpdate(id,{ status: "cancelled" })
+  }
+  async findOneAuction(query: Record<string, any>): Promise<Auction | null> {
+    
+    return await this.auctionrepo.findOne(query)
+  }
+
+  async unblockAuction(id: string, userId: string): Promise<void> {
+    
+    
+    const auction = await this.findOneAuction({
+      _id: id,
+      userId,
+      status: "cancelled",
+      isSold: false,
+      endAt: {$gt: new Date()}
+    })
+    
+    if(!auction){
+      throw new CustomError(ResponseMessages.AUCTION_NOT_FOUND,HttpStatusCode.NOT_FOUND)
+    }
+    const now = new Date()
+    const startDate = new Date(auction.startAt)
+    if(now < startDate){
+      await this.auctionrepo.findByIdAndUpdate(id,{ status: "scheduled"})
+    }else if(now > startDate){
+      await this.auctionrepo.findByIdAndUpdate(id,{ status: "running"})
+    }
   }
 }

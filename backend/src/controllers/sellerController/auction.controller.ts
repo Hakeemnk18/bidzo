@@ -99,4 +99,46 @@ export class AuctionController implements IAuctioncontroller {
       console.log("error in all auctions ", error);
     }
   }
+
+  async cancelAuction(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const { user } = req;
+      const { id } = req.params
+      if (!user) {
+        throw new CustomError(
+          ResponseMessages.UNAUTHORIZED,
+          HttpStatusCode.UNAUTHORIZED
+        );
+      }
+      await this.auctionService.cancelAuction(id,user.id)
+      res.status(HttpStatusCode.OK).json({
+        success: true,
+        message: ResponseMessages.SUCCESS,
+      });
+    } catch (error) {
+      handleError(res, error)
+      console.log("error in cancel auction ",error)
+    }
+  }
+
+  async unblockAuction(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const { user } = req;
+      const { id } = req.params
+      if (!user) {
+        throw new CustomError(
+          ResponseMessages.UNAUTHORIZED,
+          HttpStatusCode.UNAUTHORIZED
+        );
+      }
+      await this.auctionService.unblockAuction(id,user.id)
+      res.status(HttpStatusCode.OK).json({
+        success: true,
+        message: ResponseMessages.SUCCESS,
+      });
+    } catch (error) {
+      handleError(res, error)
+      console.log("error in unblock auction ",error)
+    }
+  }
 }

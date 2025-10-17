@@ -17,6 +17,7 @@ import type {
   IResGetAuction,
   PopulatedAuction,
 } from "../../../../types/auction.type";
+import { isDateInPast } from "../../../../utils/validDate";
 
 const AuctionTable = () => {
   const role = localStorage.getItem("userRole");
@@ -25,7 +26,7 @@ const AuctionTable = () => {
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [productId, setProductId] = useState<string | null>(null);
+  const [auctionId, setAuctionId] = useState<string | null>(null);
   const [isConfirmModal, setIsConfirmModal] = useState(false);
   const [isBlocked, setIsBlocked] = useState<boolean>(true);
   const [filters, setFilters] = useState<Record<string, any>>({
@@ -78,7 +79,7 @@ const AuctionTable = () => {
         }
       );
       if (res.data.success) {
-        console.log(res.data.data);
+        console.log(res.data.data[0])
         setData(res.data.data);
         setTotalPages(res.data.totalPages);
       }
@@ -102,8 +103,9 @@ const AuctionTable = () => {
     setIsConfirmModal(false);
 
     try {
+      const point = isBlocked ? "block" : "unblock"
       const res = await instance.patch<ApiResponse>(
-        `/${role}/product/${productId}`
+        `/${role}/auction/${auctionId}/${point}`
       );
 
       if (res.data.success) {
@@ -117,6 +119,26 @@ const AuctionTable = () => {
         toast.error("Failed to block/unblock");
       }
     }
+  };
+
+  const isEligibleForDelete = (
+    status: "scheduled" | "running" | "ended" | "cancelled",
+    isSold: boolean
+  ): boolean => {
+    if (isSold) return false;
+    if (status !== 'scheduled') return false;
+    return true;
+  };
+
+  const isEligibleForUnLock = (
+    status: "scheduled" | "running" | "ended" | "cancelled",
+    isSold: boolean,
+    endAt: Date
+  ): boolean => {
+    if (isSold) return false;
+    if (status !== "cancelled") return false;
+    if(!isDateInPast(endAt)) return false
+    return true
   };
 
   useEffect(() => {
@@ -174,6 +196,8 @@ const AuctionTable = () => {
             <tr className="text-left text-gray-400">
               <th className="py-3">Product Name</th>
               <th>Base Price</th>
+              <th>Status</th>
+
               <th>Current Bid</th>
               <th>TotalBid</th>
               <th>End Date</th>
@@ -202,39 +226,38 @@ const AuctionTable = () => {
                 >
                   <td className="py-3">{item.product.name}</td>
                   <td className="py-3">{item.basePrice}</td>
+                  <td className="py-3">{item.status}</td>
                   <td className="py-3">{item.currentBid}</td>
                   <td className="py-3">{item.bids.length}</td>
                   <td className="py-3">
                     {" "}
                     {format(new Date(item.endAt), "dd-MM-yy")}
                   </td>
-                  {/* <td>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        item.status
-                          ? "bg-[#1f3b7a] text-blue-300"
-                          : "bg-[#3e3f5c] text-gray-300"
-                      }`}
-                    >
-                      {item.status ? "Deleted" : "Active"}
-                    </span>
-                  </td> */}
-
+        
                   <td className="">
-                    {item.status ? (
-                      <button onClick={() => {}}>
-                        <FaUnlock className="text-red-400 cursor-pointer mr-5" />
-                      </button>
-                    ) : (
-                      <button onClick={() => {}}>
+                    {isEligibleForDelete(item.status, item.isSold) ? (
+                      <button onClick={() => {
+                        setIsConfirmModal(true)
+                        setIsBlocked(true)
+                        setAuctionId(item._id)
+                      }}>
                         <FaTrash className="text-red-400 cursor-pointer mr-5" />
                       </button>
+                    ) : (
+                      <></>
                     )}
-                    {role === "seller" && (
-                      <button onClick={() => {}}>
-                        <FaEdit className="text-blue-400 cursor-pointer text-lg" />
-                      </button>
-                    )}
+
+                    {
+                      isEligibleForUnLock(item.status, item.isSold, item.endAt) ? 
+                      <button onClick={() => {
+                        setIsConfirmModal(true)
+                        setIsBlocked(false)
+                        setAuctionId(item._id)
+                      }}>
+                        <FaUnlock className="text-red-400 cursor-pointer mr-5" />
+                      </button> : <></>
+
+                    }
 
                     {/* confirm modal */}
                     {isConfirmModal && (
@@ -245,8 +268,8 @@ const AuctionTable = () => {
                         onClose={() => setIsConfirmModal(false)}
                         message={
                           isBlocked
-                            ? "Do You want block this product"
-                            : "Do You want unblock this product"
+                            ? "Do You want block this auction"
+                            : "Do You want unblock this auction"
                         }
                       />
                     )}

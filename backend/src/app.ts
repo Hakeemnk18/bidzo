@@ -12,8 +12,10 @@ import { Request, Response, NextFunction } from 'express';
 import { createServer } from 'http';
 import { handleError } from './utils/customError';
 import cors from "cors"
+import { scheduleAuctionJobs } from './schedular';
 
 connectdb()
+scheduleAuctionJobs();
 
 const app = express()
 const httpServer = createServer(app);

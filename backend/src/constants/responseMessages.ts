@@ -48,5 +48,7 @@ export const ResponseMessages = {
   CATEGORY_EXIST: "Category already exist",
 
   PRODUCT_CREATED: "Product created successfully",
-  PRODUCT_NOT_FOUND: "Product not found"
+  PRODUCT_NOT_FOUND: "Product not found",
+
+  AUCTION_NOT_FOUND: "Auction not found"
 };

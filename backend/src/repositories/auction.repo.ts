@@ -40,4 +40,16 @@ export class AuctionRepo implements IAuctionRepo {
     );
     return result.modifiedCount;
   }
+
+  async findOne(query: Record<string, any>): Promise<Auction | null> {
+    return await AuctionModel.findOne(query)
+  }
+
+  async findOneAndUpdate(query: Record<string, any>): Promise<void> {
+    await AuctionModel.findOneAndUpdate(query)
+  }
+
+  async findByIdAndUpdate(id: string, query: Record<string, any>): Promise<void> {
+    await AuctionModel.findByIdAndUpdate(id,{ $set: query})
+  }
 }
