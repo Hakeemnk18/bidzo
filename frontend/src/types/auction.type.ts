@@ -12,6 +12,7 @@ export interface IAuctionData {
   winner?: string;
   status: "scheduled" | "running" | "ended" | "cancelled";
   isSold: boolean;
+  isDeleted: boolean
   type: "auto" | "manual";
 }
 

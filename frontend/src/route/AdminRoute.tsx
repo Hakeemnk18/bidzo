@@ -13,6 +13,7 @@ const PlanCreatePage = lazy(()=> import('../features/admin/components/plan/Creat
 const PlanEditPage = lazy(()=> import('../features/admin/components/plan/EditPlan'))
 const CategoryPage = lazy(()=> import('../features/admin/components/category/CategoryTable'))
 const ProductManagementPage = lazy(()=> import('../features/seller/components/product/ProductTable'))
+const AuctionPage = lazy(()=> import('../features/admin/components/auction/AuctionTable'))
 
 
 
@@ -105,7 +106,14 @@ const adminRoute = [
             </ProtectedRoute>
         )
     },
-    
+    {
+        path: '/admin/auctionManagement',
+        element:( 
+            <ProtectedRoute>
+                <AuctionPage />
+            </ProtectedRoute>
+        )
+    },
 
 ]
 

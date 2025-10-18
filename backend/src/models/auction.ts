@@ -21,6 +21,7 @@ export interface IAuction extends Document {
   winner?: Schema.Types.ObjectId;
   status: "scheduled" | "running" | "ended" | "cancelled";
   isSold: boolean;
+  isDeleted: boolean;
   type: "auto" | "manual";
 }
 
@@ -56,6 +57,7 @@ const auctionSchema = new Schema<IAuction>(
       enum: ["scheduled", "running", "ended", "cancelled"],
       default: "scheduled",
     },
+    isDeleted: {type: Boolean, default: false },
     isSold: { type: Boolean, default: false },
     type: {
       type: String,

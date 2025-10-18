@@ -61,7 +61,7 @@ const Navbar = () => {
         secondUrl: '/admin/sellerManagement',
         thirdUrl: '/admin/userManagement',
         fourthUrl: '/admin/planManagement',
-        fifthUrl: "",
+        fifthUrl: "/admin/auctionManagement",
         sixthUrl: '/admin/categoryManagement',
         seventhUrl:'/admin/productManagement'
       };

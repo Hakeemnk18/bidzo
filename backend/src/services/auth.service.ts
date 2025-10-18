@@ -72,8 +72,14 @@ export class AuthService implements IAuthService {
       throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
     }
 
-    if (role === "seller" && user.isVerified === "pending") {
-      throw new CustomError(ResponseMessages.SELLER_SIGNUP_PENDING, HttpStatusCode.FORBIDDEN);
+    if (role === "seller" ) {
+
+      if(user.isVerified === "pending"){
+        throw new CustomError(ResponseMessages.SELLER_SIGNUP_PENDING, HttpStatusCode.FORBIDDEN);
+      }
+      if(user.isVerified === "rejected"){
+        throw new CustomError(ResponseMessages.ACCESS_DENIED, HttpStatusCode.FORBIDDEN);
+      }
     }
 
     const jwtToken = await this.jwtService.sign({ id: user.id, role: user.role })

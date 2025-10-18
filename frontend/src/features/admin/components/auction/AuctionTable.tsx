@@ -8,10 +8,13 @@ import TableFilter from "../../../shared/components/table/TableFilter";
 import type { ApiResponse } from "../../../../types/user.types";
 import ConfirmModal from "../../../shared/components/modal/ConfirmationModal";
 import instance from "../../../../api/axios";
+import type { IProductDTO, IResProduct } from "../../../../types/product.type";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import type {
+  IAuctionData,
   IResAuction,
+  IResGetAuction,
   PopulatedAuction,
 } from "../../../../types/auction.type";
 import { isDateInFuture, isDateInPast } from "../../../../utils/validDate";
@@ -65,7 +68,7 @@ const AuctionTable = () => {
   const fetchData = async () => {
     try {
       const res = await instance.get<IResAuction>(
-        `/seller/auction/management`,
+        `/admin/auction/management`,
         {
           params: {
             page: currentPage,
@@ -76,7 +79,7 @@ const AuctionTable = () => {
         }
       );
       if (res.data.success) {
-        console.log(res.data.data)
+        
         setData(res.data.data);
         setTotalPages(res.data.totalPages);
       }
@@ -90,19 +93,15 @@ const AuctionTable = () => {
     }
   };
 
-  const handleEdit = async (id: string) => {
-    try {
-      navigate(`/seller/edit/auction?id=${id}`);
-    } catch (error) {}
-  };
+  
 
   const handleBlockAndUnblock = async () => {
     setIsConfirmModal(false);
 
     try {
-      const point = isBlocked ? "block" : "unblock"
+      const point = isBlocked ? "block": "unblock" ;
       const res = await instance.patch<ApiResponse>(
-        `/${role}/auction/${auctionId}/${point}`
+        `/admin/auction/${auctionId}/${point}`
       );
 
       if (res.data.success) {
@@ -120,35 +119,29 @@ const AuctionTable = () => {
 
   const isEligibleForDelete = (
     status: "scheduled" | "running" | "ended" | "cancelled",
-    isSold: boolean
+    isSold: boolean,
+    isDeleted: boolean,
   ): boolean => {
     if (isSold) return false;
-    if (status !== 'scheduled') return false;
+    if(isDeleted) return false
+    if (status === 'running') return false;
     return true;
   };
 
   const isEligibleForUnLock = (
     status: "scheduled" | "running" | "ended" | "cancelled",
     isSold: boolean,
+    isDeleted: boolean,
     endAt: Date
   ): boolean => {
     if (isSold) return false;
-    if (status !== "cancelled") return false;
+    if (!isDeleted) return false
+    if (status === "running") return false;
     if(!isDateInPast(endAt)) return false
     return true
   };
 
-  const isEligibleForEdit = (
-    status: "scheduled" | "running" | "ended" | "cancelled",
-    isSold: boolean,
-    startAt: Date
-  )=>{
-    if(isSold) return false
-    if(status === "running") return false
-    if(!isDateInFuture(startAt)) return false
-    return true
-  }
-
+  
   
 
   useEffect(() => {
@@ -207,7 +200,6 @@ const AuctionTable = () => {
               <th className="py-3">Product Name</th>
               <th>Base Price</th>
               <th>Status</th>
-
               <th>Current Bid</th>
               <th>TotalBid</th>
               <th>End Date</th>
@@ -218,10 +210,10 @@ const AuctionTable = () => {
             <tbody>
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={4}
                   className="py-10 text-center text-gray-300 text-base"
                 >
-                  No Auction found
+                  No Product found
                 </td>
               </tr>
             </tbody>
@@ -245,7 +237,7 @@ const AuctionTable = () => {
                   </td>
         
                   <td className="">
-                    {isEligibleForDelete(item.status, item.isSold) ? (
+                    {isEligibleForDelete(item.status, item.isSold, item.isDeleted) ? (
                       <button onClick={() => {
                         setIsConfirmModal(true)
                         setIsBlocked(true)
@@ -258,7 +250,7 @@ const AuctionTable = () => {
                     )}
 
                     {
-                      isEligibleForUnLock(item.status, item.isSold, item.endAt) ? 
+                      isEligibleForUnLock(item.status, item.isSold,item.isDeleted, item.endAt) ? 
                       <button onClick={() => {
                         setIsConfirmModal(true)
                         setIsBlocked(false)
@@ -268,17 +260,7 @@ const AuctionTable = () => {
                       </button> : <></>
 
                     }
-                    {
-                      isEligibleForEdit(item.status, item.isSold, item.startAt) ? 
-                       <button onClick={() => { 
-                        setAuctionId(item._id)
-                        handleEdit(item._id)
-                       }}>
-                      <FaEdit 
-                      className="text-blue-400 cursor-pointer text-lg" />
-                    </button>
-                      : <></>
-                    }
+                   
 
                     {/* confirm modal */}
                     {isConfirmModal && (
@@ -310,18 +292,7 @@ const AuctionTable = () => {
           />
         </div>
       </div>
-      {role === "seller" && (
-        <div className="flex justify-end pt-4 max-w-5xl mx-auto ">
-          <button
-            onClick={() => {
-              navigate("/seller/create/auction");
-            }}
-            className="bg-green-500 px-4 py-2 rounded-md font-bold text-gray-800"
-          >
-            Add Auction
-          </button>
-        </div>
-      )}
+     
     </div>
   );
 };

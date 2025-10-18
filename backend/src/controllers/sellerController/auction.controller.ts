@@ -82,10 +82,7 @@ export class AuctionController implements IAuctionController {
       
       const parseData = parseReq(req, ["status","type"]);
       
-      const { resData, total } = await this.auctionService.getAllAuctions(
-        parseData,
-        
-      );
+      const { resData, total } = await this.auctionService.getAllAuctions(parseData,user.id);
       
       res.status(HttpStatusCode.OK).json({
         success: true,

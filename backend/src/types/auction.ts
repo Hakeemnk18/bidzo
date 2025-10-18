@@ -18,5 +18,6 @@ export type Auction = {
   type: "auto" | "manual";
   createdAt?: Date;
   updatedAt?: Date;
+  
 }
 

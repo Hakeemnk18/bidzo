@@ -8,6 +8,8 @@ import { container } from '../di/container'
 import { PlanMangementController } from "../controllers/adminController/plan.management";
 import { CategoryControllers } from "../controllers/adminController/category.controller";
 import { ProductController } from "../controllers/adminController/product.controller";
+import { AdminAuctionController } from "../controllers/adminController/auction.controller";
+
 
 
 
@@ -19,6 +21,7 @@ const adminUserManagementController = container.resolve(UserMangementController)
 const planManagementController = container.resolve(PlanMangementController)
 const categoryController = container.resolve(CategoryControllers)
 const productController = container.resolve(ProductController)
+const auctionController = container.resolve(AdminAuctionController)
 
 
 router.post('/login',(req,res)=> adminAuthController.login(req,res))
@@ -133,6 +136,24 @@ router.patch('/product/:id',
     (req, res)=> productController.blockAndUnblock(req,res)
 )
 
+//auction
+router.get('/auction/management',
+    authenticate,
+    authorizeRoles('admin'),
+    (req, res)=> auctionController.getAllAuction(req,res)
+)
+
+router.patch('/auction/:id/block',
+    authenticate,
+    authorizeRoles('admin'),
+    (req, res)=> auctionController.deleteAuction(req,res)
+)
+
+router.patch('/auction/:id/unblock',
+    authenticate,
+    authorizeRoles('admin'),
+    (req, res)=> auctionController.unBlockAuction(req,res)
+)
 
 
 

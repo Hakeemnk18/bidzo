@@ -15,4 +15,6 @@ export interface IAuctionService {
     unblockAuction(id: string, userId: string): Promise<void>
     findOnePopulated(id: string, userId: string): Promise<PopulatedAuction>
     editAuction(id: string,  data: ICreateAuctionDTO): Promise<void>
+    deleteAuction(id: string): Promise<void>
+    removeDeleteAuction(id: string): Promise<void>
 }

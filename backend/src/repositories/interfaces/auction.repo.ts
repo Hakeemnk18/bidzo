@@ -6,7 +6,7 @@ import { Auction } from "../../types/auction";
 export interface IAuctionRepo {
     create(data: ICreateAuctionDTO): Promise<void>
     getAll(pipeline: any[]): Promise<PopulatedAuction[]>
-    countDocuments(query: Record<string, any>): Promise<number>
+    countDocuments(pipeline: any[]): Promise<number>
     startDueAuctions(date: Date): Promise<number>
     endDueAuctions(date: Date): Promise<number>
     findOne(query: Record<string, any>): Promise<Auction | null>

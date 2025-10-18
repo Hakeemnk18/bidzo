@@ -21,8 +21,13 @@ export class AuctionRepo implements IAuctionRepo {
     return auctions as unknown as PopulatedAuction[];
   }
 
-  async countDocuments(query: Record<string, any>): Promise<number> {
-    return await AuctionModel.countDocuments(query)
+  async countDocuments(pipeline: any[]): Promise<number> {
+    const num = await AuctionModel.aggregate(pipeline)
+    
+    const total: number = num[0]?.total | 0
+    
+
+    return total
   }
 
   async startDueAuctions(date: Date): Promise<number> {
