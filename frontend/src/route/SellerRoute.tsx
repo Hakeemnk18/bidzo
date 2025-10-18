@@ -17,6 +17,7 @@ const CreateProductPage = lazy(()=> import('../features/seller/components/produc
 const EditProductPage = lazy(()=>import('../features/seller/components/product/UpdateProduct'))
 const AuctionPage = lazy(()=> import('../features/seller/components/auction/auctionTable'))
 const AuctionCreatePage = lazy(()=> import('../features/seller/components/auction/CreateAuction'))
+const EditAuctionPage = lazy(()=> import('../features/seller/components/auction/EditAuction'))
 
 
 const sellerRoute = [
@@ -122,6 +123,16 @@ const sellerRoute = [
          <ProtectedRoute>
             <Suspense fallback={<LoadingSpinner />}>
                 <AuctionCreatePage/>
+            </Suspense>
+         </ProtectedRoute>
+        ),
+    },
+    {
+        path:'/seller/edit/auction',
+        element:(
+         <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+                <EditAuctionPage/>
             </Suspense>
          </ProtectedRoute>
         ),

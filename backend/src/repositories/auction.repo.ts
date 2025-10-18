@@ -16,12 +16,12 @@ export class AuctionRepo implements IAuctionRepo {
     await AuctionModel.create(data);
   }
 
-  async getAll(pipline: any[]): Promise<PopulatedAuction[]> {
-    const auctions = await AuctionModel.aggregate(pipline).exec()
+  async getAll(pipeline: any[]): Promise<PopulatedAuction[]> {
+    const auctions = await AuctionModel.aggregate(pipeline).exec()
     return auctions as unknown as PopulatedAuction[];
   }
 
-  async countDoucements(query: Record<string, any>): Promise<number> {
+  async countDocuments(query: Record<string, any>): Promise<number> {
     return await AuctionModel.countDocuments(query)
   }
 
@@ -51,5 +51,12 @@ export class AuctionRepo implements IAuctionRepo {
 
   async findByIdAndUpdate(id: string, query: Record<string, any>): Promise<void> {
     await AuctionModel.findByIdAndUpdate(id,{ $set: query})
+  }
+
+  async findOneWithPopulated(query: Record<string, any>): Promise<PopulatedAuction | null> {
+    const fieldsToSelect = '_id name';
+    const product = await AuctionModel.findOne(query)
+    .populate('product', fieldsToSelect)
+    return product as unknown as PopulatedAuction
   }
 }

@@ -17,7 +17,7 @@ import type {
   IResGetAuction,
   PopulatedAuction,
 } from "../../../../types/auction.type";
-import { isDateInPast } from "../../../../utils/validDate";
+import { isDateInFuture, isDateInPast } from "../../../../utils/validDate";
 
 const AuctionTable = () => {
   const role = localStorage.getItem("userRole");
@@ -79,7 +79,7 @@ const AuctionTable = () => {
         }
       );
       if (res.data.success) {
-        console.log(res.data.data[0])
+        
         setData(res.data.data);
         setTotalPages(res.data.totalPages);
       }
@@ -95,7 +95,7 @@ const AuctionTable = () => {
 
   const handleEdit = async (id: string) => {
     try {
-      navigate(`/seller/edit/product?id=${id}`);
+      navigate(`/seller/edit/auction?id=${id}`);
     } catch (error) {}
   };
 
@@ -141,6 +141,19 @@ const AuctionTable = () => {
     return true
   };
 
+  const isEligibleForEdit = (
+    status: "scheduled" | "running" | "ended" | "cancelled",
+    isSold: boolean,
+    startAt: Date
+  )=>{
+    if(isSold) return false
+    if(status === "running") return false
+    if(!isDateInFuture(startAt)) return false
+    return true
+  }
+
+  
+
   useEffect(() => {
     setCurrentPage(1);
   }, [search, sort, filters]);
@@ -158,7 +171,7 @@ const AuctionTable = () => {
     <div className="pt-34 pb-20">
       <div className="bg-gradient-to-r from-[#0d1128] to-[#1d1e33] p-6 rounded-xl text-white w-full max-w-5xl mx-auto ">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Product</h2>
+          <h2 className="text-xl font-semibold">Auction</h2>
           <div className="flex gap-3">
             <TableSearch search={search} setSearch={setSearch} />
 
@@ -257,6 +270,17 @@ const AuctionTable = () => {
                         <FaUnlock className="text-red-400 cursor-pointer mr-5" />
                       </button> : <></>
 
+                    }
+                    {
+                      isEligibleForEdit(item.status, item.isSold, item.startAt) ? 
+                       <button onClick={() => { 
+                        setAuctionId(item._id)
+                        handleEdit(item._id)
+                       }}>
+                      <FaEdit 
+                      className="text-blue-400 cursor-pointer text-lg" />
+                    </button>
+                      : <></>
                     }
 
                     {/* confirm modal */}

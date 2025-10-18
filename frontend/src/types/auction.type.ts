@@ -17,6 +17,11 @@ export interface IAuctionData {
 
 export type PopulatedAuction = Omit<IAuctionData, 'product'> & { product: IResGetProductNameDTO }
 
+export interface IResCurrentAuction {
+    success: boolean,
+    message: string,
+    data: PopulatedAuction
+}
 
 export interface IResAuction{
     success: boolean;

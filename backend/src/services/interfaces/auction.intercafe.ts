@@ -13,4 +13,6 @@ export interface IAuctionService {
     cancelAuction(id: string, userId:string): Promise<void>
     findOneAuction(query: Record<string,any>): Promise<Auction | null>
     unblockAuction(id: string, userId: string): Promise<void>
+    findOnePopulated(id: string, userId: string): Promise<PopulatedAuction>
+    editAuction(id: string,  data: ICreateAuctionDTO): Promise<void>
 }

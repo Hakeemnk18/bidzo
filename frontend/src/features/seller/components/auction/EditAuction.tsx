@@ -6,12 +6,17 @@ import type { ApiResponse } from "../../../../types/user.types";
 import { toast } from "react-toastify";
 import { showErrorToast } from "../../../../utils/showErrorToast";
 import type {
-  IAuctionFormData,
-  IResProductNameDTO,
+   IResAuction,
+   IAuctionFormData,
+   IResCurrentAuction,
+   IResProductNameDTO,
 } from "../../../../types/auction.type";
+import { formatDateForInput } from "../../../../utils/dateFormat";
 
-const CreateAuctionForm = () => {
-
+const EditAuctionForm = () => {
+  // --- MODIFIED: State to match IAuctionFormData ---
+  const [searchParams] = useSearchParams();
+  const auctionId = searchParams.get("id");
   const [formData, setFormData] = useState<IAuctionFormData>({
     product: "",
     basePrice: "",
@@ -48,6 +53,33 @@ const CreateAuctionForm = () => {
       showErrorToast(error);
     }
   };
+
+  const fetchCurrentAuction = async()=>{
+    try {
+      const res = await instance.get<IResCurrentAuction>(`seller/auction/current/${auctionId}`)
+      if(res.data.success){
+        const { data } = res.data
+        console.log(typeof data.startAt)
+        setFormData({
+            basePrice: data.basePrice.toString(),
+            reservePrice: data.reservePrice.toString(),
+            startAt: data.startAt,
+            endAt: data.endAt,
+            product: data.product._id,
+            auctionType: data.auctionType
+        })
+        setProducts((prev)=> [...prev,{id: data.product._id, productName: data.product.name}])
+        
+      }
+
+    } catch (error) {
+      
+    }
+  }
+
+  useEffect(()=>{
+    fetchCurrentAuction()
+  },[])
 
   useEffect(() => {
     fetchProducts();
@@ -95,12 +127,12 @@ const CreateAuctionForm = () => {
       return;
     } else {
       try {
-        const res = await instance.post<ApiResponse>("/seller/auction", {
+        const res = await instance.put<ApiResponse>(`/seller/auction/${auctionId}`, {
           ...formData,
         });
         console.log("form submitted")
         if (res.data.success) {
-          toast("Auction created successfully!");
+          toast("Auction edited successfully!");
           navigate("/seller/auction/management");
         }
       } catch (error: any) {
@@ -193,7 +225,8 @@ const CreateAuctionForm = () => {
                 Start Date
               </label>
               <input
-                type="datetime-local"
+                value={formatDateForInput(formData.startAt)}
+                type="date"
                 name="startAt"
                 onChange={handleChange}
                 className={`w-full px-4 py-2 border ${
@@ -208,7 +241,8 @@ const CreateAuctionForm = () => {
                 End Date
               </label>
               <input
-                type="datetime-local"
+                value={formatDateForInput(formData.endAt)}
+                type="date"
                 name="endAt"
                 onChange={handleChange}
                 className={`w-full px-4 py-2 border ${
@@ -246,4 +280,4 @@ const CreateAuctionForm = () => {
   );
 };
 
-export default CreateAuctionForm;
+export default EditAuctionForm;
