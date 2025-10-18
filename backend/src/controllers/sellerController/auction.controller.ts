@@ -5,15 +5,16 @@ import { AuthenticatedRequest } from "../../interfaces/AuthenticatedRequest";
 import { AuctionMapper } from "../../mappers/auction.mapper";
 import { CustomError, handleError } from "../../utils/customError";
 import { createAuctionSchema } from "../../utils/validations/auction";
-import { IAuctioncontroller } from "./interfaces/auction.controller.interface";
+import { IAuctionController } from "./interfaces/auction.controller.interface";
 import { IAuctionService } from "../../services/interfaces/auction.intercafe";
 import { boolean } from "zod";
 import { Response, Request } from "express";
 import { ProductMapper } from "../../mappers/product.mappers";
 import { parseReq } from "../../utils/parseReq";
+import { PopulatedAuction } from "../../dtos/auction.dto";
 
 @injectable()
-export class AuctionController implements IAuctioncontroller {
+export class AuctionController implements IAuctionController {
   constructor(
     @inject("IAuctionService") private readonly auctionService: IAuctionService
   ) {}
@@ -139,6 +140,58 @@ export class AuctionController implements IAuctioncontroller {
     } catch (error) {
       handleError(res, error)
       console.log("error in unblock auction ",error)
+    }
+  }
+
+  async getCurrentAuction(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const { user } = req;
+      const { id } = req.params
+      if (!user) {
+        throw new CustomError(
+          ResponseMessages.UNAUTHORIZED,
+          HttpStatusCode.UNAUTHORIZED
+        );
+      }
+      const auction: PopulatedAuction = await this.auctionService.findOnePopulated(id, user.id)
+      const resData = AuctionMapper.toResGetAuction(auction)
+      res.status(HttpStatusCode.OK).json({
+        success: true,
+        message: ResponseMessages.SUCCESS,
+        data: resData
+      });
+
+    } catch (error) {
+      handleError(res, error)
+      console.log("error in get current auction ",error)
+    }
+  }
+
+  async editAuction(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const { user } = req;
+      const { id } = req.params
+      if (!user) {
+        throw new CustomError(
+          ResponseMessages.UNAUTHORIZED,
+          HttpStatusCode.UNAUTHORIZED
+        );
+      }
+
+      const validateData = createAuctionSchema.parse(req.body);
+      const auctionData = AuctionMapper.toCreateAuctionDTO(
+        validateData,
+        user.id
+      );
+      await this.auctionService.editAuction(id,auctionData);
+
+      res.status(HttpStatusCode.OK).json({
+        success: true,
+        message: ResponseMessages.SUCCESS,
+      });
+    } catch (error) {
+      handleError(res, error);
+      console.log("error in edit auction ", error);
     }
   }
 }

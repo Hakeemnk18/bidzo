@@ -87,4 +87,16 @@ router.patch('/auction/:id/unblock',
     (req,res)=> auctionController.unblockAuction(req as AuthenticatedRequest, res)
 )
 
+router.get('/auction/current/:id',
+    authenticate,
+    authorizeRoles('seller'),
+    (req,res)=> auctionController.getCurrentAuction(req as AuthenticatedRequest, res)
+)
+
+router.put('/auction/:id',
+    authenticate,
+    authorizeRoles('seller'),
+    (req,res)=> auctionController.editAuction(req as AuthenticatedRequest, res)
+)
+
 export default router

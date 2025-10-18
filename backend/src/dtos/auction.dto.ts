@@ -32,6 +32,6 @@ export type PopulatedAuction = Omit<Auction, "product"> & {
     product: IResProductNameDTO
 }
 
-export type populatedResAuctions = Omit<IResAuctionDTO, "product"> & {
+export type PopulatedResAuctions = Omit<IResAuctionDTO, "product"> & {
     product: IResProductNameDTO
 }

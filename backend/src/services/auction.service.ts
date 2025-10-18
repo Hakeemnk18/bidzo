@@ -7,13 +7,13 @@ import { IProductService } from "./interfaces/product.interface";
 import { CustomError } from "../utils/customError";
 import { ResponseMessages } from "../constants/responseMessages";
 import { HttpStatusCode } from "../constants/httpStatusCode";
-import { IGetAllDocDBDTO, IReqGetAllDocDTO } from "../dtos/shared.dto";
+import { IReqGetAllDocDTO } from "../dtos/shared.dto";
 import { Auction } from "../types/auction";
 
 @injectable()
 export class AuctionService implements IAuctionService {
   constructor(
-    @inject("IAuctionRepo") private readonly auctionrepo: IAuctionRepo,
+    @inject("IAuctionRepo") private readonly auctionRepo: IAuctionRepo,
     @inject("IProductService") private readonly productService: IProductService
   ) {}
 
@@ -24,7 +24,7 @@ export class AuctionService implements IAuctionService {
       isSelled: false,
       isUsed: false,
     });
-    await this.auctionrepo.create(data);
+    await this.auctionRepo.create(data);
     await this.productService.markAsUsed(data.product);
   }
 
@@ -101,8 +101,8 @@ export class AuctionService implements IAuctionService {
     pipeline.push({ $limit: limit });
 
     const [resData, total] = await Promise.all([
-      this.auctionrepo.getAll(pipeline),
-      this.auctionrepo.countDoucements(query),
+      this.auctionRepo.getAll(pipeline),
+      this.auctionRepo.countDocuments(query),
     ]);
 
     return { resData, total };
@@ -110,16 +110,16 @@ export class AuctionService implements IAuctionService {
 
   async processAuctionEnds(): Promise<void> {
     const now = new Date()
-    const endedCount = await this.auctionrepo.endDueAuctions(now)
+    const endedCount = await this.auctionRepo.endDueAuctions(now)
   }
 
   async processAuctionStarts(): Promise<void> {
     const now = new Date()
-    const startedCount = await this.auctionrepo.startDueAuctions(now);
+    const startedCount = await this.auctionRepo.startDueAuctions(now);
     
   }
   async isEligibleForModification(query: Record<string, any>): Promise<boolean> {
-    const auction = await this.auctionrepo.findOne(query)
+    const auction = await this.auctionRepo.findOne(query)
     return auction ? true : false
   }
 
@@ -138,11 +138,11 @@ export class AuctionService implements IAuctionService {
       throw new CustomError(ResponseMessages.AUCTION_NOT_FOUND,HttpStatusCode.NOT_FOUND)
     }
 
-    await this.auctionrepo.findByIdAndUpdate(id,{ status: "cancelled" })
+    await this.auctionRepo.findByIdAndUpdate(id,{ status: "cancelled" })
   }
   async findOneAuction(query: Record<string, any>): Promise<Auction | null> {
     
-    return await this.auctionrepo.findOne(query)
+    return await this.auctionRepo.findOne(query)
   }
 
   async unblockAuction(id: string, userId: string): Promise<void> {
@@ -162,9 +162,28 @@ export class AuctionService implements IAuctionService {
     const now = new Date()
     const startDate = new Date(auction.startAt)
     if(now < startDate){
-      await this.auctionrepo.findByIdAndUpdate(id,{ status: "scheduled"})
+      await this.auctionRepo.findByIdAndUpdate(id,{ status: "scheduled"})
     }else if(now > startDate){
-      await this.auctionrepo.findByIdAndUpdate(id,{ status: "running"})
+      await this.auctionRepo.findByIdAndUpdate(id,{ status: "running"})
     }
+  }
+
+  async findOnePopulated(id: string, userId: string): Promise<PopulatedAuction> {
+    const auction = await this.auctionRepo.findOneWithPopulated({_id: id, userId})
+    if(!auction){
+      throw new CustomError(ResponseMessages.AUCTION_NOT_FOUND,HttpStatusCode.NOT_FOUND)
+    }
+    
+    return auction as unknown as PopulatedAuction
+  }
+
+  async editAuction(id: string, data: ICreateAuctionDTO): Promise<void> {
+    const { userId }  = data
+    const auction = await this.auctionRepo.findOneWithPopulated({_id: id,userId })
+    if(!auction){
+      throw new CustomError(ResponseMessages.AUCTION_NOT_FOUND,HttpStatusCode.NOT_FOUND)
+    }
+
+    await this.auctionRepo.findByIdAndUpdate(id, data)
   }
 }
