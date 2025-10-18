@@ -8,7 +8,7 @@ export type Product = {
   sellerId: Types.ObjectId;
   productImage: string;
   isDeleted: boolean;
-  isSelled: boolean;
+  isSold: boolean;
   isUsed: boolean;
   createdAt?: Date;
   updatedAt?: Date;
