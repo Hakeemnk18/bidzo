@@ -28,7 +28,7 @@ export class SubscriptionService implements ISubscriptionService {
     ) { }
 
     async createRazorpayOrder(planId: string, billing: string, userId: string): Promise<IRazorpayOrder> {
-        const plan = await this.planService.getPlan(planId)
+        const plan = await this.planService.getCurrentSubscriptionPlan(planId)
         if (!plan) {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
@@ -37,8 +37,12 @@ export class SubscriptionService implements ISubscriptionService {
             throw new CustomError(ResponseMessages.CURRENT_PLAN, HttpStatusCode.BAD_REQUEST)
         }
         if (currentSubscription) {
-            const currentPlan = await this.planService.getPlan(currentSubscription.planId)
-            isValidPlan(currentPlan!, plan, currentSubscription, billing as 'monthly' | 'yearly')
+            
+            const currentPlan = await this.planService.getCurrentSubscriptionPlan(currentSubscription.planId)
+            if(currentPlan){
+                isValidPlan(currentPlan, plan, currentSubscription, billing as 'monthly' | 'yearly')
+            }
+            
         }
         const amountRupees = billing === 'yearly' ? plan.yearlyAmount : plan.monthlyAmount;
 
@@ -64,13 +68,13 @@ export class SubscriptionService implements ISubscriptionService {
 
     async renewRazorpayOrder(userId: string): Promise<IRazorpayOrder> {
 
-        console.log("inside renew subscription")
+        
         const currentSubscription = await this.getCurrentOne(userId)
         if (!currentSubscription) {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
         isValidRenewalPlan(currentSubscription)
-        const plan = await this.planService.getPlan(currentSubscription?.planId)
+        const plan = await this.planService.getCurrentSubscriptionPlan(currentSubscription?.planId)
         if (!plan) {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
@@ -110,7 +114,7 @@ export class SubscriptionService implements ISubscriptionService {
         if (!payment) {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
-        const plan = await this.planService.getPlan(data.planId)
+        const plan = await this.planService.getCurrentSubscriptionPlan(data.planId)
         if (!plan) {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
@@ -125,8 +129,11 @@ export class SubscriptionService implements ISubscriptionService {
         })
 
         if (existingSubscription) {
-            const currentPlan = await this.planService.getPlan(existingSubscription.planId)
-            isValidPlan(currentPlan!, plan!, existingSubscription, data.billing)
+            const currentPlan = await this.planService.getCurrentSubscriptionPlan(existingSubscription.planId)
+            if(currentPlan){
+                isValidPlan(currentPlan, plan, existingSubscription, data.billing)
+            }
+            
             await this.updateExpire(existingSubscription._id!)
             const availableFeatures = existingSubscription.qouta.filter(item => item.type === 'count' && (item.value - item.used) > 0);
             if (availableFeatures.length > 0) {
@@ -174,7 +181,7 @@ export class SubscriptionService implements ISubscriptionService {
         if (!payment) {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
-        const plan = await this.planService.getPlan(data.planId)
+        const plan = await this.planService.getCurrentSubscriptionPlan(data.planId)
         if (!plan) {
             throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
         }
@@ -214,6 +221,7 @@ export class SubscriptionService implements ISubscriptionService {
     }
 
     async getCurrentPlan(id: string): Promise<PopulatedSubscription | null> {
+        console.log("inside current plan get")
         return this.subscriptionRepo.currentSubscription(
             { userId: id, endAt: { $gt: new Date() }, startAt:{ $lte: new Date() } ,isExpired: false }
         )

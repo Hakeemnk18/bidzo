@@ -74,12 +74,8 @@ export class PlanService implements IPlanService {
         }
     }
 
-    async getPlan(id: string): Promise<Plan> {
+    async getCurrentSubscriptionPlan(id: string): Promise<Plan | null> {
         const plan = await this.planRepo.findOne({_id: id})
-
-        if(!plan){
-            throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
-        }
         return plan
     }
 
@@ -105,5 +101,13 @@ export class PlanService implements IPlanService {
 
     async findOne(query: Record<string, any>): Promise<Plan | null> {
         return this.planRepo.findOne(query)
+    }
+
+    async getPlan(id: string): Promise<Plan> {
+        const plan = await this.planRepo.findOne({_id: id})
+        if(!plan){
+            throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
+        }
+        return plan
     }
 }

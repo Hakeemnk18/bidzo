@@ -62,7 +62,7 @@ router.get('/plans',
   (req,res)=> subscriptionController.getPlans(req as AuthenticatedRequest,res)
 )
 
-router.post('/creat-order',
+router.post('/create-order',
   authenticate,
   (req,res)=> subscriptionController.createRazorpayOrder(req as AuthenticatedRequest,res)
 )
