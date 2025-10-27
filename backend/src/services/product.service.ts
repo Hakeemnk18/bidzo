@@ -22,7 +22,8 @@ export class ProductService implements IProductService {
     const { page, search, limit, sortValue, filters } = data;
     let query: Record<string, any> = {}
     if(sellerId){
-      query.sellerId = sellerId
+      query.sellerId = sellerId,
+      query.isDeletedByAdmin = false
     };
   
     
@@ -97,7 +98,7 @@ export class ProductService implements IProductService {
   }
 
   async updateProduct(id: string, data: IProductCreateDTO): Promise<void> {
-    const product = await this.findOne({ _id: id, sellerId: data.sellerId });
+    await this.findOne({ _id: id, sellerId: data.sellerId, isUsed: false });
     const query = {
       name: data.name,
       description: data.description,
@@ -118,7 +119,7 @@ export class ProductService implements IProductService {
       );
     }
 
-    await this.productRepo.updateOne(id, { isDeleted: !product.isDeleted });
+    await this.productRepo.updateOne(id, { isDeletedByAdmin: !product.isDeletedByAdmin });
   }
 
   async allProducts(query: Record<string, any>): Promise<Product[]> {

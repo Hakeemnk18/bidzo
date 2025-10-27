@@ -9,6 +9,9 @@ export class ProductMapper {
             productImage: product.productImage,
             description: product.description,
             isDeleted: product.isDeleted,
+            isUsed: product.isUsed,
+            isSold: product.isSold,
+            isDeletedByAdmin: product.isDeletedByAdmin,
             category: product.category.categoryName,
             id: product.id!
         }
@@ -21,8 +24,11 @@ export class ProductMapper {
             productImage: product.productImage,
             description: product.description,
             isDeleted: product.isDeleted,
+            isUsed: product.isUsed,
+            isSold: product.isSold,
             category: product.category,
-            id: product.id!
+            id: product.id!,
+            isDeletedByAdmin: product.isDeletedByAdmin,
         }
     }
 

@@ -17,7 +17,7 @@ export class ProductController implements IProductController {
     try {
       const parseData = parseReq(req, ["isDeleted"]);
 
-      const { resData, total } = await this.productService.getAllProdects(
+      const { resData, total } = await this.productService.getAllProducts(
         parseData
       );
       const products = ProductMapper.toResProductAllDTO(resData);
