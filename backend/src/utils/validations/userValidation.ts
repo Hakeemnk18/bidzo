@@ -12,3 +12,9 @@ export const updateUserSchema = z.object({
 export type UpdateUserDTO = z.infer<typeof updateUserSchema> & { id: string};
 
 
+export const passwordSchema = z.object({
+    password: z.string().trim().min(6, { message: "Password must be 6 letters"}),
+    oldPassword: z.string().trim().min(6, { message: "Password must be 6 letters"})
+})
+
+

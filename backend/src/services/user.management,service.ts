@@ -210,7 +210,11 @@ export class UserMangementService implements IUserManagementService {
     }
 
 
-    async changePassword(id: string, password: string): Promise<void> {
+    async changePassword(id: string, password: string, oldPassword: string): Promise<void> {
+
+        if(!await this.passwordMatch(oldPassword, id)){
+            throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
+        }
         const hashPsd = await hashPassword(password)
         const user = await this.userRepo.resetPassword(id, hashPsd)
 
