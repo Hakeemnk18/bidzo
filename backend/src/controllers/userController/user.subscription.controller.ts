@@ -46,6 +46,7 @@ export class UserSubscriptionController implements IUserSubscriptionController {
 
     async createRazorpayOrder(req: AuthenticatedRequest, res: Response): Promise<void> {
         try {
+            console.log("inside create order")
             const { user } = req
             if (!user) {
                 throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)

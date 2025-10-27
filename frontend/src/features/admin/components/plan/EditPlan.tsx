@@ -208,7 +208,7 @@ const CreatePlanForm = () => {
                 {/* Right: Form */}
                 <div className="md:w-1/2 p-8 w-full">
                     <form className="p-4 w-full" onSubmit={handleSubmit}>
-                        <h2 className="text-center text-lg font-bold mb-4">Create Plan</h2>
+                        <h2 className="text-center text-lg font-bold mb-4">Edit Plan</h2>
 
                         {/* target */}
                         <div className="w-full mb-4">

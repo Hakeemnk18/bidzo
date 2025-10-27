@@ -89,7 +89,7 @@ const PlansPage = () => {
     // handle new plan
     const handleUpgrade = async (planId: string) => {
         try {
-            const res = await instance.post<IResRazorpayCreateOrder>("/user/creat-order", {
+            const res = await instance.post<IResRazorpayCreateOrder>("/user/create-order", {
                 planId,
                 billing: isYearly ? 'yearly' : 'monthly'
             })
