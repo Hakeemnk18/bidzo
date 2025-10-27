@@ -8,7 +8,7 @@ import { injectable, inject } from "tsyringe";
 import { ResponseMessages } from "../../constants/responseMessages";
 import { email } from "zod";
 import { CustomError } from "../../utils/customError";
-import { updateUserSchema } from "../../utils/validations/userValidation";
+import { passwordSchema, updateUserSchema } from "../../utils/validations/userValidation";
 
 @injectable()
 export class UserManagement implements IUserManagement {
@@ -102,9 +102,9 @@ export class UserManagement implements IUserManagement {
         );
       }
       const { id } = user;
-      const { password } = req.body;
+      const { password, oldPassword } = passwordSchema.parse(req.body)
 
-      await this.userManagementService.changePassword(id, password);
+      await this.userManagementService.changePassword(id, password, oldPassword);
       res.status(HttpStatusCode.OK).json({
         success: true,
         message: ResponseMessages.PASSWORD_UPDATED,

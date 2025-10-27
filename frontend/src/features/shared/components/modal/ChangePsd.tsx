@@ -79,7 +79,8 @@ const ChangePassword = ({ isOpen, onClose, }: ConfirmModalProps) => {
             setLoading(true)
             try {
                 const res = await instance.patch<ResGetToken>('/user/password', {
-                    password: formData.password
+                    password: formData.password,
+                    oldPassword
                 })
                 setLoading(false)
                 if (res.data.success) {
