@@ -132,6 +132,7 @@ const CreatePlanForm = () => {
         navigate('/admin/planManagement')
     }
 
+    //handle form submit
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const newErrors: typeof errors = {};

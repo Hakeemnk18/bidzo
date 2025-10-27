@@ -25,6 +25,7 @@ export class AuctionService implements IAuctionService {
       isSold: false,
       isUsed: false,
     });
+    
     await this.auctionRepo.create(data);
     await this.productService.markAsUsed(data.product);
   }

@@ -223,6 +223,7 @@ const CreateAuctionForm = () => {
             {/* Auction Type */}
             <div className="w-full mb-4">
               <select
+                hidden={true}
                 name="auctionType"
                 value={formData.auctionType}
                 onChange={handleChange}

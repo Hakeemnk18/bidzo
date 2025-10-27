@@ -8,13 +8,12 @@ import { ISendEMAIL, sendEmail } from "../utils/send.email";
 import { HttpStatusCode } from "../constants/httpStatusCode";
 import { ResponseMessages } from "../constants/responseMessages";
 import { injectable, inject } from "tsyringe";
-import { UpdateUserDTO } from "../dtos/editUser.dto";
-import { validateUserUpdate } from "../utils/userValidation";
 import { comparePassword, hashPassword } from "../utils/hash";
 import { INotificationRepo } from "../repositories/interfaces/notification.repo.interface";
 import { INotificationService } from "./interfaces/notification.interfaces";
 import { ICreateNotficationDTO } from "../dtos/notification.dto";
 import { io } from "../app";
+import { UpdateUserDTO } from "../utils/validations/userValidation";
 
 
 
@@ -184,8 +183,6 @@ export class UserMangementService implements IUserManagementService {
     }
 
     async userUpdate(userData: UpdateUserDTO): Promise<void> {
-        validateUserUpdate(userData)
-        console.log("inside user update service")
         const { id, name, phone } = userData
         const updateData = await this.userRepo.findByidAndUpdate(id, { name, phone })
         if (updateData!.matchedCount === 0) {

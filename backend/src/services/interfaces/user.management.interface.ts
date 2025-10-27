@@ -1,6 +1,7 @@
-import { UpdateUserDTO } from "../../dtos/editUser.dto";
 import { IResProfile, ResGetUser } from "../../dtos/userLogin.dto";
 import { GetUsersDTO } from "../../dtos/userLogin.dto";
+import { UpdateUserDTO } from "../../utils/validations/userValidation";
+
 
 
 export interface IUserManagementService {
