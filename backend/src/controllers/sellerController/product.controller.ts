@@ -7,7 +7,7 @@ import { ResponseMessages } from "../../constants/responseMessages";
 import { HttpStatusCode } from "../../constants/httpStatusCode";
 import { buildFilters } from "../../utils/buildFilters";
 import { parseReq } from "../../utils/parseReq";
-import { createProdectSchema } from "../../utils/validations/product";
+import { createProductSchema } from "../../utils/validations/product";
 import { inject, injectable } from "tsyringe";
 import { ICategoryService } from "../../services/interfaces/category.interface";
 import { success } from "zod";
@@ -51,7 +51,7 @@ export class ProductController implements IProductController {
                 throw new CustomError(ResponseMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED)
             }
             
-            const validatedData = createProdectSchema.parse(req.body);
+            const validatedData = createProductSchema.parse(req.body);
             await this.productService.createProduct({
                 ...validatedData,
                 sellerId: user.id
@@ -105,7 +105,7 @@ export class ProductController implements IProductController {
                 throw new CustomError(ResponseMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED)
             }
             const { id } = req.params
-            const validatedData = createProdectSchema.parse(req.body);
+            const validatedData = createProductSchema.parse(req.body);
             await this.productService.updateProduct(id,{
                 ...validatedData,
                 sellerId: user.id

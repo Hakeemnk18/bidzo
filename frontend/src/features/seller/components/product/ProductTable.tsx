@@ -160,7 +160,8 @@ const ProductTable = () => {
           <thead>
             <tr className="text-left text-gray-400">
               <th className="py-3">Name</th>
-              <th>Status</th>
+              <th>Used</th>
+              <th>Sold</th>
               <th>Category</th>
               <th>Actions</th>
             </tr>
@@ -189,12 +190,23 @@ const ProductTable = () => {
                   <td>
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        item.isDeleted
+                        item.isUsed
                           ? "bg-[#1f3b7a] text-blue-300"
                           : "bg-[#3e3f5c] text-gray-300"
                       }`}
                     >
-                      {item.isDeleted ? "Deleted" : "Active"}
+                      {item.isUsed ? "Live" : "Ended"}
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        item.isSold
+                          ? "bg-[#1f3b7a] text-blue-300"
+                          : "bg-[#3e3f5c] text-gray-300"
+                      }`}
+                    >
+                      {item.isSold ? "Sold" : "Live"}
                     </span>
                   </td>
                   <td className="py-3 flex items-center gap-2">
@@ -202,7 +214,8 @@ const ProductTable = () => {
                   </td>
 
                   <td className="">
-                    {item.isDeleted ? (
+                    
+                    {(role === 'seller'  && item.isDeleted ) || (role === 'admin'  && item.isDeletedByAdmin)? (
                       <button
                         onClick={() => {
                           setIsConfirmModal(true);

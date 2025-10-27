@@ -21,7 +21,10 @@ export interface IResProductDTO {
     description: string;
     category: string;     
     productImage: string;      
-    isDeleted: boolean;   
+    isDeleted: boolean;
+    isUsed: boolean;
+    isSold: boolean;
+    isDeletedByAdmin: boolean;   
 }
 export interface IResProductExtendedDTO extends IResProductDTO {
     sellerId: string

@@ -9,7 +9,10 @@ export interface IProductDTO {
     description: string;
     category:string ;     
     productImage: string;      
-    isDeleted: boolean;  
+    isDeleted: boolean;
+    isDeletedByAdmin: boolean;  
+    isUsed: boolean,
+    isSold: boolean,
 }
 
 export interface IResProduct{
