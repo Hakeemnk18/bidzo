@@ -8,92 +8,110 @@ import { injectable, inject } from "tsyringe";
 import { ResponseMessages } from "../../constants/responseMessages";
 import { email } from "zod";
 import { CustomError } from "../../utils/customError";
-
+import { updateUserSchema } from "../../utils/validations/userValidation";
 
 @injectable()
 export class UserManagement implements IUserManagement {
+  constructor(
+    @inject("IUserManagementService")
+    private readonly userManagementService: IUserManagementService
+  ) {}
 
-    constructor(@inject('IUserManagementService') private readonly userManagementService: IUserManagementService) { }
+  async getUser(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const { user } = req;
+      if (!user) {
+        throw new CustomError(
+          ResponseMessages.USER_NOT_FOUND,
+          HttpStatusCode.NOT_FOUND
+        );
+      }
+      const { id } = user;
 
-    async getUser(req: AuthenticatedRequest, res: Response): Promise<void> {
+      const userData = await this.userManagementService.getUserProfile(id);
 
-        try {
-
-
-
-            const { id } = req.user!
-
-            const userData = await this.userManagementService.getUserProfile(id)
-
-            res.status(HttpStatusCode.OK).json({
-                success: true,
-                data: userData
-            })
-        } catch (err) {
-            handleError(res, err)
-            console.log("error in get user user controller ", err)
-        }
+      res.status(HttpStatusCode.OK).json({
+        success: true,
+        data: userData,
+      });
+    } catch (err) {
+      handleError(res, err);
+      console.log("error in get user user controller ", err);
     }
+  }
 
-    async editUser(req: AuthenticatedRequest, res: Response): Promise<void> {
-        try {
+  async editUser(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const { user } = req;
+      if (!user) {
+        throw new CustomError(
+          ResponseMessages.USER_NOT_FOUND,
+          HttpStatusCode.NOT_FOUND
+        );
+      }
+      const { id } = user;
+      
+      const validateData = updateUserSchema.parse(req.body);
+      await this.userManagementService.userUpdate({ ...validateData, id:id});
 
-            const { id } = req.user!
-            const { name, phone } = req.body
-
-            await this.userManagementService.userUpdate({ id, name, phone })
-
-            res.status(HttpStatusCode.OK).json({
-                success: true,
-                message: ResponseMessages.APPLICATION_SUBMITTED
-            })
-
-        } catch (err) {
-            handleError(res, err)
-            console.log("error in user edit controlled ", err)
-        }
+      res.status(HttpStatusCode.OK).json({
+        success: true,
+        message: ResponseMessages.APPLICATION_SUBMITTED,
+      });
+    } catch (err) {
+      handleError(res, err);
+      console.log("error in user edit controlled ", err);
     }
+  }
 
-    async checkPassword(req: AuthenticatedRequest, res: Response): Promise<void> {
-        try {
-            console.log("inside password check controller")
-            const { user } = req
-            if (!user) {
-                throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
-            }
-            const { id } = user
-            const { password } = req.body
+  async checkPassword(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const { user } = req;
+      if (!user) {
+        throw new CustomError(
+          ResponseMessages.USER_NOT_FOUND,
+          HttpStatusCode.NOT_FOUND
+        );
+      }
+      const { id } = user;
+      const { password } = req.body;
 
-            const success = await this.userManagementService.passwordMatch(password, id)
-            res.status(HttpStatusCode.OK).json({
-                success: success,
-
-            })
-        } catch (err) {
-            handleError(res, err)
-            console.log("error in user password check controlled ", err)
-        }
+      const success = await this.userManagementService.passwordMatch(
+        password,
+        id
+      );
+      res.status(HttpStatusCode.OK).json({
+        success: success,
+      });
+    } catch (err) {
+      handleError(res, err);
+      console.log("error in user password check controlled ", err);
     }
+  }
 
-    async changePassword(req: AuthenticatedRequest, res: Response): Promise<void> {
-        try {
-            const { user } = req
-            if (!user) {
-                throw new CustomError(ResponseMessages.USER_NOT_FOUND, HttpStatusCode.NOT_FOUND)
-            }
-            const { id } = user
-            const { password } = req.body
+  async changePassword(
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> {
+    try {
+      const { user } = req;
+      if (!user) {
+        throw new CustomError(
+          ResponseMessages.USER_NOT_FOUND,
+          HttpStatusCode.NOT_FOUND
+        );
+      }
+      const { id } = user;
+      const { password } = req.body;
 
-            await this.userManagementService.changePassword(id, password)
-            res.status(HttpStatusCode.OK).json({
-                success: true,
-                message: ResponseMessages.PASSWORD_UPDATED
-            })
-        } catch (err) {
-            handleError(res, err)
-            console.log("error in change password controller ",err)
-        }
-
-
+      await this.userManagementService.changePassword(id, password);
+      res.status(HttpStatusCode.OK).json({
+        success: true,
+        message: ResponseMessages.PASSWORD_UPDATED,
+      });
+    } catch (err) {
+      handleError(res, err);
+      console.log("error in change password controller ", err);
     }
+  }
 }

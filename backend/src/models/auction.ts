@@ -22,7 +22,7 @@ export interface IAuction extends Document {
   status: "scheduled" | "running" | "ended" | "cancelled";
   isSold: boolean;
   isDeleted: boolean;
-  type: "auto" | "manual";
+  type: "manual";
 }
 
 
@@ -32,7 +32,7 @@ const bidSchema = new Schema<IBid>(
     amount: { type: Number, required: true },
     timestamp: { type: Date, default: Date.now },
   },
-  { _id: false } // Do not create a separate _id for each bid
+  { _id: false } 
 );
 
 
@@ -61,7 +61,6 @@ const auctionSchema = new Schema<IAuction>(
     isSold: { type: Boolean, default: false },
     type: {
       type: String,
-      enum: ["auto", "manual"],
       default: "manual",
     },
   },

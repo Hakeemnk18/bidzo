@@ -61,13 +61,11 @@ export type ITargetType = "user" | "seller";
 
 export const featureConfigSet: Record<ITargetType, FeatureConfigItem[]> = {
     user: [
-        { value: "autoBid", label: "Auto Bid", allowedTypes: ["count"] },
         { value: "bidDiscount", label: "Bid Discount", allowedTypes: ["flat", "percentage"] },
         
     ],
     seller: [
-        { value: "autoliveAuction", label: "Auto Live Auction", allowedTypes: ["count"] },
-        { value: "auctionDiscount", label: "Auction Discount", allowedTypes: ["flat", "percentage"] },
+        { value: "liveAuction", label: "Live Auction", allowedTypes: ["count"] },
     ],
 };
 

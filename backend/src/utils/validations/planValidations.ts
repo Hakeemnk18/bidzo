@@ -30,12 +30,12 @@ class CreatePLanValidation {
 
 
         let isValid: boolean = true
-        const tragetPlan: Plan[] = plans.filter((item) => item.target === target)
-        if (tragetPlan.length === 0) {
+        const targetPlan: Plan[] = plans.filter((item) => item.target === target)
+        if (targetPlan.length === 0) {
             return
         }
         if (planName === 'Gold') {
-            const silverPlans: Plan[] = tragetPlan.filter((item) => item.planName === 'Silver')
+            const silverPlans: Plan[] = targetPlan.filter((item) => item.planName === 'Silver')
             if (silverPlans.length) {
                 isValid = silverPlans.some((item) => {
                     return Number(item.monthlyAmount) < amount
@@ -43,7 +43,7 @@ class CreatePLanValidation {
             }
 
         } else if (planName === 'Silver') {
-            const goldPlans: Plan[] = tragetPlan.filter((item) => item.planName === 'Gold')
+            const goldPlans: Plan[] = targetPlan.filter((item) => item.planName === 'Gold')
             if (goldPlans.length) {
                 isValid = goldPlans.some((item) => {
                     return Number(item.monthlyAmount) > amount
@@ -59,7 +59,7 @@ class CreatePLanValidation {
         }
     }
 
-    static isExis(plans: Plan[], target: string, planName: string) {
+    static isExist(plans: Plan[], target: string, planName: string) {
         let isValid = plans.some((item) => {
             return item.target === target && item.planName === planName
         })
@@ -71,12 +71,12 @@ class CreatePLanValidation {
     static validYearlyAmount = (plans: Plan[], amount: number, target: string, planName: string) => {
 
         let isValid: boolean = true
-        const tragetPlan: Plan[] = plans.filter((item) => item.target === target)
-        if (tragetPlan.length === 0) {
+        const targetPlan: Plan[] = plans.filter((item) => item.target === target)
+        if (targetPlan.length === 0) {
             return
         }
         if (planName === 'Gold') {
-            const silverPlans: Plan[] = tragetPlan.filter((item) => item.planName === 'Silver')
+            const silverPlans: Plan[] = targetPlan.filter((item) => item.planName === 'Silver')
             if (silverPlans.length) {
                 isValid = silverPlans.some((item) => {
                     return Number(item.yearlyAmount) < amount
@@ -84,7 +84,7 @@ class CreatePLanValidation {
             }
 
         } else if (planName === 'Silver') {
-            const goldPlans: Plan[] = tragetPlan.filter((item) => item.planName === 'Gold')
+            const goldPlans: Plan[] = targetPlan.filter((item) => item.planName === 'Gold')
             if (goldPlans.length) {
                 isValid = goldPlans.some((item) => {
                     return Number(item.yearlyAmount) > amount
@@ -106,7 +106,7 @@ class CreatePLanValidation {
         if (planName === 'Silver') {
             const comparedFeatures = targetPlan.filter((item) => item.planName === 'Gold').flatMap((item) => item.features)
             if (comparedFeatures.length && featureRow.length > comparedFeatures.length) {
-                console.log("insid if")
+                
                 throw new CustomError(ResponseMessages.PLAN_INVALID_FEATURES, HttpStatusCode.BAD_REQUEST)
             }
         }
@@ -146,7 +146,7 @@ class CreatePLanValidation {
 
 export const createPlanValidation = (data: ICreatePlanDto, plans: Plan[]) => {
     const { target, monthlyAmount, yearlyAmount, planName, features } = data
-    CreatePLanValidation.isExis(plans, target, planName)
+    CreatePLanValidation.isExist(plans, target, planName)
     CreatePLanValidation.validYearlyAmount(plans, yearlyAmount, target, planName)
     CreatePLanValidation.validMonthlyAmount(plans, monthlyAmount, target, planName)
     CreatePLanValidation.validateFeature(plans, features, target, planName)
