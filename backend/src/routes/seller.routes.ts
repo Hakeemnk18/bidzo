@@ -48,7 +48,7 @@ router.patch('/product/:id',
 router.put('/product/:id',
     authenticate,
     authorizeRoles('seller'),
-    (req,res)=> productController.updatePorduct(req as AuthenticatedRequest,res)
+    (req,res)=> productController.updateProduct(req as AuthenticatedRequest,res)
 )
 
 router.get('/product/:id',

@@ -3,9 +3,18 @@ import {container} from './di/container'
 import { AuctionService } from './services/auction.service';
 
 export const scheduleAuctionJobs = async () => {
-    await auctionService.processAuctionStarts();
-    await auctionService.processAuctionEnds();
-}
+  try {
+    await auctionService.processAuctionStarts();    
+  } catch (err) {
+    console.error("processAuctionStarts failed:", err);
+  }
+
+  try {
+    await auctionService.processAuctionEnds();      
+  } catch (err) {
+    console.error("processAuctionEnds failed:", err);
+  }
+};
   
 
 const auctionService = container.resolve(AuctionService);

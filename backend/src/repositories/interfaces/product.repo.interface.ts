@@ -10,4 +10,5 @@ export interface IProductRepo {
     findOne(quey: Record<string, any>):Promise<Product | null>
     findOneWithPopulated(quer: Record<string,any>):Promise<PopulatedProduct | null >
     allProducts(query: Record<string, any>): Promise<Product[]>
+    updateMany(filter: Record<string, any>, update: Record<string, any>): Promise<void>
 }

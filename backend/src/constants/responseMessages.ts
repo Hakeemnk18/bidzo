@@ -49,6 +49,7 @@ export const ResponseMessages = {
 
   PRODUCT_CREATED: "Product created successfully",
   PRODUCT_NOT_FOUND: "Product not found",
+  PRODUCT_IN_USE: "Product is already in use by another auction or sold.",
 
   AUCTION_NOT_FOUND: "Auction not found"
 };

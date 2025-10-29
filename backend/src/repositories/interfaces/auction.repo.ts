@@ -13,4 +13,8 @@ export interface IAuctionRepo {
     findOneAndUpdate(query : Record<string, any>): Promise<void>
     findByIdAndUpdate(id: string, query: Record<string,any>): Promise<void>
     findOneWithPopulated(query : Record<string,any>): Promise<PopulatedAuction | null>
+    updateAndReturn(id: string, query: Record<string,any>): Promise<Auction | null>
+    findAllEnded(query: Record<string, any>): Promise<Auction[]>
+    findAllLiveAuction(): Promise<Auction[]>
+    getAllLiveAuctionProducts(): Promise<string[]>
 }

@@ -5,7 +5,7 @@ import { Product } from "../../types/product.type";
 
 export interface IAuctionService {
     create(data: ICreateAuctionDTO): Promise<void>
-    getAllProducts(sellerId: string): Promise<Product[]>
+    getAllAvailableProducts(sellerId: string): Promise<Product[]>
     getAllAuctions(data: IReqGetAllDocDTO, userId?: string):Promise<{resData: PopulatedAuction[], total: number}>
     processAuctionStarts(): Promise<void>
     processAuctionEnds(): Promise<void>
@@ -17,4 +17,6 @@ export interface IAuctionService {
     editAuction(id: string,  data: ICreateAuctionDTO): Promise<void>
     deleteAuction(id: string): Promise<void>
     removeDeleteAuction(id: string): Promise<void>
+    getAllLiveAuctions(): Promise<Auction[]>
+    isValidProduct(productId: string): Promise<boolean>
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { data, useNavigate, useSearchParams } from "react-router-dom";
 import instance from "../../../../api/axios";
 import type { ApiResponse } from "../../../../types/user.types";
 import { toast } from "react-toastify";
@@ -65,7 +65,9 @@ const CreateAuctionForm = () => {
 
     const newErrors: typeof errors = {};
     const { product, basePrice, reservePrice, startAt, endAt } = formData;
-    console.log(formData)
+    const today = new Date()
+    let tomorrow = new Date()
+    tomorrow.setDate(today.getDate() + 1);
 
     if (!product.trim()) {
       newErrors.product = "Product selection is required.";
@@ -83,6 +85,9 @@ const CreateAuctionForm = () => {
     if (!startAt || isNaN(new Date(startAt).getTime())) {
       newErrors.startAt = "Start date is required.";
     }
+    if(new Date(startAt) < new Date(tomorrow)){
+      newErrors.startAt = "Start date must be tomorrow or later";
+    }
     if (!endAt || isNaN(new Date(endAt).getTime())) {
       newErrors.endAt = "Start date is required.";
     }
@@ -91,6 +96,7 @@ const CreateAuctionForm = () => {
     }
 
     if (Object.keys(newErrors).length > 0) {
+      console.log(newErrors)
       setErrors(newErrors);
       return;
     } else {
@@ -200,6 +206,9 @@ const CreateAuctionForm = () => {
                   errors.startAt ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
+              {errors.startAt && (
+                <p className="text-red-500 text-xs mt-1">{errors.startAt}</p>
+              )}
             </div>
 
             {/* End At */}

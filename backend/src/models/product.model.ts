@@ -9,7 +9,6 @@ export interface IProduct extends Document {
     isDeleted: boolean;
     isDeletedByAdmin: boolean,   
     isSold: boolean;
-    isUsed: boolean
 }
 
 const productSchema = new Schema<IProduct>(
@@ -22,7 +21,6 @@ const productSchema = new Schema<IProduct>(
     isDeleted: { type: Boolean, default: false },
     isDeletedByAdmin: { type: Boolean, default: false },
     isSold:{ type: Boolean, default: false },
-    isUsed: { type: Boolean, default: false }
   },
   {
     timestamps: true,
