@@ -12,6 +12,7 @@ const SignupPage = lazy(()=> import('../features/user/pages/SignUpPage'))
 const ProfilePage = lazy(()=> import('../features/shared/pages/ProfilePage'))
 const NotificationPage = lazy(()=> import('../features/shared/components/Notification'))
 const PlansPage = lazy(()=> import('../features/shared/components/plans/Plans'))
+const ProductList = lazy(()=> import('../features/user/components/auction/AllAuction'))
 
 
 
@@ -82,6 +83,16 @@ const userRoutes = [
          <ProtectedRoute>
             <Suspense fallback={<LoadingSpinner />}>
                 <PlansPage/>
+            </Suspense>
+         </ProtectedRoute>
+        ),
+    },
+    {
+        path:'/user/auctions',
+        element:(
+         <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner />}>
+                <ProductList />
             </Suspense>
          </ProtectedRoute>
         ),

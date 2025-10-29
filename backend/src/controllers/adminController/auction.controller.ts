@@ -21,7 +21,8 @@ export class AdminAuctionController implements IAuctionAdminController {
 
       const parseData = parseReq(req, ["status", "type"]);
       const { resData, total } = await this.auctionService.getAllAuctions(
-        parseData
+        parseData,
+        "admin"
       );
 
       res.status(HttpStatusCode.OK).json({

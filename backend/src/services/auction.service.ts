@@ -50,6 +50,7 @@ export class AuctionService implements IAuctionService {
 
   async getAllAuctions(
     data: IReqGetAllDocDTO,
+    role: "admin" | "seller" | "user",
     userId?: string
   ): Promise<{ resData: PopulatedAuction[]; total: number }> {
     const { page, search, limit, sortValue, filters } = data;
@@ -59,10 +60,18 @@ export class AuctionService implements IAuctionService {
     let pipeline: any[] = [];
     let countPipeline: any[] = [];
 
-    if (userId) {
+    if (userId && role === 'seller') {
       pipeline.push({
         $match: {
           userId: new mongoose.Types.ObjectId(userId),
+          isDeleted: false,
+        },
+      });
+    }
+
+    if(role === "user"){
+      pipeline.push({
+        $match: {
           isDeleted: false,
         },
       });
@@ -83,10 +92,8 @@ export class AuctionService implements IAuctionService {
           "product.description": 0,
           "product.category": 0,
           "product.sellerId": 0,
-          "product.productImage": 0,
           "product.isDeleted": 0,
           "product.isSold": 0,
-          "product.isUsed": 0,
           "product.createdAt": 0,
           "product.updatedAt": 0,
           "product.__v": 0,

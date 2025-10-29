@@ -10,7 +10,8 @@ const Navbar = () => {
 
   const [dropDownOpen, setDropDownOpen] = useState(false)
   const user = useStoreSelector((state) => state.auth)
-  const role = useRouterRole()
+  const role = localStorage.getItem('userRole')
+
   
   const navItems = useMemo(() => {
   switch (role) {
@@ -24,7 +25,7 @@ const Navbar = () => {
         sixth: "",
         seventh:'',
         firstUrl: "#",
-        secondUrl: "#",
+        secondUrl: "/user/auctions",
         thirdUrl: "#",
         fourthUrl: "",
         fifthUrl: "",
