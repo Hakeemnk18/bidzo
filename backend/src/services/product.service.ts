@@ -9,24 +9,24 @@ import { PopulatedProduct } from "../dtos/product.dto";
 import { CustomError } from "../utils/customError";
 import { ResponseMessages } from "../constants/responseMessages";
 import { HttpStatusCode } from "../constants/httpStatusCode";
-import ProductModel from "../models/product.model";
+import { IAuctionService } from "./interfaces/auction.intercafe";
 
 @injectable()
 export class ProductService implements IProductService {
-  constructor(@inject("IProductRepo") private productRepo: IProductRepo) {}
+  constructor(
+    @inject("IProductRepo") private productRepo: IProductRepo,
+  ) {}
 
   async getAllProducts(
     data: IReqGetAllDocDTO,
     sellerId?: string
   ): Promise<{ resData: PopulatedProduct[]; total: number }> {
     const { page, search, limit, sortValue, filters } = data;
-    let query: Record<string, any> = {}
-    if(sellerId){
-      query.sellerId = sellerId,
-      query.isDeletedByAdmin = false
-    };
-  
-    
+    let query: Record<string, any> = {};
+    if (sellerId) {
+      (query.sellerId = sellerId), (query.isDeletedByAdmin = false);
+    }
+
     let sort: Record<string, any> = {};
     if (search && search.trim() !== "") {
       query.name = { $regex: `^${search.trim()}`, $options: "i" };
@@ -69,24 +69,26 @@ export class ProductService implements IProductService {
     const product = await this.productRepo.findOne(query);
     if (!product) {
       throw new CustomError(
-        ResponseMessages.PRODUCT_NOT_FOUND,
+        ResponseMessages.PRODUCT_IN_USE,
         HttpStatusCode.NOT_FOUND
       );
     }
-    return product
+    return product;
   }
-  async findOneWithPopulated(query: Record<string, any>): Promise<PopulatedProduct> {
-    const product = await this.productRepo.findOneWithPopulated(query)
+  async findOneWithPopulated(
+    query: Record<string, any>
+  ): Promise<PopulatedProduct> {
+    const product = await this.productRepo.findOneWithPopulated(query);
     if (!product) {
       throw new CustomError(
         ResponseMessages.NOT_FOUND,
         HttpStatusCode.NOT_FOUND
       );
     }
-    return product
+    return product;
   }
   async blockAndUnblock(id: string, sellerId: string): Promise<void> {
-    const product = await this.findOne({ _id: id,sellerId  });
+    const product = await this.findOne({ _id: id, sellerId });
     if (!product) {
       throw new CustomError(
         ResponseMessages.NOT_FOUND,
@@ -98,7 +100,14 @@ export class ProductService implements IProductService {
   }
 
   async updateProduct(id: string, data: IProductCreateDTO): Promise<void> {
-    await this.findOne({ _id: id, sellerId: data.sellerId, isUsed: false });
+
+    await this.findOne({
+      _id: id,
+      sellerId: data.sellerId,
+      isDeleted: false,
+      isDeletedByAdmin: false,
+      isSold: false,
+    });
     const query = {
       name: data.name,
       description: data.description,
@@ -107,11 +116,11 @@ export class ProductService implements IProductService {
       productImage: data.productImage,
     };
 
-    await this.productRepo.updateOne(id,query)
+    await this.productRepo.updateOne(id, query);
   }
 
   async adminBlockAndUnblock(id: string): Promise<void> {
-    const product = await this.findOne({ _id: id});
+    const product = await this.findOne({ _id: id });
     if (!product) {
       throw new CustomError(
         ResponseMessages.NOT_FOUND,
@@ -119,19 +128,12 @@ export class ProductService implements IProductService {
       );
     }
 
-    await this.productRepo.updateOne(id, { isDeletedByAdmin: !product.isDeletedByAdmin });
+    await this.productRepo.updateOne(id, {
+      isDeletedByAdmin: !product.isDeletedByAdmin,
+    });
   }
 
   async allProducts(query: Record<string, any>): Promise<Product[]> {
-    return await this.productRepo.allProducts(query)
-  }
-
-  async markAsUsed(id: string): Promise<void> {
-    const product = await this.productRepo.findOne({_id: id})
-    if(!product){
-      throw new CustomError(ResponseMessages.NOT_FOUND, HttpStatusCode.NOT_FOUND)
-    }
-
-    await this.productRepo.updateOne(id, { isUsed: true})
+    return await this.productRepo.allProducts(query);
   }
 }

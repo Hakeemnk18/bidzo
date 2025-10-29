@@ -20,6 +20,7 @@ export class AuctionController implements IAuctionController {
   ) {}
   async createAuction(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
+      
       const { user } = req;
       if (!user) {
         throw new CustomError(
@@ -54,7 +55,8 @@ export class AuctionController implements IAuctionController {
           HttpStatusCode.UNAUTHORIZED
         );
       }
-      const products = await this.auctionService.getAllProducts(user.id);
+      const products = await this.auctionService.getAllAvailableProducts(user.id);
+      
 
       const resData = ProductMapper.toResAllProductNames(products);
 
@@ -71,7 +73,6 @@ export class AuctionController implements IAuctionController {
 
   async allAuctions(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-        
       const { user } = req;
       if (!user) {
         throw new CustomError(
@@ -168,6 +169,7 @@ export class AuctionController implements IAuctionController {
     try {
       const { user } = req;
       const { id } = req.params
+      
       if (!user) {
         throw new CustomError(
           ResponseMessages.UNAUTHORIZED,
@@ -175,6 +177,7 @@ export class AuctionController implements IAuctionController {
         );
       }
 
+      
       const validateData = createAuctionSchema.parse(req.body);
       const auctionData = AuctionMapper.toCreateAuctionDTO(
         validateData,

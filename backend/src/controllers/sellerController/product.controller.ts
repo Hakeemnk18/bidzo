@@ -12,12 +12,14 @@ import { inject, injectable } from "tsyringe";
 import { ICategoryService } from "../../services/interfaces/category.interface";
 import { success } from "zod";
 import { ProductMapper } from "../../mappers/product.mappers";
+import { IAuctionService } from "../../services/interfaces/auction.intercafe";
 
 @injectable()
 export class ProductController implements IProductController {
     constructor(
         @inject('IProductService') private readonly productService: IProductService,
-        @inject('ICategoryService') private readonly categoryService: ICategoryService
+        @inject('ICategoryService') private readonly categoryService: ICategoryService,
+        @inject('IAuctionService') private readonly auctionService: IAuctionService
     ) {}
     async getAllProducts(req: AuthenticatedRequest, res: Response): Promise<void> {
         try {
@@ -86,7 +88,13 @@ export class ProductController implements IProductController {
             if(!user){
                 throw new CustomError(ResponseMessages.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED)
             }
-            
+            const isUsed = await this.auctionService.isValidProduct(id)
+            if(isUsed){
+                throw new CustomError(
+                    ResponseMessages.PRODUCT_IN_USE, HttpStatusCode.NOT_FOUND
+                )
+            }
+        
             await this.productService.blockAndUnblock(id, user.id)
             res.status(HttpStatusCode.OK).json({
                 success: true,
@@ -98,7 +106,7 @@ export class ProductController implements IProductController {
         }
     }
 
-    async updatePorduct(req: AuthenticatedRequest, res: Response): Promise<void> {
+    async updateProduct(req: AuthenticatedRequest, res: Response): Promise<void> {
         try {
             const { user } = req
             if(!user){
@@ -106,6 +114,12 @@ export class ProductController implements IProductController {
             }
             const { id } = req.params
             const validatedData = createProductSchema.parse(req.body);
+            const isUsed = await this.auctionService.isValidProduct(id)
+            if(isUsed){
+                throw new CustomError(
+                    ResponseMessages.PRODUCT_IN_USE, HttpStatusCode.NOT_FOUND
+                )
+            }
             await this.productService.updateProduct(id,{
                 ...validatedData,
                 sellerId: user.id

@@ -6,6 +6,7 @@ import ProductModel from "../models/product.model";
 import { injectable } from "tsyringe";
 import { IResCategoryNameDTO } from "../dtos/category.dto";
 import { Query } from "mongoose";
+import products from "razorpay/dist/types/products";
 
 
 @injectable()
@@ -46,5 +47,9 @@ export class ProductRepo implements IProductRepo {
 
   async allProducts(query: Record<string, any>): Promise<Product[]> {
     return await ProductModel.find(query)
+  }
+
+  async updateMany(filter: Record<string, any>, update: Record<string, any>): Promise<void> {
+    await ProductModel.updateMany(filter, update)
   }
 }

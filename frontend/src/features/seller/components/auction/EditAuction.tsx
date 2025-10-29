@@ -126,6 +126,7 @@ const EditAuctionForm = () => {
       setErrors(newErrors);
       return;
     } else {
+      console.log("action id ", auctionId)
       try {
         const res = await instance.put<ApiResponse>(`/seller/auction/${auctionId}`, {
           ...formData,

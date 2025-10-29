@@ -10,7 +10,6 @@ export type Product = {
   isDeleted: boolean;
   isDeletedByAdmin: boolean;
   isSold: boolean;
-  isUsed: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 };

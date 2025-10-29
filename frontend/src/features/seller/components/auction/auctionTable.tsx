@@ -76,7 +76,6 @@ const AuctionTable = () => {
         }
       );
       if (res.data.success) {
-        console.log(res.data.data)
         setData(res.data.data);
         setTotalPages(res.data.totalPages);
       }
@@ -84,9 +83,9 @@ const AuctionTable = () => {
       if (error.response && error.response.data?.message) {
         toast.error(error.response.data.message);
       } else {
-        toast.error("Failed to fetch user data");
+        toast.error("Failed to fetch  data");
       }
-      console.log("error in admin user table ", error);
+      console.log("error in seller auction table ", error);
     }
   };
 

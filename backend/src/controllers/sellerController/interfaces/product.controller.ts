@@ -6,6 +6,6 @@ export interface IProductController {
     createProduct(req: AuthenticatedRequest, res: Response): Promise<void>;
     getCategoriesName(req: Request, res: Response): Promise<void>
     blockAndUnblock(req: AuthenticatedRequest, res: Response): Promise<void>
-    updatePorduct(req: AuthenticatedRequest, res: Response): Promise<void>
+    updateProduct(req: AuthenticatedRequest, res: Response): Promise<void>
     getProduct(req: AuthenticatedRequest, res: Response): Promise<void>
 }   

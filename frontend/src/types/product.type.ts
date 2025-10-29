@@ -11,7 +11,6 @@ export interface IProductDTO {
     productImage: string;      
     isDeleted: boolean;
     isDeletedByAdmin: boolean;  
-    isUsed: boolean,
     isSold: boolean,
 }
 

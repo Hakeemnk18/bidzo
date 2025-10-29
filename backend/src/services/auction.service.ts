@@ -19,22 +19,32 @@ export class AuctionService implements IAuctionService {
   ) {}
 
   async create(data: ICreateAuctionDTO): Promise<void> {
-    const product = await this.productService.findOne({
-      sellerId: data.userId,
-      isDeleted: false,
-      isSold: false,
-      isUsed: false,
-    });
-    
+    if (await this.isValidProduct(data.product)) {
+      throw new CustomError(
+        ResponseMessages.PRODUCT_IN_USE,
+        HttpStatusCode.NOT_FOUND
+      );
+    }
     await this.auctionRepo.create(data);
-    await this.productService.markAsUsed(data.product);
   }
 
-  async getAllProducts(sellerId: string): Promise<Product[]> {
+  async getAllLiveAuctions(): Promise<Auction[]> {
+    return await this.auctionRepo.findAllLiveAuction();
+  }
+
+  async isValidProduct(productId: string): Promise<boolean> {
+    const productIds = await this.auctionRepo.getAllLiveAuctionProducts();
+    return productIds.includes(productId);
+  }
+
+  async getAllAvailableProducts(sellerId: string): Promise<Product[]> {
+    const productIds = await this.auctionRepo.getAllLiveAuctionProducts();
     return await this.productService.allProducts({
+      _id: { $nin: productIds },
       sellerId,
       isDeleted: false,
-      isUsed: false,
+      isDeletedByAdmin: false,
+      isSold: false,
     });
   }
 
@@ -115,7 +125,7 @@ export class AuctionService implements IAuctionService {
       this.auctionRepo.getAll(pipeline),
       this.auctionRepo.countDocuments(countPipeline),
     ]);
-    
+
     return { resData, total };
   }
 
@@ -152,7 +162,15 @@ export class AuctionService implements IAuctionService {
       );
     }
 
-    await this.auctionRepo.findByIdAndUpdate(id, { status: "cancelled" });
+    const updatedDocument = await this.auctionRepo.updateAndReturn(id, {
+      status: "cancelled",
+    });
+    if (!updatedDocument) {
+      throw new CustomError(
+        ResponseMessages.AUCTION_NOT_FOUND,
+        HttpStatusCode.NOT_FOUND
+      );
+    }
   }
   async findOneAuction(query: Record<string, any>): Promise<Auction | null> {
     return await this.auctionRepo.findOne(query);
@@ -165,7 +183,6 @@ export class AuctionService implements IAuctionService {
       status: "cancelled",
       isSold: false,
       isDeleted: false,
-      endAt: { $gt: new Date() },
     });
 
     if (!auction) {
@@ -176,10 +193,13 @@ export class AuctionService implements IAuctionService {
     }
     const now = new Date();
     const startDate = new Date(auction.startAt);
+    const endDate = new Date(auction.endAt);
     if (now < startDate) {
       await this.auctionRepo.findByIdAndUpdate(id, { status: "scheduled" });
-    } else if (now > startDate) {
+    } else if (now > startDate && now < endDate) {
       await this.auctionRepo.findByIdAndUpdate(id, { status: "running" });
+    } else if (now > endDate) {
+      await this.auctionRepo.findByIdAndUpdate(id, { status: "ended" });
     }
   }
 
@@ -209,7 +229,6 @@ export class AuctionService implements IAuctionService {
       status: { $ne: "running" },
       isSold: false,
       isDeleted: false,
-      startAt: { $gt: new Date() },
     });
     if (!auction) {
       throw new CustomError(
@@ -217,8 +236,34 @@ export class AuctionService implements IAuctionService {
         HttpStatusCode.NOT_FOUND
       );
     }
+    const product = await this.productService.findOne({
+      _id: auction.product,
+      isDeleted: false,
+      isDeletedByAdmin: false,
+      isSold: false,
+    });
 
-    await this.auctionRepo.findByIdAndUpdate(id, data);
+    if (product.id !== data.product) {
+      
+      const isUsed = await this.isValidProduct(data.product);
+      if (isUsed) {
+        throw new CustomError(
+          ResponseMessages.PRODUCT_IN_USE,
+          HttpStatusCode.NOT_FOUND
+        );
+      }
+      await this.productService.findOne({
+        _id: data.product,
+        isDeleted: false,
+        isDeletedByAdmin: false,
+        isSold: false,
+      });
+    }
+
+    await this.auctionRepo.findByIdAndUpdate(id, {
+      ...data,
+      status: "scheduled",
+    });
   }
 
   async deleteAuction(id: string): Promise<void> {
@@ -227,7 +272,7 @@ export class AuctionService implements IAuctionService {
       isSold: false,
       isDeleted: false,
       status: { $ne: "running" },
-    })
+    });
 
     if (!auction) {
       throw new CustomError(
@@ -236,7 +281,7 @@ export class AuctionService implements IAuctionService {
       );
     }
 
-    await this.auctionRepo.findByIdAndUpdate(id, { isDeleted: true});
+    await this.auctionRepo.findByIdAndUpdate(id, { isDeleted: true });
   }
 
   async removeDeleteAuction(id: string): Promise<void> {
@@ -245,7 +290,7 @@ export class AuctionService implements IAuctionService {
       isSold: false,
       isDeleted: true,
       status: { $ne: "running" },
-    })
+    });
 
     if (!auction) {
       throw new CustomError(
@@ -254,6 +299,6 @@ export class AuctionService implements IAuctionService {
       );
     }
 
-    await this.auctionRepo.findByIdAndUpdate(id, { isDeleted: false});
+    await this.auctionRepo.findByIdAndUpdate(id, { isDeleted: false });
   }
 }

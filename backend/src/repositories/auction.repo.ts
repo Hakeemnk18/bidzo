@@ -16,6 +16,19 @@ export class AuctionRepo implements IAuctionRepo {
     await AuctionModel.create(data);
   }
 
+  async findAllLiveAuction(): Promise<Auction[]> {
+    return await AuctionModel.find({status: {$in: ['scheduled', 'running']}})
+  }
+
+  async getAllLiveAuctionProducts(): Promise<string[]> {
+    const auction = await AuctionModel.find({
+      status: {$in: ['scheduled', 'running']}},
+      'product'
+    )
+    return auction.map((auction)=> auction.product.toString())
+  }
+ 
+
   async getAll(pipeline: any[]): Promise<PopulatedAuction[]> {
     const auctions = await AuctionModel.aggregate(pipeline).exec()
     return auctions as unknown as PopulatedAuction[];
@@ -23,10 +36,7 @@ export class AuctionRepo implements IAuctionRepo {
 
   async countDocuments(pipeline: any[]): Promise<number> {
     const num = await AuctionModel.aggregate(pipeline)
-    
     const total: number = num[0]?.total | 0
-    
-
     return total
   }
 
@@ -63,5 +73,13 @@ export class AuctionRepo implements IAuctionRepo {
     const product = await AuctionModel.findOne(query)
     .populate('product', fieldsToSelect)
     return product as unknown as PopulatedAuction
+  }
+
+  async updateAndReturn(id: string, query: Record<string, any>): Promise<Auction | null> {
+    return await AuctionModel.findByIdAndUpdate(id,{ $set: query}, { new : true})
+  }
+
+  async findAllEnded(query: Record<string, any>): Promise<Auction[]> {
+    return await AuctionModel.find(query, { _id: 1, product: 1})
   }
 }
