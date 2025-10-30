@@ -15,7 +15,6 @@ export class AuctionController implements IAuctionUserController {
 
     async getAllAuctions(req: Request, res: Response): Promise<void> {
          try {
-        
               const parseData = parseReq(req, ["status", "type"]);
               const { resData, total } = await this.auctionService.getAllAuctions(
                 parseData,
