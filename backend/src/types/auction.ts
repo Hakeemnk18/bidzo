@@ -11,7 +11,8 @@ export type Auction = {
   basePrice: number;
   reservePrice: number; 
   currentBid: number;
-  bids: IBid[];
+  bidCount: number,
+  highestBidder?: string,
   winner?: string;
   status: "scheduled" | "running" | "ended" | "cancelled";
   isSold: boolean;

@@ -8,7 +8,8 @@ export interface IAuctionData {
   basePrice: number;
   reservePrice: number; 
   currentBid: number;
-  bids: IBid[];
+  bidCount: number,
+  highestBidder?: string,
   winner?: string;
   status: "scheduled" | "running" | "ended" | "cancelled";
   isSold: boolean;
@@ -24,6 +25,10 @@ export interface IResCurrentAuction {
     data: PopulatedAuction
 }
 
+export type PopulatedAuctionWithImage = Omit<IAuctionData, 'product' > & { product: IProductWithImage};
+
+export type IResAuctionWithImage = Omit<IResAuction, 'data'> & { data: PopulatedAuctionWithImage[]}
+
 export interface IResAuction{
     success: boolean;
     message: string;
@@ -35,6 +40,10 @@ export interface IResAuction{
 export interface IResGetProductNameDTO {
     _id: string;
     name: string;
+}
+
+export interface IProductWithImage extends IResGetProductNameDTO {
+    productImage: string
 }
 
 

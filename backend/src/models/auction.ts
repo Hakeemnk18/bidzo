@@ -1,13 +1,6 @@
 import { Schema, Document, model } from "mongoose";
 
 
-interface IBid {
-  bidder: Schema.Types.ObjectId;
-  amount: number;
-  timestamp: Date;
-}
-
-
 export interface IAuction extends Document {
   product: Schema.Types.ObjectId;
   userId: Schema.Types.ObjectId; 
@@ -17,24 +10,14 @@ export interface IAuction extends Document {
   basePrice: number;
   reservePrice: number; 
   currentBid: number;
-  bids: IBid[];
+  bidCount: number,
+  highestBidder?: Schema.Types.ObjectId,
   winner?: Schema.Types.ObjectId;
   status: "scheduled" | "running" | "ended" | "cancelled";
   isSold: boolean;
   isDeleted: boolean;
   type: "manual";
 }
-
-
-const bidSchema = new Schema<IBid>(
-  {
-    bidder: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    amount: { type: Number, required: true },
-    timestamp: { type: Date, default: Date.now },
-  },
-  { _id: false } 
-);
-
 
 const auctionSchema = new Schema<IAuction>(
   {
@@ -49,8 +32,9 @@ const auctionSchema = new Schema<IAuction>(
     endAt: { type: Date, required: true },
     basePrice: { type: Number, required: true },
     reservePrice: { type: Number, required: true  },
-    currentBid: { type: Number, default: 0 },
-    bids: [bidSchema], 
+    currentBid: { type: Number, default: 0 }, 
+    bidCount: { type: Number, default: 0 },
+    highestBidder: { type: Schema.Types.ObjectId, ref: "User" },
     winner: { type: Schema.Types.ObjectId, ref: "User" },
     status: {
       type: String,

@@ -237,7 +237,7 @@ const AuctionTable = () => {
                   <td className="py-3">{item.basePrice}</td>
                   <td className="py-3">{item.status}</td>
                   <td className="py-3">{item.currentBid}</td>
-                  <td className="py-3">{item.bids.length}</td>
+                  <td className="py-3">{item.bidCount}</td>
                   <td className="py-3">
                     {" "}
                     {format(new Date(item.endAt), "dd-MM-yy")}

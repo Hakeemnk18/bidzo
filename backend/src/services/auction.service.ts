@@ -73,6 +73,7 @@ export class AuctionService implements IAuctionService {
       pipeline.push({
         $match: {
           isDeleted: false,
+          status: {$ne: "cancelled"}
         },
       });
     }
@@ -106,10 +107,15 @@ export class AuctionService implements IAuctionService {
     }
 
     if (sortValue && sortValue.trim() !== "") {
+      
       if (sortValue === "baseAsc") {
         sort = { basePrice: 1 };
       } else if (sortValue === "baseDesc") {
         sort = { basePrice: -1 };
+      }else if(sortValue === "curAsc"){
+        sort = { currentBid: 1 }
+      }else if(sortValue === "curDesc"){
+        sort = { currentBid: -1 }
       }
       pipeline.push({ $sort: sort });
     }
