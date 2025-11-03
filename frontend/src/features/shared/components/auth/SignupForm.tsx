@@ -85,15 +85,10 @@ const SignUpForm = () => {
             if (role === "seller" && formData.document) {
                 
                 const file = formData.document as File;
-                
                 const formDataUpload = new FormData();
                 formDataUpload.append("file", file);
                 formDataUpload.append("upload_preset", "pdf_unsigned"); 
                 formDataUpload.append("folder", "pdf_upload");
-               
-
-                
-
                 try {
                     const uploadRes = await axios.post<IResCloudinaryURL>("https://api.cloudinary.com/v1_1/dijkesgb1/raw/upload",formDataUpload);
                     const uploadedUrl = uploadRes.data.secure_url;

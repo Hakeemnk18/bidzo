@@ -16,6 +16,10 @@ export class AuctionRepo implements IAuctionRepo {
     await AuctionModel.create(data);
   }
 
+  async findAuctions(query: Record<string, any>): Promise<Auction[]> {
+    return await AuctionModel.find(query)
+  }
+
   async findAllLiveAuction(): Promise<Auction[]> {
     return await AuctionModel.find({status: {$in: ['scheduled', 'running']}})
   }
@@ -60,8 +64,11 @@ export class AuctionRepo implements IAuctionRepo {
     return await AuctionModel.findOne(query)
   }
 
-  async findOneAndUpdate(query: Record<string, any>): Promise<void> {
-    await AuctionModel.findOneAndUpdate(query)
+  async findOneAndUpdate(
+    filter: Record<string, any>, 
+  update: Record<string, any>
+): Promise<void> {
+    await AuctionModel.findOneAndUpdate(filter, update)
   }
 
   async findByIdAndUpdate(id: string, query: Record<string, any>): Promise<void> {

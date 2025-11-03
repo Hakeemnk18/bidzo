@@ -1,9 +1,9 @@
-import type { IFeaturesOptions } from "../../../../types/plan,types";
+import type { FeatureRow } from "../../../../types/plan,types";
 
 interface FeatureModalProps {
   isOpen: boolean;
   onClose: () => void;
-  features: IFeaturesOptions[] | []
+  features: FeatureRow[] | []
 }
 
 const FeatureModal = ({ isOpen, onClose, features }: FeatureModalProps) => {

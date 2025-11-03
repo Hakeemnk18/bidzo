@@ -1,8 +1,8 @@
 import { Schema, Document, model } from 'mongoose';
 
 export interface IBid extends Document {
-  userId: Schema.Types.ObjectId;    // ref: 'User'
-  auctionId: Schema.Types.ObjectId; // ref: 'Auction'
+  userId: Schema.Types.ObjectId;    
+  auctionId: Schema.Types.ObjectId; 
   bidAmount: number;
   createdAt: Date;
 }
@@ -13,7 +13,7 @@ const BidSchema = new Schema({
   auctionId: { type: Schema.Types.ObjectId, ref: 'Auction', required: true },
   bidAmount: { type: Number, required: true },
 }, {
-  timestamps: { createdAt: true, updatedAt: false } // Only need createdAt
+  timestamps: { createdAt: true, updatedAt: false }
 });
 
 export const BidModel = model<IBid>('Bid', BidSchema);
