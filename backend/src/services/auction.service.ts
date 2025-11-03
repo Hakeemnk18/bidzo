@@ -25,6 +25,15 @@ export class AuctionService implements IAuctionService {
         HttpStatusCode.NOT_FOUND
       );
     }
+    const auctionWithSameEndDate = await this.findAuctions({
+      endAt: data.endAt,
+    });
+    if (auctionWithSameEndDate.length > 0) {
+      throw new CustomError(
+        "Auction with same End Date is not possible",
+        HttpStatusCode.BAD_REQUEST
+      );
+    }
     await this.auctionRepo.create(data);
   }
 
@@ -35,6 +44,10 @@ export class AuctionService implements IAuctionService {
   async isValidProduct(productId: string): Promise<boolean> {
     const productIds = await this.auctionRepo.getAllLiveAuctionProducts();
     return productIds.includes(productId);
+  }
+
+  async findAuctions(query: Record<string, any>): Promise<Auction[]> {
+    return await this.auctionRepo.findAuctions(query);
   }
 
   async getAllAvailableProducts(sellerId: string): Promise<Product[]> {
@@ -60,7 +73,7 @@ export class AuctionService implements IAuctionService {
     let pipeline: any[] = [];
     let countPipeline: any[] = [];
 
-    if (userId && role === 'seller') {
+    if (userId && role === "seller") {
       pipeline.push({
         $match: {
           userId: new mongoose.Types.ObjectId(userId),
@@ -69,11 +82,11 @@ export class AuctionService implements IAuctionService {
       });
     }
 
-    if(role === "user"){
+    if (role === "user") {
       pipeline.push({
         $match: {
           isDeleted: false,
-          status: {$ne: "cancelled"}
+          status: { $ne: "cancelled" },
         },
       });
     }
@@ -107,15 +120,14 @@ export class AuctionService implements IAuctionService {
     }
 
     if (sortValue && sortValue.trim() !== "") {
-      
       if (sortValue === "baseAsc") {
         sort = { basePrice: 1 };
       } else if (sortValue === "baseDesc") {
         sort = { basePrice: -1 };
-      }else if(sortValue === "curAsc"){
-        sort = { currentBid: 1 }
-      }else if(sortValue === "curDesc"){
-        sort = { currentBid: -1 }
+      } else if (sortValue === "curAsc") {
+        sort = { currentBid: 1 };
+      } else if (sortValue === "curDesc") {
+        sort = { currentBid: -1 };
       }
       pipeline.push({ $sort: sort });
     }
@@ -257,7 +269,6 @@ export class AuctionService implements IAuctionService {
     });
 
     if (product.id !== data.product) {
-      
       const isUsed = await this.isValidProduct(data.product);
       if (isUsed) {
         throw new CustomError(
@@ -313,5 +324,15 @@ export class AuctionService implements IAuctionService {
     }
 
     await this.auctionRepo.findByIdAndUpdate(id, { isDeleted: false });
+  }
+
+  async incrementBidCount(id: string): Promise<void> {
+    const filter = { _id: id };
+    const update = { $inc: { bidCount: 1 } };
+    await this.auctionRepo.findOneAndUpdate(filter, update);
+  }
+
+  async setCurrentBidAndHigherBidder(id: string, bidAmount:number, userId: string): Promise<void> {
+    await this.auctionRepo.findByIdAndUpdate(id,{ currentBid:bidAmount, highestBidder: userId })
   }
 }

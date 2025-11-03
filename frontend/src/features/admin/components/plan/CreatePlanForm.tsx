@@ -142,7 +142,8 @@ const CreatePlanForm = () => {
 
         if (!target.trim()) newErrors.target = "Choose target";
 
-        if (!yearlyAmount || isNaN(Number(yearlyAmount || Number(yearlyAmount) < 1))) {
+        
+        if(!yearlyAmount || isNaN(Number(yearlyAmount)) || Number(yearlyAmount) < 1){
             newErrors.yearlyAmount = "Enter a valid yearly amount";
         }
 
@@ -170,6 +171,7 @@ const CreatePlanForm = () => {
             setErrors(newErrors);
             return;
         } else {
+            
             try {
                 const res = await instance.post<ApiResponse>('/admin/plan', {
                     ...formData,

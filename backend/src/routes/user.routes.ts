@@ -7,6 +7,8 @@ import { container } from '../di/container';
 import { UserNotificationController } from '../controllers/userController/user.notification.controller';
 import { UserSubscriptionController } from '../controllers/userController/user.subscription.controller';
 import { AuctionController } from '../controllers/userController/auction.controller';
+import { authorizeRoles } from '../middileware/role.middileware';
+import { BidController } from '../controllers/userController/bid.controller';
 
 
 
@@ -19,6 +21,7 @@ const userController = container.resolve(UserManagement)
 const notificationController = container.resolve(UserNotificationController)
 const subscriptionController = container.resolve(UserSubscriptionController)
 const auctionController = container.resolve(AuctionController)
+const bidController = container.resolve(BidController)
 
 
 
@@ -92,6 +95,12 @@ router.post('/renewal/verify-payment',
 router.get('/auctions',
   authenticate,
   (req, res)=> auctionController.getAllAuctions(req, res)
+)
+
+router.post('/bid',
+  authenticate,
+  authorizeRoles('user'),
+  (req, res)=> bidController.create(req as AuthenticatedRequest, res)
 )
 
 export default router;

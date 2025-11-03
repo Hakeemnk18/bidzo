@@ -42,6 +42,10 @@ import { IAuctionRepo } from '../repositories/interfaces/auction.repo';
 import { AuctionRepo } from '../repositories/auction.repo';
 import { IAuctionService } from '../services/interfaces/auction.intercafe';
 import { AuctionService } from '../services/auction.service';
+import { IBidRepository } from '../repositories/interfaces/bid.repo';
+import { BidRepo } from '../repositories/bid.repo';
+import { IBidService } from '../services/interfaces/bid.interface';
+import { BidService } from '../services/bid.service';
 
 container.register<IOTPRepository>('IOTPRepository', {useClass: OTPRepository})
 container.register<IOTPService>('IOTPService', { useClass: OTPService})
@@ -74,6 +78,10 @@ container.register<IProductService>('IProductService', { useClass: ProductServic
 
 container.register<IAuctionRepo>('IAuctionRepo', { useClass: AuctionRepo})
 container.register<IAuctionService>('IAuctionService', { useClass: AuctionService})
+
+container.register<IBidRepository>('IBidRepository' , { useClass: BidRepo})
+container.register<IBidService>('IBidService' , { useClass: BidService})
+
 
 
 

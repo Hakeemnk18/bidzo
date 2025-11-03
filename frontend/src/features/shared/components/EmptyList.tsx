@@ -1,6 +1,6 @@
 const EmptyState = () => {
 
-    console.log(" empty state called")
+
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-lg mx-auto py-20 px-6 
                    bg-slate-800/60 backdrop-blur-sm rounded-xl shadow-lg text-center">

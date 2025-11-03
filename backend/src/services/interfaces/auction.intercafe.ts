@@ -19,5 +19,7 @@ export interface IAuctionService {
     removeDeleteAuction(id: string): Promise<void>
     getAllLiveAuctions(): Promise<Auction[]>
     isValidProduct(productId: string): Promise<boolean>
-    
+    findAuctions(query: Record<string, any>): Promise<Auction[]>
+    incrementBidCount(id: string): Promise<void>
+    setCurrentBidAndHigherBidder(id: string, bidAmount:number, userId: string): Promise<void>
 }

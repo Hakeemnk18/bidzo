@@ -6,24 +6,25 @@ import './index.css'
 import { Provider } from 'react-redux'
 import store from './store/store.ts'
 import SocketListener from './features/shared/components/SocketListener.tsx'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
 
 const appRouter = createBrowserRouter(allRoutes)
 
+const queryClient = new QueryClient();
 const root = createRoot(document.getElementById('root')!)
 
 
 root.render(
-  <Provider store={store}>
+  <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
       <SocketListener />
       <StrictMode>
-        
         <RouterProvider router={appRouter} />
       </StrictMode>
-    
-
-  </Provider>
+    </Provider>
+  </QueryClientProvider>
 
 )
 
