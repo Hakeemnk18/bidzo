@@ -8,6 +8,8 @@ import GoogleLogin from "./GoogleLogin";
 import axios from "axios";
 import { useRouterRole } from "../../../../hooks/useRouterRole";
 import ResetPasswordModal from "../modal/ResetPasswordModal";
+import { setLocalStorageUser } from "../../../../utils/setLocalStorage";
+import { useSetDispatch } from "../../../../hooks/useDispatch";
 
 
 
@@ -18,6 +20,7 @@ const LoginForm = () => {
     const role = useRouterRole()
     const navigate = useNavigate()
     const dispatch = useStoreDispatch()
+    const setUserData = useSetDispatch()
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,15 +51,9 @@ const LoginForm = () => {
                 if (res.data.success) {
                     toast(res.data.message)
                     const userData: LoginResponse = res.data.data!
-                    localStorage.setItem("authToken", userData.token);
-                    localStorage.setItem("userName", userData.name);
-                    localStorage.setItem("userRole", userData.role);
-                    localStorage.setItem('userId',userData.id)
-                    //connectSocket(userData.id)
-                    dispatch(login({
-                        name: userData.name,
-                        role: userData.role
-                    }));
+                    setLocalStorageUser(userData)
+                    setUserData(userData)
+                    
                     if (role === 'user') {
                         navigate('/');
                     } else if (role === 'admin') {

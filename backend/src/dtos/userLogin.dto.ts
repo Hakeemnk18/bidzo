@@ -33,6 +33,7 @@ export interface UserLoginResponseDTO {
   role: "user" | "admin" | "seller";
   id: string
   token: string;
+  bidCredit: number
 }
 
 

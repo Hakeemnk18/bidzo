@@ -5,6 +5,7 @@ import type { AuthState } from "../../../types/user.types";
 const initialState: AuthState = {
     name: null,
     role: null,
+    bidCredit: 0,
     isAuthenticated: false,
     loading: true
 }
@@ -15,9 +16,10 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         login: (state, action) => {
-            const {  name, role } = action.payload;
+            const {  name, role, bidCredit } = action.payload;
             state.name = name;
             state.role = role;
+            state.bidCredit = bidCredit
             state.isAuthenticated = true;
             
         },
@@ -25,7 +27,7 @@ const authSlice = createSlice({
             state.name = null,
             state.role = null,
             state.isAuthenticated = false
-            
+            state.bidCredit = 0
         },
         authChecked: (state) => {
             state.loading = false

@@ -11,6 +11,7 @@ interface IUser extends Document {
     isVerified: "pending" | "rejected" | "approved",
     submitCount: number
     isBlocked: boolean
+    bidCredit: number
 
 }
 
@@ -27,6 +28,7 @@ const userSchema = new Schema<IUser>(
       enum: ["pending" ,"rejected" , "approved"]
     },
     submitCount: { type:Number, default: 1},
+    bidCredit: { type:Number, default: 1},
     isBlocked: { type: Boolean, default:false},
     role: { 
       type: String,

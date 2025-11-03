@@ -7,6 +7,8 @@ import { login } from "../../slices/authSlice";
 import OTPVerification from "./OTPVerification";
 import axios from "axios";
 import { useRouterRole } from "../../../../hooks/useRouterRole";
+import { setLocalStorageUser } from "../../../../utils/setLocalStorage";
+import { useSetDispatch } from "../../../../hooks/useDispatch";
 
 
 
@@ -21,6 +23,7 @@ const SignUpForm = () => {
     const dispatch = useStoreDispatch()
     const navigate = useNavigate()
     const role = useRouterRole()
+    const setUserData = useSetDispatch()
 
 
 
@@ -132,13 +135,8 @@ const SignUpForm = () => {
 
                 if (role === 'user') {
                     const userData: LoginResponse = res.data.data!
-                    localStorage.setItem("authToken", userData.token);
-                    localStorage.setItem("userName", userData.name);
-                    localStorage.setItem("userRole", userData.role);
-                    dispatch(login({
-                        name: userData.name,
-                        role: userData.role
-                    }));
+                    setLocalStorageUser(userData)
+                    setUserData(userData)
                     navigate('/');
                 }
 

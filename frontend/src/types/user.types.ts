@@ -3,6 +3,7 @@ export interface LoginResponse {
   role: 'admin' | 'user' | 'seller';
   token: string;
   id: string
+  bidCredit: number
 }
 
 export interface GoogleLoginResponse {
@@ -12,7 +13,8 @@ export interface GoogleLoginResponse {
     name: string;
     role: 'admin' | 'user' | 'seller';
     token: string;
-    id: string
+    id: string;
+    bidCredit: number
   };
   error?: string;
 }
@@ -22,6 +24,7 @@ export interface AuthState {
     role: "admin" | "user" | "seller" | null,
     isAuthenticated: boolean,
     loading: boolean
+    bidCredit: number
 }
 
 export interface ApiResponse {

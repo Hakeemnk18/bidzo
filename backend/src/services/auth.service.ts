@@ -88,7 +88,8 @@ export class AuthService implements IAuthService {
       name: user.name,
       role: user.role,
       id: user.id!,
-      token: jwtToken
+      token: jwtToken,
+      bidCredit: user.bidCredit!
     }
     return responseUser
 
@@ -124,6 +125,7 @@ export class AuthService implements IAuthService {
         role: user.role,
         id: user.id!,
         token: jwtToken,
+        bidCredit: user.bidCredit!
       };
 
       return responseUser;
@@ -145,7 +147,8 @@ export class AuthService implements IAuthService {
           name: "",
           role: "seller",
           token: "",
-          id: ""
+          id: "",
+          bidCredit: 1
         }
         return responseUser
       }
@@ -157,7 +160,8 @@ export class AuthService implements IAuthService {
         name: user.name,
         role: user.role,
         id: user.id!,
-        token: jwtToken
+        token: jwtToken,
+        bidCredit: user.bidCredit!
       }
       return responseUser
     } catch (error) {
