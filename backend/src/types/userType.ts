@@ -12,6 +12,7 @@ export type User = {
   createdAt?: Date;
   updatedAt?: Date;
   submitCount?: number;
+  bidCredit?: number
 };
 
 

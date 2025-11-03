@@ -4,6 +4,8 @@ import { useStoreDispatch } from "../../../../hooks/useStore";
 import type { GoogleLoginResponse, LoginResponse } from "../../../../types/user.types";
 import { login } from "../../slices/authSlice";
 import axios from 'axios';
+import { setLocalStorageUser } from "../../../../utils/setLocalStorage";
+import { useSetDispatch } from "../../../../hooks/useDispatch";
 const client_id = import.meta.env.VITE_CLIENTID;
 
 
@@ -11,6 +13,7 @@ const client_id = import.meta.env.VITE_CLIENTID;
 const GoogleLogin = () => {
     const dispatch = useStoreDispatch()
     const navigate = useNavigate()
+    const setUserData = useSetDispatch()
 
 
     const handleGoogleLogin = async () => {
@@ -36,16 +39,11 @@ const GoogleLogin = () => {
                         );
 
                         if (resData.success) {
-                            console.log("google successed")
+                            
                             toast(resData.message);
                             const userData: LoginResponse = resData.data!;
-                            localStorage.setItem("authToken", userData.token);
-                            localStorage.setItem("userName", userData.name);
-                            localStorage.setItem("userRole", userData.role);
-                            dispatch(login({
-                                name: userData.name,
-                                role: userData.role
-                            }));
+                            setLocalStorageUser(userData)
+                            setUserData(userData)
                             navigate('/');
                         } else {
                             toast.error(resData.message || "Google login failed");
