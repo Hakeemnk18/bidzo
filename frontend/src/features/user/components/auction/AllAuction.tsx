@@ -16,6 +16,7 @@ import EmptyState from "../../../shared/components/EmptyList";
 import { useAuctions } from "../../../../hooks/useAuction";
 import { showErrorToast } from "../../../../utils/showErrorToast";
 import { useBid } from "../../../../hooks/useBid";
+import { useStoreSelector } from "../../../../hooks/useStore";
 
 export interface AuctionItem {
   id: string;
@@ -55,15 +56,15 @@ interface IBidFormData {
 
 const ProductListings = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const currentUser = useStoreSelector((state) => state.auth)
   const navigate = useNavigate();
-  const { mutateAsync, isPending } = useBid()
+  const { mutateAsync } = useBid()
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<Record<string, any>>({});
   const [showFilters, setShowFilters] = useState(false);
   const [showSort, setShowSort] = useState(false);
   const [sort, setSort] = useState("");
   const [bidError, setBidError] = useState("");
-  const {} = useAuctions(currentPage, search, sort, filters);
   const [formData, setFormData] = useState<IBidFormData>({
     currentBid: "",
     bidAmount: "",
@@ -79,6 +80,12 @@ const ProductListings = () => {
   } = useAuctions(currentPage, search, sort, filters);
 
   const handleBid = (auctionId: string, currentBid: string) => {
+    
+    if(currentUser.bidCredit < 1){
+      
+      toast.error("no remaining bid credit")
+      return
+    }
     setFormData({
       auctionId,
       currentBid,

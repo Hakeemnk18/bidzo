@@ -11,7 +11,6 @@ const Navbar = () => {
   const [dropDownOpen, setDropDownOpen] = useState(false)
   const user = useStoreSelector((state) => state.auth)
   const role = localStorage.getItem('userRole')
-
   
   const navItems = useMemo(() => {
   switch (role) {
@@ -24,13 +23,15 @@ const Navbar = () => {
         fifth: "",
         sixth: "",
         seventh:'',
+        eighth:"",
         firstUrl: "#",
         secondUrl: "/user/auctions",
         thirdUrl: "#",
         fourthUrl: "",
         fifthUrl: "",
         sixthUrl: "",
-        seventhUrl: ''
+        seventhUrl: '',
+        eighthUrl: ""
       };
     case "seller":
       return {
@@ -41,13 +42,15 @@ const Navbar = () => {
         fifth: "",
         sixth: "",
         seventh: '',
+        eighth: "",
         firstUrl: "/seller/dashboard",
         secondUrl: "/seller/auction/management",
         thirdUrl: "/seller/product/management",
         fourthUrl: "",
         fifthUrl: "",
         sixthUrl: "",
-        seventhUrl: ''
+        seventhUrl: '',
+        eighthUrl: ""
       };
     case "admin":
       return {
@@ -56,15 +59,17 @@ const Navbar = () => {
         third: "Users",
         fourth: "Plans",
         fifth: "Auctions",
-        sixth: "category",
-        seventh: "product",
+        sixth: "Category",
+        seventh: "Product",
+        eighth: "Bid",
         firstUrl: "/admin/dashboard",
         secondUrl: '/admin/sellerManagement',
         thirdUrl: '/admin/userManagement',
         fourthUrl: '/admin/planManagement',
         fifthUrl: "/admin/auctionManagement",
         sixthUrl: '/admin/categoryManagement',
-        seventhUrl:'/admin/productManagement'
+        seventhUrl:'/admin/productManagement',
+        eighthUrl:'/admin/bidManagement'
       };
     default:
       return {
@@ -75,13 +80,15 @@ const Navbar = () => {
         fifth: "",
         sixth: "",
         seventh: "",
+        eighth: "",
         firstUrl: "#",
         secondUrl: "#",
         thirdUrl: "#",
         fourthUrl: "",
         fifthUrl: "",
         sixthUrl: "",
-        seventhUrl: ""
+        seventhUrl: "",
+        eighthUrl: ""
       };
   }
 }, [role]);
@@ -119,6 +126,9 @@ const Navbar = () => {
           </Link>
           <Link to={navItems.seventhUrl} className="text-white hover:text-gray-300 transition duration-300">
             { navItems.seventh }
+          </Link>
+          <Link to={navItems.eighthUrl} className="text-white hover:text-gray-300 transition duration-300">
+            { navItems.eighth }
           </Link>
           </>
             

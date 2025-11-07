@@ -9,6 +9,7 @@ import { PlanMangementController } from "../controllers/adminController/plan.man
 import { CategoryControllers } from "../controllers/adminController/category.controller";
 import { ProductController } from "../controllers/adminController/product.controller";
 import { AdminAuctionController } from "../controllers/adminController/auction.controller";
+import { BidCountController } from "../controllers/adminController/bidCount.controller";
 
 
 
@@ -22,6 +23,7 @@ const planManagementController = container.resolve(PlanMangementController)
 const categoryController = container.resolve(CategoryControllers)
 const productController = container.resolve(ProductController)
 const auctionController = container.resolve(AdminAuctionController)
+const bidCountController = container.resolve(BidCountController)
 
 
 router.post('/login',(req,res)=> adminAuthController.login(req,res))
@@ -153,6 +155,30 @@ router.patch('/auction/:id/unblock',
     authenticate,
     authorizeRoles('admin'),
     (req, res)=> auctionController.unBlockAuction(req,res)
+)
+
+router.get('/bidCount',
+    authenticate,
+    authorizeRoles('admin'),
+    (req, res)=> bidCountController.getAllBidCounts(req, res)
+)
+
+router.post('/bidCount',
+    authenticate,
+    authorizeRoles('admin'),
+    (req, res)=> bidCountController.createBidCount(req, res)
+)
+
+router.get('/bidCount/management',
+    authenticate,
+    authorizeRoles('admin'),
+    (req, res)=> bidCountController.getAllBidCountsByFilter(req, res)
+)
+
+router.delete('/bidCount/:id',
+    authenticate,
+    authorizeRoles('admin'),
+    (req, res)=> bidCountController.deleteBidCount(req, res)
 )
 
 

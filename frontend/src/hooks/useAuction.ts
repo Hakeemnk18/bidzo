@@ -3,7 +3,7 @@ import { fetchAuctions } from '../api/auction.api';
 import type { IResAuctionWithImage } from '../types/auction.type'; 
 
 
-type AuctionQueryKey = [string, { currentPage: number; search: string; sort: string; filters: any }];
+export type AuctionQueryKey = [string, { currentPage: number; search: string; sort: string; filters: any }];
 
 export const useAuctions = (currentPage: number, search: string, sort: string, filters: any) => {
   

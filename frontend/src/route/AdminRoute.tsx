@@ -14,7 +14,7 @@ const PlanEditPage = lazy(()=> import('../features/admin/components/plan/EditPla
 const CategoryPage = lazy(()=> import('../features/admin/components/category/CategoryTable'))
 const ProductManagementPage = lazy(()=> import('../features/seller/components/product/ProductTable'))
 const AuctionPage = lazy(()=> import('../features/admin/components/auction/AuctionTable'))
-
+const BidPage = lazy(()=> import('../features/admin/components/bidCount/BidTable'))
 
 
 
@@ -111,6 +111,14 @@ const adminRoute = [
         element:( 
             <ProtectedRoute>
                 <AuctionPage />
+            </ProtectedRoute>
+        )
+    },
+    {
+        path: '/admin/bidManagement',
+        element:( 
+            <ProtectedRoute>
+                <BidPage />
             </ProtectedRoute>
         )
     },

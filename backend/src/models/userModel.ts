@@ -28,7 +28,7 @@ const userSchema = new Schema<IUser>(
       enum: ["pending" ,"rejected" , "approved"]
     },
     submitCount: { type:Number, default: 1},
-    bidCredit: { type:Number, default: 1},
+    bidCredit: { type:Number, default: 0},
     isBlocked: { type: Boolean, default:false},
     role: { 
       type: String,
