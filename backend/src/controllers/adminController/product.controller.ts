@@ -31,7 +31,10 @@ export class ProductController implements IProductController {
         currentPage: parseData.page,
         totalPages: Math.ceil(total / parseData.limit),
       });
-    } catch (error) {}
+    } catch (error) {
+      handleError(res,error)
+      console.log("error in admin product controller")
+    }
   }
 
   async blockAndUnblock(req: Request, res: Response): Promise<void> {

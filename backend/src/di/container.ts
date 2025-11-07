@@ -46,6 +46,10 @@ import { IBidRepository } from '../repositories/interfaces/bid.repo';
 import { BidRepo } from '../repositories/bid.repo';
 import { IBidService } from '../services/interfaces/bid.interface';
 import { BidService } from '../services/bid.service';
+import { IBidCountRepo } from '../repositories/interfaces/bid.count.repo';
+import { BidCountRepo } from '../repositories/bid.count.repo';
+import { IBidCountService } from '../services/interfaces/bid.count.service.interface';
+import { BidCountService } from '../services/bid.count.service';
 
 container.register<IOTPRepository>('IOTPRepository', {useClass: OTPRepository})
 container.register<IOTPService>('IOTPService', { useClass: OTPService})
@@ -82,6 +86,8 @@ container.register<IAuctionService>('IAuctionService', { useClass: AuctionServic
 container.register<IBidRepository>('IBidRepository' , { useClass: BidRepo})
 container.register<IBidService>('IBidService' , { useClass: BidService})
 
+container.register<IBidCountRepo>('IBidCountRepo', { useClass: BidCountRepo})
+container.register<IBidCountService>('IBidCountService', { useClass: BidCountService })
 
 
 

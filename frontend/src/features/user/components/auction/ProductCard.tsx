@@ -78,7 +78,7 @@ export const ProductCard = ({ item, handleBid }: ProductCardProps) => {
             Auto Bid
           </button>
         </div>
-        {/* --- END OF CHANGE --- */}
+        
 
       </div>
     </div>

@@ -29,7 +29,9 @@ function App() {
       
       const name = localStorage.getItem("userName");
       const role = localStorage.getItem("userRole");
-      dispatch(login({ name, role }));
+      const bidCredit = parseInt(localStorage.getItem("bidCredit")!)
+    
+      dispatch(login({ name, role, bidCredit }));
 
     }else{
       
